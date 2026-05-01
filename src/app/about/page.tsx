@@ -14,18 +14,16 @@ export default function AboutPage() {
         <AboutNav />
 
         <ScrollReveal>
-          <div className="eyebrow-lg mb-3">A Research and Development Lab</div>
-        </ScrollReveal>
-        <ScrollReveal>
-          <h1 className="mb-6 max-w-3xl">
-            A research and development lab inside Mays Business School.
-          </h1>
-        </ScrollReveal>
-        <ScrollReveal>
-          <p className="text-[18px] text-ink-secondary leading-relaxed max-w-3xl">
-            The Mays Method Lab exists to discover, test, and codify a new way of teaching
-            business for the AI era.
-          </p>
+          <div className="dotted-frame bg-bg-subtle py-12 px-8 md:px-12">
+            <div className="eyebrow-lg mb-3">A Research and Development Lab</div>
+            <h1 className="mb-6 max-w-3xl">
+              A research and development lab inside Mays Business School.
+            </h1>
+            <p className="text-[18px] text-ink-secondary leading-relaxed max-w-3xl">
+              The Mays Method Lab exists to discover, test, and codify a new way of teaching
+              business for the AI era.
+            </p>
+          </div>
         </ScrollReveal>
       </section>
 
@@ -33,7 +31,7 @@ export default function AboutPage() {
 
       <section className="section">
         <ScrollReveal>
-          <div className="heading-rule">
+          <div className="heading-rule mb-10">
             <h2 className="text-center mx-auto">Co-Directors</h2>
           </div>
         </ScrollReveal>
@@ -65,13 +63,13 @@ Professor and Joe Foster '56 Chair in Business Leadership`}
 
       <section className="section">
         <ScrollReveal>
-          <div className="eyebrow mb-3">Affiliation</div>
-        </ScrollReveal>
-        <ScrollReveal>
-          <p className="text-[16px] text-ink-secondary leading-relaxed max-w-3xl">
-            The Mays Method Lab is part of Mays Business School at Texas A&amp;M University in
-            College Station, Texas.
-          </p>
+          <div className="dotted-frame bg-bg-subtle py-10 px-8 md:px-12 max-w-3xl">
+            <div className="eyebrow mb-3">Affiliation</div>
+            <p className="text-[16px] text-ink-secondary leading-relaxed">
+              The Mays Method Lab is part of Mays Business School at Texas A&amp;M University in
+              College Station, Texas.
+            </p>
+          </div>
         </ScrollReveal>
       </section>
     </>

@@ -4,9 +4,11 @@ import path from 'path';
 import {
   AlignmentType,
   Document,
+  Footer,
   HeightRule,
   ImageRun,
   LevelFormat,
+  PageNumber,
   Packer,
   Paragraph,
   Table,
@@ -269,6 +271,12 @@ export async function generateLetterDocx(opts: LetterDocOptions): Promise<Buffer
 
   const headerParagraphs: Paragraph[] = [];
   if (headerImage) {
+    // The Mays/TAMU letterhead source is 600×146 (aspect 4.11). Render at
+    // a smaller, symmetric size — 320×78 (~3.3" wide) — so it sits cleanly
+    // at the top of a 1"-margin US Letter page without dominating the
+    // first paragraphs.
+    const LETTERHEAD_WIDTH = 320;
+    const LETTERHEAD_HEIGHT = 78; // 320 / 4.11 ≈ 78
     headerParagraphs.push(
       new Paragraph({
         alignment: AlignmentType.CENTER,
@@ -277,7 +285,7 @@ export async function generateLetterDocx(opts: LetterDocOptions): Promise<Buffer
           new ImageRun({
             type: 'jpg',
             data: headerImage,
-            transformation: { width: 540, height: 90 },
+            transformation: { width: LETTERHEAD_WIDTH, height: LETTERHEAD_HEIGHT },
           }),
         ],
       }),
@@ -299,6 +307,21 @@ export async function generateLetterDocx(opts: LetterDocOptions): Promise<Buffer
       }),
     );
   }
+
+  // Page-number footer: "Page X of Y", centered, 10pt Calibri.
+  const pageFooter = new Footer({
+    children: [
+      new Paragraph({
+        alignment: AlignmentType.CENTER,
+        children: [
+          new TextRun({ text: 'Page ', font: FONT, size: 20 }),
+          new TextRun({ children: [PageNumber.CURRENT], font: FONT, size: 20 }),
+          new TextRun({ text: ' of ', font: FONT, size: 20 }),
+          new TextRun({ children: [PageNumber.TOTAL_PAGES], font: FONT, size: 20 }),
+        ],
+      }),
+    ],
+  });
 
   const doc = new Document({
     creator: 'Mays Method Lab — Evaluation Letter Writer',
@@ -340,6 +363,7 @@ export async function generateLetterDocx(opts: LetterDocOptions): Promise<Buffer
             },
           },
         },
+        footers: { default: pageFooter },
         children: [...headerParagraphs, ...body],
       },
     ],

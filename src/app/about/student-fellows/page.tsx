@@ -14,16 +14,14 @@ export default function StudentFellowsPage() {
       <AboutNav />
 
       <ScrollReveal>
-        <div className="eyebrow-lg mb-3">AI Student Fellows</div>
-      </ScrollReveal>
-      <ScrollReveal>
-        <h1 className="mb-6 max-w-3xl">Student fellows of the Lab.</h1>
-      </ScrollReveal>
-      <ScrollReveal>
-        <p className="text-[16px] text-ink-secondary leading-relaxed max-w-3xl mb-12">
-          Texas A&amp;M students working alongside the Lab on AI-powered tools, research, and
-          shipped product.
-        </p>
+        <div className="dotted-frame bg-bg-subtle py-12 px-8 md:px-12 mb-12">
+          <div className="eyebrow-lg mb-3">AI Student Fellows</div>
+          <h1 className="mb-6 max-w-3xl">Student fellows of the Lab.</h1>
+          <p className="text-[16px] text-ink-secondary leading-relaxed max-w-3xl">
+            Texas A&amp;M students working alongside the Lab on AI-powered tools, research, and
+            shipped product.
+          </p>
+        </div>
       </ScrollReveal>
 
       <div className="grid md:grid-cols-2 gap-6 md:gap-8">
