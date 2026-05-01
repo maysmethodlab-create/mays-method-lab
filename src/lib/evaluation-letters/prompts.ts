@@ -298,23 +298,95 @@ Please return a signed copy of this annual performance review for our personnel 
 }
 
 /* ==========================================================================
- * Phase 3 — Verification Agent
+ * Phase 3a — Hallucination Agent
+ *
+ * SINGLE JOB: every claim in the letter must be traceable to the source
+ * documents. Identify every fabrication / embellishment / unsupported
+ * inference, and produce a CORRECTED letter that contains zero of them.
+ * Style is NOT this agent's concern; the next agent handles that.
  * ========================================================================== */
 
-export function verifyPrompt(args: { letterText: string; sourceDocuments: string }) {
-  const system = `You are the Verification Agent for an evaluation letter. You check every factual claim in the letter against the source documents and you check for AI-sounding language patterns.
+export function hallucinationPrompt(args: { letterText: string; sourceDocuments: string }) {
+  const system = `You are the Hallucination Agent for an evaluation letter at Mays Business School. The letter you are about to read will be downloaded as a .docx and signed by a department head and placed in a faculty member's personnel file. Every factual claim must be traceable to the source documents.
 
-OUTPUT FORMAT — return a markdown report followed by an optional corrected letter inside a fenced block:
+YOUR ONLY JOB IS FACTUAL ACCURACY. You are not concerned with sentence rhythm, banned words, em-dashes, or any other writing-style issue. A separate Style Agent will handle those after you. Focus 100% on facts.
 
-## Factual Verification
+OUTPUT FORMAT — return a markdown report followed by a CORRECTED LETTER inside a fenced code block:
 
-For every verifiable claim (numbers, names, dates, titles, journals, courses, awards), classify as:
+## Factual Audit
+
+Go through the letter sentence by sentence. Identify every verifiable claim: numbers, names, dates, titles, journal names, course numbers, enrollment counts, awards, dollar amounts, citation counts, h-index, co-authors, mentees, conference venues, committee names, etc.
+
+For each claim, classify:
 - ✅ CONFIRMED: matches the source exactly or with minor rephrasing.
-- ⚠ EMBELLISHED: source says something related but the letter adds unsupported detail.
+- ⚠ EMBELLISHED: source says something related but the letter adds unsupported detail (a stronger adjective, a higher number, an extra accomplishment).
 - ❌ FABRICATED: no corresponding information in any source document.
-- ℹ INFERRED: reasonable conclusion but not explicitly stated.
+- ℹ INFERRED: not explicitly stated but reasonably implied by the source. These are usually fine but flag them so the writer can verify.
 
-For each item, quote the letter snippet and explain.
+For each ⚠ EMBELLISHED or ❌ FABRICATED, quote the letter snippet and quote the source (or note the absence).
+
+## Verdict
+- READY TO SEND if zero EMBELLISHED and zero FABRICATED.
+- NEEDS CORRECTION otherwise. List what changed below.
+
+## Corrected Letter (REQUIRED whenever ANY claim was EMBELLISHED or FABRICATED)
+
+The Corrected Letter is what will be downloaded as a .docx and signed by
+the department head. It MUST contain ZERO of the claims you flagged as
+EMBELLISHED or FABRICATED above. For each, you must either:
+  (a) replace the claim with what the source documents actually say, OR
+  (b) delete the claim and rephrase the surrounding sentence so it reads
+      naturally without it.
+
+DO NOT copy the original letter verbatim into the Corrected Letter block
+while you have flagged fabrications above. That is the most common
+failure mode and it is unacceptable.
+
+Concrete rewrite examples:
+  - Original: "taught SCMT 364 with 350 students"
+    CV says: "SCMT 335, four sections of ~45 students each"
+    Corrected: "taught four sections of SCMT 335, with approximately 45
+                students per section"
+  - Original: "this is your fourth article in the Journal of Finance"
+    CV shows: two JF articles
+    Corrected: "this is your second article in the Journal of Finance"
+  - Original: "appeared in the journal in 2025"
+    CV shows: 2024
+    Corrected: "appeared in the journal in 2024"
+
+After writing the Corrected Letter, re-read it and confirm that NONE of
+the fabrications you flagged still appear. If one slips through, fix it
+before closing the fenced block.
+
+\`\`\`
+<full corrected letter text — must contain zero fabrications you flagged>
+\`\`\``;
+
+  const user = `LETTER TEXT:
+
+${args.letterText}
+
+SOURCE DOCUMENTS (the only ground truth — every claim must be traceable here):
+
+${args.sourceDocuments}
+
+Produce the factual audit and Corrected Letter now.`;
+
+  return { system, user };
+}
+
+/* ==========================================================================
+ * Phase 3b — Style Agent (formerly the combined Verifier)
+ *
+ * SINGLE JOB: enforce the human-writing rules and structural patterns.
+ * Operates on the OUTPUT of the Hallucination Agent — i.e., a letter
+ * whose facts are already correct.
+ * ========================================================================== */
+
+export function verifyPrompt(args: { letterText: string }) {
+  const system = `You are the Style Agent for an evaluation letter. The letter you are about to read has already been fact-checked by the Hallucination Agent — its facts are correct. Your only job is to enforce the human-writing rules and the structural patterns of a Mays evaluation letter.
+
+OUTPUT FORMAT — return a markdown report followed by a CORRECTED LETTER inside a fenced code block:
 
 ## AI Language Issues
 
@@ -384,22 +456,28 @@ Flag every instance of:
 - Participial phrases at sentence ends summarizing significance ("...highlighting the importance of").
 
 ## Verdict
-- "READY TO SEND" if zero fabrications and zero AI-language issues.
-- "NEEDS REVISION" otherwise. Briefly explain.
+- "STYLE-CLEAN" if zero AI-language issues.
+- "NEEDS STYLE REVISION" otherwise. Briefly explain.
 
-## Corrected Letter (only if revisions were needed)
+## Corrected Letter (REQUIRED whenever ANY style issue is found)
+
+Replace every flagged em-dash with a comma, semicolon, or two sentences.
+(Year ranges like 2018–2020 STAY — only em-dashes between WORDS get
+rewritten.) Replace every banned word with a plain alternative. Break runs
+of three or more "Your"/"You" sentence openers by leading with the noun or
+inserting a soft transition.
+
+Preserve every fact in the input letter exactly as it appears. The
+Hallucination Agent already corrected the facts; do not re-introduce
+errors by rephrasing claims.
 
 \`\`\`
-<full corrected letter text>
+<full style-corrected letter text — same facts, cleaner prose>
 \`\`\``;
 
   const user = `LETTER TEXT:
 
 ${args.letterText}
-
-SOURCE DOCUMENTS (concatenated):
-
-${args.sourceDocuments}
 
 Produce the verification report now.`;
 

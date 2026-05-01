@@ -1,17 +1,38 @@
 import { NextResponse } from 'next/server';
 import { DEFAULT_MODEL, getClient, isApiKeyConfigured } from '@/lib/evaluation-letters/claude';
-import { verifyPrompt } from '@/lib/evaluation-letters/prompts';
+import { hallucinationPrompt, verifyPrompt } from '@/lib/evaluation-letters/prompts';
 import { lintLetter } from '@/lib/evaluation-letters/writing-rules';
 import { sanitizeLetter } from '@/lib/evaluation-letters/sanitize';
 import { placeholderNotice, requireAuth } from '@/lib/evaluation-letters/api-helpers';
 
 export const runtime = 'nodejs';
-export const maxDuration = 120;
+export const maxDuration = 240;
 
 type Body = {
   letterText: string;
   sourceDocuments: string;
 };
+
+/**
+ * Two-agent verify pipeline:
+ *
+ *   1. Hallucination Agent — fact-checks every claim against source docs and
+ *      produces a fact-corrected letter. Single job: kill fabrications.
+ *   2. Style Agent — operates on the fact-corrected letter; fixes em-dashes,
+ *      banned words, "Your"/"You" runs. Single job: kill AI-language patterns.
+ *   3. Local Sanitizer — deterministic last-mile cleanup that runs over
+ *      whatever the Style Agent emits.
+ *
+ * What the user downloads is the output of step 3.
+ */
+
+function extractFenced(text: string, fallback: string): string {
+  // Prefer the LAST fenced block in the response, in case the AI used a
+  // smaller fence earlier in its report.
+  const matches = [...text.matchAll(/```[\w-]*\n([\s\S]*?)```/g)];
+  const last = matches[matches.length - 1];
+  return last ? last[1].trim() : fallback;
+}
 
 export async function POST(req: Request) {
   const guard = requireAuth(req);
@@ -22,18 +43,16 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'letterText is required.' }, { status: 400 });
   }
 
-  // Always run the local lint so the UI can show structural issues even without an API key.
-  const lintIssues = lintLetter(body.letterText);
-
   if (!isApiKeyConfigured()) {
-    // Even without an API key, run the deterministic sanitizer so the workflow
-    // returns a cleaner letter.
     const sanitized = sanitizeLetter(body.letterText);
     const postLint = lintLetter(sanitized.text);
     return NextResponse.json({
       report: `${placeholderNotice('Verify')}
-## Factual Verification
+## Hallucination check
 (Claude would compare every claim in the letter against the uploaded source documents.)
+
+## Style check
+(Claude would catch banned words and structural AI-language patterns.)
 
 ## Local sanitizer
 - Swapped ${sanitized.changes.bannedWords} banned word(s)
@@ -41,11 +60,8 @@ export async function POST(req: Request) {
 - Removed ${sanitized.changes.dashes} em/en dash(es)
 - Broke ${sanitized.changes.yourRuns} run(s) of "Your"/"You" sentence openers
 
-## AI Language Issues (after sanitize)
-${postLint.length === 0 ? 'No issues remaining.' : postLint.map((i) => `- ${i.kind}: "${i.match}"`).join('\n')}
-
 ## Verdict
-${postLint.length === 0 ? 'READY TO SEND (sanitized letter is clean)' : 'NEEDS REVISION (some issues remain after sanitize)'}
+${postLint.length === 0 ? 'READY TO SEND (sanitizer-only check passed)' : 'NEEDS REVISION (some lint remains)'}
 `,
       correctedText: sanitized.text,
       lintIssues: postLint,
@@ -53,36 +69,55 @@ ${postLint.length === 0 ? 'READY TO SEND (sanitized letter is clean)' : 'NEEDS R
     });
   }
 
-  const { system, user } = verifyPrompt({
-    letterText: body.letterText,
-    sourceDocuments: body.sourceDocuments || '',
-  });
-
   try {
     const client = getClient();
-    const response = await client.messages.create({
-      model: DEFAULT_MODEL,
-      max_tokens: 4000,
-      system,
-      messages: [{ role: 'user', content: user }],
+
+    // ---- Phase 3a: Hallucination Agent ----
+    const hp = hallucinationPrompt({
+      letterText: body.letterText,
+      sourceDocuments: body.sourceDocuments || '',
     });
-    const text = response.content
+    const hRes = await client.messages.create({
+      model: DEFAULT_MODEL,
+      max_tokens: 5000,
+      system: hp.system,
+      messages: [{ role: 'user', content: hp.user }],
+    });
+    const hReport = hRes.content
       .map((b) => (b.type === 'text' ? b.text : ''))
       .join('');
+    const factCorrected = extractFenced(hReport, body.letterText);
 
-    // Extract corrected letter if present; otherwise use the original.
-    const fence = text.match(/```[\w-]*\n([\s\S]*?)```/);
-    const aiCorrected = fence ? fence[1].trim() : body.letterText;
+    // ---- Phase 3b: Style Agent (operates on the fact-corrected letter) ----
+    const sp = verifyPrompt({ letterText: factCorrected });
+    const sRes = await client.messages.create({
+      model: DEFAULT_MODEL,
+      max_tokens: 5000,
+      system: sp.system,
+      messages: [{ role: 'user', content: sp.user }],
+    });
+    const sReport = sRes.content
+      .map((b) => (b.type === 'text' ? b.text : ''))
+      .join('');
+    const styleCorrected = extractFenced(sReport, factCorrected);
 
-    // Always run the deterministic sanitizer over whatever text we'll surface.
-    const sanitized = sanitizeLetter(aiCorrected);
+    // ---- Phase 3c: Local Sanitizer (deterministic safety net) ----
+    const sanitized = sanitizeLetter(styleCorrected);
     const postLint = lintLetter(sanitized.text);
 
-    const sanitizerNote = `
+    const combinedReport = `# Hallucination Agent — Factual Audit
+
+${hReport}
 
 ---
 
-**Local sanitizer pass** (deterministic, runs after Claude):
+# Style Agent — AI-Language Audit
+
+${sReport}
+
+---
+
+**Local sanitizer pass** (deterministic, runs after both agents):
 - Swapped ${sanitized.changes.bannedWords} banned word(s)
 - Swapped ${sanitized.changes.phrases} banned phrase(s)
 - Removed ${sanitized.changes.dashes} em/en dash(es)
@@ -91,7 +126,7 @@ ${postLint.length === 0 ? 'READY TO SEND (sanitized letter is clean)' : 'NEEDS R
 **Lint after sanitize**: ${postLint.length === 0 ? 'clean ✓' : `${postLint.length} remaining (${postLint.map((i) => i.match).slice(0, 5).join(', ')})`}`;
 
     return NextResponse.json({
-      report: text + sanitizerNote,
+      report: combinedReport,
       correctedText: sanitized.text,
       lintIssues: postLint,
       sanitizerChanges: sanitized.changes,

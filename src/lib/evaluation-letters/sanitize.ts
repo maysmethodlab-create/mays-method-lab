@@ -105,9 +105,15 @@ const PHRASE_SWAPS: Sub[] = [
   { from: /^Taken together,\s*/gim, to: '' },
 ];
 
-// Em / en dash → comma (per writing rules).
+// Em / en dash → comma. Critical: do NOT touch dashes that sit between
+// digits (e.g., year ranges 2018–2020, FY2023–FY2025, page ranges 731-744).
+// Those are legitimate uses of the dash and replacing them with a comma
+// produces "2018, 2020" which reads as two separate years, not a range.
 const DASH_SWAPS: Sub[] = [
-  { from: /\s*[—–]\s*/g, to: ', ' },
+  // Match an em/en dash with optional surrounding spaces, but ONLY when at
+  // least one side is NOT immediately a digit. The negative lookarounds
+  // exempt purely numeric ranges.
+  { from: /(?<!\d)\s*[—–]\s*(?!\d)|(?<=\d)\s*[—–]\s+(?!\d)|(?<!\d)\s+[—–]\s*(?=\d)/g, to: ', ' },
 ];
 
 function wordSwap(text: string, from: string, to: string): string {
@@ -251,7 +257,7 @@ function softenOpener(sentence: string, transition: string): string {
 
 /** Collapse double spaces / orphaned punctuation introduced by removals. */
 function tidy(text: string): string {
-  return text
+  let t = text
     // collapse multiple spaces
     .replace(/[ \t]{2,}/g, ' ')
     // trim spaces around line breaks
@@ -265,6 +271,17 @@ function tidy(text: string): string {
     .replace(/,\s*,/g, ',')
     // space before punctuation cleanup
     .replace(/ ([.,;:!?])/g, '$1');
+
+  // After phrase removal, sentences may begin with a lowercase letter — e.g.,
+  // "...even for strong work. that you continue to place papers..." (where
+  // "The fact" was scrubbed). Detect any sentence-final ". " followed by a
+  // lowercase letter and capitalize the next word. Also handle paragraph
+  // starts and bullet starts.
+  t = t.replace(/([.!?]\s+)([a-z])/g, (_, prefix, ch) => prefix + ch.toUpperCase());
+  t = t.replace(/(\n\s*)([a-z])(?=[a-z])/g, (_, prefix, ch) => prefix + ch.toUpperCase());
+  t = t.replace(/(\n\s*[-*•]\s+)([a-z])/g, (_, prefix, ch) => prefix + ch.toUpperCase());
+
+  return t;
 }
 
 export type SanitizeResult = {

@@ -10,7 +10,7 @@ const ROOT = path.resolve(__dirname, '..');
 const APP_DIR = path.join(ROOT, 'apps', 'Annual Evaluation Letters');
 const BASE = process.env.BASE_URL || 'http://localhost:3000';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'mml-dev-2026';
-const OUT = path.join(APP_DIR, 'test-output', 'arreola-risa-v3');
+const OUT = path.join(APP_DIR, 'test-output', 'arreola-risa-v4-after-bugfix');
 const TEMPLATE_DIR = path.join(APP_DIR, 'Template Letters');
 
 fs.mkdirSync(OUT, { recursive: true });

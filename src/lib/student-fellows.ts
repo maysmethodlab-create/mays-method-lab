@@ -24,14 +24,16 @@ export type StudentFellow = {
 export const STUDENT_FELLOWS: StudentFellow[] = [
   {
     name: 'Russell Cates',
-    program: 'Texas A&M University',
-    bio: 'Bio forthcoming.',
+    program: 'B.B.A. in Management Information Systems, Mays Business School, Texas A&M University · expected 2027',
+    bio: 'Russell is a Mays Business School student at Texas A&M and an incoming intern at Meta. He works with the Lab on the engineering side of its tools.',
+    focus: ['MIS', 'Meta intern'],
     links: { linkedin: 'https://www.linkedin.com/in/russell-cates/' },
   },
   {
-    name: 'Yonatan Marom',
-    program: 'Texas A&M University',
-    bio: 'Bio forthcoming.',
+    name: 'Yuval Marom',
+    program: 'B.S. in Industrial and Systems Engineering, Texas A&M University · graduating May 2026',
+    bio: 'Yuval is a Texas A&M student graduating this semester with a degree in Industrial and Systems Engineering.',
+    focus: ['Industrial & Systems Engineering'],
     links: { linkedin: 'https://www.linkedin.com/in/ymarom/' },
   },
 ];
