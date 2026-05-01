@@ -10,19 +10,19 @@ export const metadata = {
 export default function AboutPage() {
   return (
     <>
-      <section className="section pt-40">
+      <section className="section pt-16">
         <AboutNav />
 
         <ScrollReveal>
-          <div className="eyebrow-lg mb-6">About</div>
+          <div className="eyebrow-lg mb-3">A Research and Development Lab</div>
         </ScrollReveal>
         <ScrollReveal>
-          <h1 className="headline text-5xl md:text-6xl mb-8 max-w-3xl">
+          <h1 className="mb-6 max-w-3xl">
             A research and development lab inside Mays Business School.
           </h1>
         </ScrollReveal>
         <ScrollReveal>
-          <p className="text-lg text-ink-secondary leading-relaxed max-w-3xl">
+          <p className="text-[18px] text-ink-secondary leading-relaxed max-w-3xl">
             The Mays Method Lab exists to discover, test, and codify a new way of teaching
             business for the AI era.
           </p>
@@ -33,7 +33,9 @@ export default function AboutPage() {
 
       <section className="section">
         <ScrollReveal>
-          <div className="eyebrow-lg mb-10">Co-Directors</div>
+          <div className="heading-rule">
+            <h2 className="text-center mx-auto">Co-Directors</h2>
+          </div>
         </ScrollReveal>
 
         <div className="grid md:grid-cols-3 gap-6 md:gap-8">
@@ -63,10 +65,10 @@ Professor and Joe Foster '56 Chair in Business Leadership`}
 
       <section className="section">
         <ScrollReveal>
-          <div className="eyebrow mb-4">Affiliation</div>
+          <div className="eyebrow mb-3">Affiliation</div>
         </ScrollReveal>
         <ScrollReveal>
-          <p className="text-base text-ink-secondary leading-relaxed max-w-3xl">
+          <p className="text-[16px] text-ink-secondary leading-relaxed max-w-3xl">
             The Mays Method Lab is part of Mays Business School at Texas A&amp;M University in
             College Station, Texas.
           </p>
@@ -79,9 +81,11 @@ Professor and Joe Foster '56 Chair in Business Leadership`}
 function Bio({ name, title }: { name: string; title: string }) {
   return (
     <div className="card h-full">
-      <div className="eyebrow text-[11px] mb-3">Co-Director</div>
-      <h3 className="text-2xl font-bold text-ink-primary mb-3 leading-tight">{name}</h3>
-      <p className="text-sm text-ink-secondary leading-relaxed whitespace-pre-line">{title}</p>
+      <div className="eyebrow text-[12px] mb-3">Co-Director</div>
+      <h3 className="font-headline text-[26px] font-semibold text-maroon mb-3 leading-tight">
+        {name}
+      </h3>
+      <p className="text-[15px] text-ink-secondary leading-relaxed whitespace-pre-line">{title}</p>
     </div>
   );
 }

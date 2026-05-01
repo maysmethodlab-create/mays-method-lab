@@ -18,10 +18,10 @@ export default function AboutNav() {
           <Link
             key={t.href}
             href={t.href}
-            className={`px-4 py-3 text-xs uppercase tracking-[0.2em] font-semibold border-b-2 -mb-px transition-colors ${
+            className={`px-5 py-3 text-[15px] font-semibold tracking-normal border-b-[3px] -mb-px transition-colors ${
               active
                 ? 'border-maroon text-maroon'
-                : 'border-transparent text-ink-muted hover:text-ink-primary'
+                : 'border-transparent text-ink-secondary hover:text-maroon'
             }`}
           >
             {t.label}

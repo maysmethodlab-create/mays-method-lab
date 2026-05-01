@@ -9,19 +9,17 @@ export const metadata = {
 
 export default function AdminToolsPage() {
   return (
-    <section className="section pt-40">
+    <section className="section pt-16">
       <div className="flex items-start justify-between flex-wrap gap-6 mb-12">
         <div>
           <ScrollReveal>
-            <div className="eyebrow-lg mb-4">Admin Tools</div>
+            <div className="eyebrow-lg mb-3">Admin Tools</div>
           </ScrollReveal>
           <ScrollReveal>
-            <h1 className="headline text-5xl md:text-6xl mb-4">
-              Tools for academic leaders.
-            </h1>
+            <h1 className="mb-4">Tools for academic leaders.</h1>
           </ScrollReveal>
           <ScrollReveal>
-            <p className="text-lg text-ink-secondary max-w-2xl leading-relaxed">
+            <p className="text-[18px] text-ink-secondary max-w-2xl leading-relaxed">
               AI-powered workflows for the recurring administrative work of running an academic
               unit at Mays Business School.
             </p>

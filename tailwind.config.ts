@@ -1,11 +1,12 @@
 import type { Config } from 'tailwindcss';
 
 /**
- * Mays Method Lab palette — official Texas A&M brand colors
- * (https://marcomm.tamu.edu/creative-platform/visual-style/brand-colors/).
+ * Mays Method Lab palette — calibrated to mays.tamu.edu (computed-CSS verified).
  *
- * The site runs on a white-dominant theme to match mays.tamu.edu, with
- * Aggie Maroon as the lone accent.
+ * Mays runs Aggie Maroon `#500000` as the primary brand color, `#3C0000` as the
+ * deep / hover variant, and `#732F2F` (the maroon-muted shade) as the
+ * superhead / dotted-frame / muted-border accent. Body copy is `#000000` for
+ * headings and `#3E3E3E` (their actual subhead gray) for paragraph text.
  */
 const config: Config = {
   content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
@@ -15,18 +16,18 @@ const config: Config = {
         bg: {
           DEFAULT: '#FFFFFF',
           panel: '#FFFFFF',
-          subtle: '#F5F2ED', // alternating-section off-white
+          subtle: '#EAEAEA', // matches mays.tamu.edu footer gray-100
           beige: '#D6D3C4',
         },
         maroon: {
           DEFAULT: '#500000', // Aggie Maroon (matches mays.tamu.edu primary)
-          deep: '#3C0000', // matches mays.tamu.edu link color
-          muted: '#732F2F', // matches mays.tamu.edu secondary
+          deep: '#3C0000', // matches mays.tamu.edu link / btn border / hover
+          muted: '#732F2F', // mays.tamu.edu superhead + dotted-frame outline
           glow: 'rgba(80, 0, 0, 0.15)',
         },
         ink: {
-          primary: '#000000', // pure black — matches mays.tamu.edu textPrimary
-          secondary: '#202020',
+          primary: '#000000', // Mays headings & strong text
+          secondary: '#3E3E3E', // mays.tamu.edu paragraph / subhead gray
           muted: '#5A5A5A',
           subtle: '#A9A9A9',
           white: '#FFFFFF',
@@ -37,27 +38,30 @@ const config: Config = {
           warning: '#C8A415',
           error: '#BF3D3D',
         },
-        line: '#E0DCD3', // soft beige-gray border
+        line: '#D1D1D1', // mays.tamu.edu divider-dots gray-300
       },
       fontFamily: {
-        // Mays uses Oswald for headings and Work Sans for body / paragraph.
+        // Mays uses Oswald for headings and Work Sans for body.
         headline: ['Oswald', 'Arial', 'sans-serif'],
         body: ['"Work Sans"', 'Arial', 'sans-serif'],
         display: ['Oswald', 'Arial', 'sans-serif'],
       },
       letterSpacing: {
-        eyebrow: '0.22em',
+        eyebrow: '0.05em',
         tightest: '-0.02em',
       },
       borderRadius: {
-        // Mays uses sharp corners (0px) on inputs and buttons. We keep a tiny
-        // 2px on cards just for elevation, but no soft pill styling.
-        card: '2px',
+        // Mays uses sharp corners (0px) on all primary surfaces — buttons,
+        // inputs, cards. Only the linked-card outer wrapper has a 12px radius
+        // and we don't replicate that pattern.
+        card: '0px',
         btn: '0px',
       },
       boxShadow: {
-        card: '0 1px 2px rgba(0, 0, 0, 0.05), 0 1px 4px rgba(0, 0, 0, 0.06)',
-        'card-hover': '0 4px 16px rgba(0, 0, 0, 0.08)',
+        // Mays does not use drop shadows on cards — accents come from the
+        // dotted-frame outline + thin maroon borders. Keep the focus ring.
+        card: 'none',
+        'card-hover': 'none',
         'maroon-glow': '0 0 0 3px rgba(80, 0, 0, 0.12)',
       },
     },

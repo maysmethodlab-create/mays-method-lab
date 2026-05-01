@@ -10,19 +10,17 @@ export const metadata = {
 
 export default function StudentFellowsPage() {
   return (
-    <section className="section pt-40">
+    <section className="section pt-16">
       <AboutNav />
 
       <ScrollReveal>
-        <div className="eyebrow-lg mb-6">AI Student Fellows</div>
+        <div className="eyebrow-lg mb-3">AI Student Fellows</div>
       </ScrollReveal>
       <ScrollReveal>
-        <h1 className="headline text-5xl md:text-6xl mb-6 max-w-3xl">
-          Student fellows of the Lab.
-        </h1>
+        <h1 className="mb-6 max-w-3xl">Student fellows of the Lab.</h1>
       </ScrollReveal>
       <ScrollReveal>
-        <p className="text-base text-ink-secondary leading-relaxed max-w-3xl mb-12">
+        <p className="text-[16px] text-ink-secondary leading-relaxed max-w-3xl mb-12">
           Texas A&amp;M students working alongside the Lab on AI-powered tools, research, and
           shipped product.
         </p>
@@ -51,7 +49,7 @@ function FellowCard({ fellow }: { fellow: (typeof STUDENT_FELLOWS)[number] }) {
             className="w-16 h-16 rounded-full object-cover border border-line"
           />
         ) : (
-          <div className="w-16 h-16 rounded-full bg-bg-subtle border border-line flex items-center justify-center font-headline text-xl text-maroon font-semibold">
+          <div className="w-16 h-16 rounded-full bg-bg-subtle border border-line flex items-center justify-center font-headline text-2xl text-maroon font-normal">
             {fellow.name
               .split(' ')
               .map((p) => p[0])
@@ -61,16 +59,18 @@ function FellowCard({ fellow }: { fellow: (typeof STUDENT_FELLOWS)[number] }) {
           </div>
         )}
         <div>
-          <div className="eyebrow text-[11px] mb-1">AI Student Fellow</div>
-          <h3 className="text-2xl font-bold text-ink-primary leading-tight">{fellow.name}</h3>
+          <div className="eyebrow text-[12px] mb-1">AI Student Fellow</div>
+          <h3 className="font-headline text-[24px] font-semibold text-maroon leading-tight">
+            {fellow.name}
+          </h3>
           {fellow.program ? (
-            <div className="text-sm text-ink-secondary mt-1">{fellow.program}</div>
+            <div className="text-[14px] text-ink-secondary mt-1">{fellow.program}</div>
           ) : null}
         </div>
       </div>
 
       {fellow.bio ? (
-        <p className="text-sm text-ink-secondary leading-relaxed mb-4 flex-1">{fellow.bio}</p>
+        <p className="text-[15px] text-ink-secondary leading-relaxed mb-4 flex-1">{fellow.bio}</p>
       ) : null}
 
       {fellow.focus && fellow.focus.length > 0 ? (
@@ -78,7 +78,7 @@ function FellowCard({ fellow }: { fellow: (typeof STUDENT_FELLOWS)[number] }) {
           {fellow.focus.map((t) => (
             <span
               key={t}
-              className="text-[11px] uppercase tracking-[0.12em] font-semibold text-maroon border border-maroon/40 px-2 py-1 rounded"
+              className="text-[11px] uppercase tracking-[0.05em] font-semibold text-maroon-muted border border-maroon-muted/50 px-2 py-1"
             >
               {t}
             </span>
@@ -87,15 +87,15 @@ function FellowCard({ fellow }: { fellow: (typeof STUDENT_FELLOWS)[number] }) {
       ) : null}
 
       {fellow.links ? (
-        <div className="flex flex-wrap gap-3 text-xs uppercase tracking-[0.12em] font-semibold mt-auto">
+        <div className="flex flex-wrap gap-4 text-[14px] font-semibold mt-auto">
           {fellow.links.linkedin ? (
             <a
               href={fellow.links.linkedin}
               target="_blank"
               rel="noreferrer"
-              className="text-maroon hover:text-maroon-deep"
+              className="text-maroon hover:text-maroon-deep prose-link"
             >
-              LinkedIn →
+              LinkedIn <span aria-hidden="true">&rarr;</span>
             </a>
           ) : null}
           {fellow.links.website ? (
@@ -103,17 +103,17 @@ function FellowCard({ fellow }: { fellow: (typeof STUDENT_FELLOWS)[number] }) {
               href={fellow.links.website}
               target="_blank"
               rel="noreferrer"
-              className="text-maroon hover:text-maroon-deep"
+              className="text-maroon hover:text-maroon-deep prose-link"
             >
-              Website →
+              Website <span aria-hidden="true">&rarr;</span>
             </a>
           ) : null}
           {fellow.links.email ? (
             <a
               href={`mailto:${fellow.links.email}`}
-              className="text-maroon hover:text-maroon-deep"
+              className="text-maroon hover:text-maroon-deep prose-link"
             >
-              Email →
+              Email <span aria-hidden="true">&rarr;</span>
             </a>
           ) : null}
         </div>

@@ -17,12 +17,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        {/* Top maroon ribbon — matches mays.tamu.edu pattern */}
+        {/* Top maroon utility ribbon — matches mays.tamu.edu pattern.
+            Left: parent-link to Texas A&M. Right: Mays Method Lab links. */}
         <div className="brand-ribbon">
           <a href="https://www.tamu.edu" target="_blank" rel="noreferrer">
+            <span aria-hidden="true" className="mr-1">↖</span>
             Texas A&amp;M University
           </a>
-          <span className="mx-2 opacity-50">·</span>
+          <span aria-hidden="true" className="opacity-40">|</span>
           <a href="https://mays.tamu.edu" target="_blank" rel="noreferrer">
             Mays Business School
           </a>

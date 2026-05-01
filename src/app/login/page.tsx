@@ -7,11 +7,11 @@ export const metadata = {
 
 export default function LoginPage() {
   return (
-    <section className="min-h-screen flex items-center justify-center px-6 pt-24 pb-16">
+    <section className="min-h-screen flex items-center justify-center px-6 pt-16 pb-16">
       <div className="w-full max-w-md">
-        <div className="eyebrow mb-3">Admin Access</div>
-        <h1 className="headline text-4xl mb-3">Sign in to the Lab.</h1>
-        <p className="text-sm text-ink-secondary mb-10 leading-relaxed">
+        <div className="eyebrow-lg mb-3">Admin Access</div>
+        <h1 className="mb-3">Sign in to the Lab.</h1>
+        <p className="text-[15px] text-ink-secondary mb-10 leading-relaxed">
           Admin Tools require authentication. Enter the shared admin password to continue.
         </p>
 
