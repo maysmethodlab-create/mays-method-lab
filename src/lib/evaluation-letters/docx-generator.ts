@@ -28,17 +28,86 @@ import {
 const FONT = 'Calibri';
 const SIZE_HALF_POINTS = 22; // 11pt = 22 half-points
 
-function bodyParagraph(text: string, opts: { bold?: boolean } = {}): Paragraph {
-  return new Paragraph({
-    spacing: { after: 200 },
-    children: [
+/**
+ * Convert a line of markdown-flavored text (with *italic* and **bold** spans)
+ * into an array of TextRun pieces with the right font properties applied.
+ *
+ * Italics are critical for journal titles per Hari's P&T pattern.
+ */
+function runsFromInlineMarkdown(
+  text: string,
+  baseOpts: { bold?: boolean; italics?: boolean } = {},
+): TextRun[] {
+  const runs: TextRun[] = [];
+  // Tokenize on **bold** and *italic* in one pass.
+  const re = /(\*\*[^*]+\*\*|\*[^*]+\*|_[^_]+_)/g;
+  let lastIndex = 0;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text)) !== null) {
+    if (m.index > lastIndex) {
+      runs.push(
+        new TextRun({
+          text: text.slice(lastIndex, m.index),
+          font: FONT,
+          size: SIZE_HALF_POINTS,
+          bold: baseOpts.bold,
+          italics: baseOpts.italics,
+        }),
+      );
+    }
+    const token = m[0];
+    if (token.startsWith('**')) {
+      runs.push(
+        new TextRun({
+          text: token.slice(2, -2),
+          font: FONT,
+          size: SIZE_HALF_POINTS,
+          bold: true,
+          italics: baseOpts.italics,
+        }),
+      );
+    } else if (token.startsWith('*') || token.startsWith('_')) {
+      runs.push(
+        new TextRun({
+          text: token.slice(1, -1),
+          font: FONT,
+          size: SIZE_HALF_POINTS,
+          bold: baseOpts.bold,
+          italics: true,
+        }),
+      );
+    }
+    lastIndex = m.index + token.length;
+  }
+  if (lastIndex < text.length) {
+    runs.push(
+      new TextRun({
+        text: text.slice(lastIndex),
+        font: FONT,
+        size: SIZE_HALF_POINTS,
+        bold: baseOpts.bold,
+        italics: baseOpts.italics,
+      }),
+    );
+  }
+  if (runs.length === 0) {
+    runs.push(
       new TextRun({
         text,
         font: FONT,
         size: SIZE_HALF_POINTS,
-        bold: opts.bold,
+        bold: baseOpts.bold,
+        italics: baseOpts.italics,
       }),
-    ],
+    );
+  }
+  return runs;
+}
+
+function bodyParagraph(text: string, opts: { bold?: boolean } = {}): Paragraph {
+  return new Paragraph({
+    spacing: { after: 200 },
+    children: runsFromInlineMarkdown(text, { bold: opts.bold }),
   });
 }
 
@@ -55,7 +124,7 @@ function bulletParagraph(text: string): Paragraph {
   return new Paragraph({
     numbering: { reference: 'mml-bullets', level: 0 },
     spacing: { after: 120 },
-    children: [new TextRun({ text, font: FONT, size: SIZE_HALF_POINTS })],
+    children: runsFromInlineMarkdown(text),
   });
 }
 

@@ -20,6 +20,7 @@ const CATEGORY_DIR = path.join(ROOT, 'letter-skills');
 const STYLE_DIR = path.join(ROOT, 'writing-style-skills');
 const APP_SKILL_DIR = path.join(ROOT, 'evaluation-letter-writer-skill');
 const TEMPLATE_DIR = path.join(ROOT, 'Template Letters');
+const REFERENCE_LETTERS_DIR = path.join(ROOT, 'reference-letters');
 
 // Some skill keys do not have a dedicated file; fall back to the closest match.
 const FALLBACK: Partial<Record<LetterSkillKey, LetterSkillKey>> = {
@@ -111,6 +112,11 @@ export async function loadStyleBundle(): Promise<string> {
       label: 'EVALUATION LETTER WRITER (app skill — research instructions)',
       path: path.join(APP_SKILL_DIR, 'references', 'research-agent-instructions.md'),
     },
+    {
+      label:
+        "HARI'S P&T LETTER SKILL (the architecture and voice Hari uses for promotion-and-tenure letters; the *research-evaluation* sections of an annual review should follow the same pattern: quantity in top journals, then pipeline, then conferences/lower-prestige, then quality/themes)",
+      path: path.join(REFERENCE_LETTERS_DIR, 'hari-promotion-tenure-letter-SKILL.md'),
+    },
   ];
 
   const parts: string[] = [];
@@ -121,7 +127,56 @@ ${s.label}
 ================================================================
 ${text}`);
   }
+
+  // Append real P&T letter exemplars (extracted on demand from .docx / .pdf).
+  const exemplars = await loadPTExemplars();
+  if (exemplars) parts.push(exemplars);
+
   return parts.join('\n\n');
+}
+
+async function loadPTExemplars(): Promise<string> {
+  const out: string[] = [];
+  // Gregory Fisher (.docx) — load with mammoth.
+  try {
+    const mammoth = (await import('mammoth')) as typeof import('mammoth');
+    const buf = await fs.readFile(
+      path.join(REFERENCE_LETTERS_DIR, 'Gregory Fisher Letter Hari Sridhar 5_29_2025.docx'),
+    );
+    const r = await mammoth.extractRawText({ buffer: buf });
+    if (r.value) {
+      out.push(`================================================================
+EXEMPLAR: HARI'S P&T LETTER FOR GREGORY FISHER (FULL PROFESSOR, 2025)
+This is the writing pattern. Note the quantity-then-quality flow,
+the named top journals (italicized), the numbered "First / Second /
+Third" anchor-paper differentiators, and the closing recommendation.
+The annual evaluation letter should adopt the same DNA in its research
+paragraphs (just shorter and adapted to a single-year window).
+================================================================
+${r.value}`);
+    }
+  } catch {
+    /* missing — skip */
+  }
+  // Sri Venkataraman (.pdf) — load with pdf-parse via dynamic import.
+  try {
+    const pdfMod = await import('pdf-parse');
+    const pdf = (pdfMod as unknown as { default?: (b: Buffer) => Promise<{ text: string }> }).default
+      || (pdfMod as unknown as (b: Buffer) => Promise<{ text: string }>);
+    const buf = await fs.readFile(
+      path.join(REFERENCE_LETTERS_DIR, 'Sri Venkataraman Letter Hari Sridhar 4_25_2026.pdf'),
+    );
+    const r = await pdf(buf);
+    if (r.text) {
+      out.push(`================================================================
+EXEMPLAR: HARI'S P&T LETTER FOR SRI VENKATARAMAN (2026)
+================================================================
+${r.text}`);
+    }
+  } catch {
+    /* missing — skip */
+  }
+  return out.join('\n\n');
 }
 
 /**
