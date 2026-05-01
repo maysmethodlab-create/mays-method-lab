@@ -2,19 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Oswald:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@300;400;500;600;700;800&family=Work+Sans:wght@400;500;600;700&display=swap');
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 html,
 body {
-  background: #050505;
-  color: #FAFAFA;
-  font-family: 'Inter', 'Helvetica Neue', sans-serif;
-  font-weight: 300;
-  line-height: 1.7;
+  background: #FFFFFF;
+  color: #202020;
+  font-family: 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-weight: 400;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -24,43 +24,48 @@ body {
 }
 
 ::selection {
-  background: rgba(80, 0, 0, 0.6);
-  color: #FAFAFA;
+  background: rgba(80, 0, 0, 0.15);
+  color: #202020;
+}
+
+a {
+  color: inherit;
 }
 
 /* ----- Typography helpers ----- */
 
 .eyebrow {
   text-transform: uppercase;
-  font-size: 14px;
-  letter-spacing: 0.25em;
+  font-size: 12px;
+  letter-spacing: 0.22em;
   color: #500000;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .eyebrow-lg {
   text-transform: uppercase;
-  font-size: 18px;
-  letter-spacing: 0.25em;
+  font-size: 14px;
+  letter-spacing: 0.22em;
   color: #500000;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .headline {
   font-family: 'Oswald', 'Tungsten', sans-serif;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: #FFFFFF;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #202020;
 }
 
 /* ----- Hero ----- */
 
 .hero-section {
   position: relative;
-  min-height: 100vh;
+  min-height: 78vh;
   display: flex;
   align-items: center;
   overflow: hidden;
+  background: #FFFFFF;
 }
 
 .hero-video-wrap {
@@ -73,7 +78,7 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 0.6;
+  opacity: 0.35;
 }
 
 .hero-fallback {
@@ -81,37 +86,24 @@ body {
   inset: 0;
   z-index: 0;
   background:
-    radial-gradient(ellipse at 30% 30%, rgba(80, 0, 0, 0.45), transparent 55%),
-    radial-gradient(ellipse at 70% 70%, rgba(140, 38, 51, 0.25), transparent 60%),
-    linear-gradient(160deg, #0a0a0a 0%, #050505 100%);
-  animation: heroDrift 22s ease-in-out infinite alternate;
-}
-
-@keyframes heroDrift {
-  0% {
-    background-position: 0% 0%, 100% 100%, 0 0;
-    filter: hue-rotate(0deg);
-  }
-  100% {
-    background-position: 30% 20%, 70% 80%, 0 0;
-    filter: hue-rotate(8deg);
-  }
+    radial-gradient(ellipse at 80% 0%, rgba(80, 0, 0, 0.10), transparent 55%),
+    radial-gradient(ellipse at 20% 100%, rgba(214, 211, 196, 0.45), transparent 60%),
+    linear-gradient(180deg, #FFFFFF 0%, #F7F5F0 100%);
 }
 
 .hero-overlay {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(to right, rgba(5, 5, 5, 0.85), rgba(5, 5, 5, 0.5), rgba(5, 5, 5, 0.3)),
-    linear-gradient(to top, rgb(5, 5, 5) 0%, rgba(5, 5, 5, 0.8) 8%, transparent 25%),
-    linear-gradient(rgba(5, 5, 5, 0.6) 0%, transparent 15%);
+    linear-gradient(to right, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.4)),
+    linear-gradient(to bottom, transparent 60%, rgba(255, 255, 255, 1));
   z-index: 1;
 }
 
 .hero-content {
   position: relative;
   z-index: 2;
-  max-width: 1400px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 0 80px;
   width: 100%;
@@ -125,36 +117,36 @@ body {
 
 .hero-eyebrow {
   text-transform: uppercase;
-  font-size: 18px;
-  letter-spacing: 0.25em;
+  font-size: 14px;
+  letter-spacing: 0.22em;
   color: #500000;
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 28px;
 }
 
 .hero-title {
   font-family: 'Oswald', 'Tungsten', sans-serif;
   font-size: clamp(40px, 6vw, 72px);
-  font-weight: 700;
-  letter-spacing: -0.04em;
-  line-height: 0.95;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1;
   max-width: 800px;
   margin-bottom: 28px;
-  color: #FAFAFA;
+  color: #202020;
 }
 
 .hero-sub {
   font-size: 18px;
-  color: #A1A1AA;
+  color: #3E3E3E;
   max-width: 560px;
-  line-height: 1.7;
-  font-weight: 300;
-  margin-bottom: 48px;
+  line-height: 1.6;
+  font-weight: 400;
+  margin-bottom: 40px;
 }
 
 .hero-buttons {
   display: flex;
-  gap: 16px;
+  gap: 14px;
   flex-wrap: wrap;
 }
 
@@ -166,50 +158,52 @@ body {
   z-index: 2;
   font-size: 11px;
   letter-spacing: 0.2em;
-  color: #A1A1AA;
+  color: #707070;
   text-transform: uppercase;
 }
 
 /* ----- Cards & buttons ----- */
 
 .card {
-  background: #141414;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
+  background: #FFFFFF;
+  border: 1px solid #E5E0D5;
+  border-radius: 8px;
   padding: 24px;
-  transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .card:hover {
-  border-color: rgba(80, 0, 0, 0.5);
-  box-shadow: 0 0 30px rgba(80, 0, 0, 0.15);
+  border-color: #D1D1D1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .btn-primary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 16px 36px;
+  gap: 10px;
+  padding: 12px 28px;
   background: #500000;
-  color: #FAFAFA;
+  color: #FFFFFF;
   font-weight: 600;
-  font-size: 15px;
-  border-radius: 10px;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  border-radius: 6px;
   border: none;
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.25s, box-shadow 0.25s, transform 0.25s;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
 }
 
-.btn-primary:hover {
-  background: #8C2633;
-  box-shadow: 0 0 24px rgba(80, 0, 0, 0.4);
+.btn-primary:hover:not(:disabled) {
+  background: #3C0000;
+  box-shadow: 0 4px 14px rgba(80, 0, 0, 0.25);
   transform: translateY(-1px);
 }
 
 .btn-primary:disabled {
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
@@ -219,78 +213,83 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 16px 36px;
-  background: transparent;
-  color: #A1A1AA;
-  font-weight: 500;
-  font-size: 15px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
+  gap: 10px;
+  padding: 12px 28px;
+  background: #FFFFFF;
+  color: #500000;
+  font-weight: 600;
+  font-size: 14px;
+  border: 1px solid #500000;
+  border-radius: 6px;
   cursor: pointer;
   text-decoration: none;
-  transition: border-color 0.25s, color 0.25s;
+  transition: background 0.2s, color 0.2s;
 }
 
-.btn-secondary:hover {
-  border-color: rgba(255, 255, 255, 0.3);
-  color: #FAFAFA;
+.btn-secondary:hover:not(:disabled) {
+  background: #500000;
+  color: #FFFFFF;
+}
+
+.btn-secondary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 /* ----- Form inputs ----- */
 
 .input {
   width: 100%;
-  background: #0a0a0a;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  padding: 14px 16px;
-  color: #FAFAFA;
+  background: #FFFFFF;
+  border: 1px solid #D1D1D1;
+  border-radius: 6px;
+  padding: 11px 14px;
+  color: #202020;
   font-size: 15px;
   font-family: inherit;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .input:focus {
   outline: none;
-  border-color: rgba(80, 0, 0, 0.6);
-  box-shadow: 0 0 0 3px rgba(80, 0, 0, 0.15);
+  border-color: #500000;
+  box-shadow: 0 0 0 3px rgba(80, 0, 0, 0.12);
 }
 
 .input::placeholder {
-  color: #71717A;
+  color: #909090;
 }
 
 .label {
   display: block;
-  font-size: 13px;
-  letter-spacing: 0.08em;
+  font-size: 12px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #A1A1AA;
-  font-weight: 600;
-  margin-bottom: 10px;
+  color: #3E3E3E;
+  font-weight: 700;
+  margin-bottom: 8px;
 }
 
 /* ----- Section spacing ----- */
 
 .section {
-  padding: 120px 80px;
-  max-width: 1400px;
+  padding: 96px 80px;
+  max-width: 1280px;
   margin: 0 auto;
 }
 
 @media (max-width: 768px) {
   .section {
-    padding: 80px 24px;
+    padding: 64px 24px;
   }
 }
 
 .divider {
   height: 1px;
-  background: linear-gradient(
-    to right,
-    transparent,
-    rgba(255, 255, 255, 0.08),
-    transparent
-  );
+  background: #E5E0D5;
+}
+
+/* Beige/off-white section variant for visual rhythm */
+.section-subtle {
+  background: #F7F5F0;
 }

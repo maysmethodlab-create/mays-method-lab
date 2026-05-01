@@ -46,16 +46,14 @@ export default function AboutPage() {
           <ScrollReveal>
             <Bio
               name="'Jon Jasperson"
-              title="Associate Dean for Academic Innovation; Clinical Professor"
+              title="Associate Dean for Academic Innovation; Clinical Professor of Information and Operations Management"
             />
           </ScrollReveal>
           <ScrollReveal>
             <Bio
               name="Shrihari Sridhar"
               title={`Senior Associate Dean of Mays Business School;
-Professor and Joe Foster '56 Chair in Business Leadership;
-Presidential Impact Fellow;
-Editor-in-Chief, Journal of Marketing`}
+Professor and Joe Foster '56 Chair in Business Leadership`}
             />
           </ScrollReveal>
         </div>

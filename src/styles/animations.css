@@ -3,38 +3,35 @@
 @keyframes animFadeUp {
   0% {
     opacity: 0;
-    transform: translateY(24px);
-    filter: blur(4px);
+    transform: translateY(20px);
   }
   100% {
     opacity: 1;
     transform: translateY(0);
-    filter: blur(0);
   }
 }
 
 .anim-fade-up {
   opacity: 0;
-  animation: animFadeUp 0.8s ease-out forwards;
+  animation: animFadeUp 0.7s ease-out forwards;
 }
 
 /* Staggered hero element delays */
-.hero-eyebrow.anim-fade-up { animation-delay: 0.2s; }
-.hero-title.anim-fade-up { animation-delay: 0.4s; }
-.hero-sub.anim-fade-up { animation-delay: 0.6s; }
-.hero-buttons.anim-fade-up { animation-delay: 0.8s; }
-.scroll-indicator.anim-fade-up { animation-delay: 1.4s; }
+.hero-eyebrow.anim-fade-up { animation-delay: 0.15s; }
+.hero-title.anim-fade-up { animation-delay: 0.3s; }
+.hero-sub.anim-fade-up { animation-delay: 0.45s; }
+.hero-buttons.anim-fade-up { animation-delay: 0.6s; }
+.scroll-indicator.anim-fade-up { animation-delay: 1s; }
 
-/* Scroll-revealed sections start hidden until IntersectionObserver adds .anim-fade-up */
+/* Scroll-revealed sections */
 .scroll-reveal {
   opacity: 0;
-  transform: translateY(24px);
-  filter: blur(4px);
+  transform: translateY(20px);
   transition: none;
 }
 
 @keyframes scrollPulse {
-  0%, 100% { opacity: 0.3; }
+  0%, 100% { opacity: 0.4; }
   50% { opacity: 1; }
 }
 
@@ -58,10 +55,10 @@
 
 .progress-bar {
   position: relative;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.05);
+  height: 3px;
+  background: #F0EDE5;
   overflow: hidden;
-  border-radius: 2px;
+  border-radius: 3px;
 }
 
 .progress-bar::before {
@@ -81,7 +78,6 @@
   animation: spinSlow 1.4s linear infinite;
 }
 
-/* Respect users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -95,6 +91,5 @@
   .scroll-reveal {
     opacity: 1;
     transform: none;
-    filter: none;
   }
 }

@@ -2,7 +2,12 @@
 
 import { useRef, useState } from 'react';
 import type { SetupData, UploadedFile } from '@/lib/evaluation-letters/types';
-import { ROLE_CATEGORIES, getRoleCategory } from '@/lib/evaluation-letters/role-categories';
+import {
+  ROLE_CATEGORIES,
+  RATING_LEVELS,
+  getRoleCategory,
+  type Rating,
+} from '@/lib/evaluation-letters/role-categories';
 
 const MAX_BYTES = 10 * 1024 * 1024;
 
@@ -29,13 +34,7 @@ export default function UploadStep({
 }: Props) {
   const [busy, setBusy] = useState(false);
   const [identifying, setIdentifying] = useState(false);
-  const [identified, setIdentified] = useState<{
-    name: string | null;
-    title: string | null;
-    department: string | null;
-    roleCategoryId: string | null;
-    source: string;
-  } | null>(null);
+  const [identifySource, setIdentifySource] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [drag, setDrag] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -71,13 +70,15 @@ export default function UploadStep({
       }));
       const failed = data.files.filter((f: { error?: string }) => f.error);
       if (failed.length) {
-        setError(failed.map((f: { filename: string; error?: string }) => `${f.filename}: ${f.error}`).join(' · '));
+        setError(
+          failed
+            .map((f: { filename: string; error?: string }) => `${f.filename}: ${f.error}`)
+            .join(' · '),
+        );
       }
       const allFiles = [...files, ...accepted];
       onFilesChange(allFiles);
-
-      // Auto-identify if name/title are still blank
-      if (accepted.length > 0 && (!setup.recipientName || !setup.recipientTitle)) {
+      if (accepted.length > 0) {
         await runIdentify(allFiles);
       }
     } catch (e) {
@@ -90,7 +91,6 @@ export default function UploadStep({
 
   async function runIdentify(allFiles: UploadedFile[]) {
     setIdentifying(true);
-    setIdentified(null);
     try {
       const sourceDocuments = allFiles
         .map((f) => `===== ${f.kind.toUpperCase()} — ${f.filename} =====\n${f.text}`)
@@ -102,16 +102,9 @@ export default function UploadStep({
       });
       if (!res.ok) return;
       const data = await res.json();
-      setIdentified({
-        name: data.name || null,
-        title: data.title || null,
-        department: data.department || null,
-        roleCategoryId: data.roleCategoryId || null,
-        source: data.source || 'unknown',
-      });
+      setIdentifySource(data.source || null);
 
-      // Apply detected values to setup state, only filling blanks (don't
-      // overwrite anything the user already typed).
+      // Apply detected values, only overwriting blanks (do not clobber edits).
       const next = { ...setup };
       let changed = false;
       if (data.name && !next.recipientName) {
@@ -132,7 +125,7 @@ export default function UploadStep({
       }
       if (changed) onSetupChange(next);
     } catch {
-      // identify is best-effort — silently swallow errors
+      /* identify is best-effort */
     } finally {
       setIdentifying(false);
     }
@@ -140,8 +133,8 @@ export default function UploadStep({
 
   function detectKind(name: string): UploadedFile['kind'] {
     const n = name.toLowerCase();
-    if (/cv|vita|curriculum/.test(n)) return 'cv';
-    if (/self|annual|evaluation|review/.test(n)) return 'self-evaluation';
+    if (/cv|vita|curriculum|resume/.test(n)) return 'cv';
+    if (/self|annual|evaluation|review|f180|faculty\s*180/.test(n)) return 'self-evaluation';
     return 'other';
   }
 
@@ -154,17 +147,23 @@ export default function UploadStep({
   }
 
   const role = getRoleCategory(setup.roleCategoryId);
+  const showResearch = role?.required.includes('research') || role?.optional.includes('research');
+  const showService = role?.required.includes('service') || role?.optional.includes('service');
+  const showTeaching = role?.required.includes('teaching') || role?.optional.includes('teaching');
+
   const recipientReady =
     setup.recipientName.trim().length > 0 && setup.recipientTitle.trim().length > 0 && Boolean(role);
+  const ratingsReady = Boolean(setup.overallRating);
+  const canContinue = files.length > 0 && recipientReady && ratingsReady;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <section className="card space-y-4">
         <div className="eyebrow text-[11px]">Documents</div>
         <p className="text-sm text-ink-secondary leading-relaxed">
-          Upload the recipient&apos;s self-evaluation and CV. After upload, we&apos;ll auto-detect
-          the recipient&apos;s name, title, and department from the documents.
-          Accepted formats: .docx, .pdf, .txt, .md. 10MB max per file.
+          Upload the recipient&apos;s self-evaluation (Faculty 180 / annual report) and CV.
+          We&apos;ll auto-detect their name, title, department, and role category from the
+          documents. Accepted formats: .docx, .pdf, .txt, .md (10MB max each).
         </p>
 
         <div
@@ -179,7 +178,7 @@ export default function UploadStep({
             if (e.dataTransfer.files?.length) handleFiles(e.dataTransfer.files);
           }}
           className={`border border-dashed rounded-card px-6 py-10 text-center transition-colors ${
-            drag ? 'border-maroon bg-maroon/5' : 'border-line bg-bg-elevated'
+            drag ? 'border-maroon bg-maroon/5' : 'border-line bg-bg-subtle'
           }`}
         >
           <div className="text-sm text-ink-secondary mb-4">
@@ -204,7 +203,7 @@ export default function UploadStep({
         </div>
 
         {error ? (
-          <div className="text-sm text-status-error border border-status-error/40 bg-status-error/10 rounded-md px-4 py-3">
+          <div className="text-sm text-status-error border border-status-error/40 bg-status-error/5 rounded-md px-4 py-3">
             {error}
           </div>
         ) : null}
@@ -212,9 +211,9 @@ export default function UploadStep({
         {files.length > 0 ? (
           <ul className="divide-y divide-line border border-line rounded-card overflow-hidden">
             {files.map((f) => (
-              <li key={f.id} className="flex items-center gap-4 px-4 py-3 bg-bg-elevated">
+              <li key={f.id} className="flex items-center gap-4 px-4 py-3 bg-white">
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm text-ink-primary truncate">{f.filename}</div>
+                  <div className="text-sm text-ink-primary truncate font-medium">{f.filename}</div>
                   <div className="text-[11px] text-ink-muted">
                     {(f.size / 1024).toFixed(1)} KB · {f.text.length.toLocaleString()} characters extracted
                   </div>
@@ -241,32 +240,29 @@ export default function UploadStep({
         ) : null}
       </section>
 
-      {/* Auto-identify panel */}
+      {/* Auto-identified recipient */}
       {files.length > 0 ? (
         <section className="card space-y-4">
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <div className="eyebrow text-[11px]">Recipient (auto-detected)</div>
             <div className="flex items-center gap-3">
               {identifying ? (
-                <span className="text-[11px] text-ink-secondary">Identifying…</span>
-              ) : identified ? (
-                <span className="text-[11px] text-ink-muted">
-                  Source: {identified.source}
-                </span>
+                <span className="text-[11px] text-ink-muted">Identifying…</span>
+              ) : identifySource ? (
+                <span className="text-[11px] text-ink-muted">Source: {identifySource}</span>
               ) : null}
               <button
                 type="button"
                 onClick={() => runIdentify(files)}
                 disabled={identifying || files.length === 0}
-                className="text-xs uppercase tracking-[0.15em] text-ink-secondary hover:text-ink-primary transition-colors"
+                className="text-xs uppercase tracking-[0.15em] font-semibold text-maroon hover:text-maroon-deep transition-colors"
               >
-                {identified ? 'Re-detect' : 'Detect now'}
+                {identifySource ? 'Re-detect' : 'Detect now'}
               </button>
             </div>
           </div>
           <p className="text-sm text-ink-secondary leading-relaxed">
-            We pull these from the documents you uploaded. Edit anything that&apos;s wrong before
-            you continue — the letter will use exactly what&apos;s here.
+            Edit anything wrong before continuing. The letter uses exactly what you confirm here.
           </p>
           <div className="grid sm:grid-cols-2 gap-4">
             <InlineField
@@ -300,29 +296,77 @@ export default function UploadStep({
               </select>
             </label>
           </div>
-          {!recipientReady ? (
-            <div className="text-xs text-status-warning border border-status-warning/40 bg-status-warning/10 rounded-md px-3 py-2">
-              Fill in name, title, and role category before continuing.
+          {role?.warning ? (
+            <div className="text-xs text-status-warning border border-status-warning/40 bg-status-warning/5 rounded-md px-3 py-2">
+              {role.warning}
             </div>
           ) : null}
+        </section>
+      ) : null}
+
+      {/* Ratings — only after we know the role category */}
+      {role ? (
+        <section className="card space-y-4">
+          <div className="eyebrow text-[11px]">
+            Performance Ratings (Mays Guidelines §6.4)
+          </div>
+          <p className="text-sm text-ink-secondary">
+            Excellent · Effective · Needs Improvement · Unsatisfactory.
+          </p>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {showTeaching ? (
+              <RatingField
+                label="Teaching"
+                value={setup.teachingRating}
+                onChange={(v) => onSetupChange({ ...setup, teachingRating: v })}
+              />
+            ) : null}
+            {showResearch ? (
+              <RatingField
+                label="Research and Publication"
+                value={setup.researchRating}
+                onChange={(v) => onSetupChange({ ...setup, researchRating: v })}
+                optional={role.optional.includes('research')}
+              />
+            ) : null}
+            {showService ? (
+              <RatingField
+                label="Service"
+                value={setup.serviceRating}
+                onChange={(v) => onSetupChange({ ...setup, serviceRating: v })}
+              />
+            ) : null}
+            <RatingField
+              label="Overall"
+              value={setup.overallRating}
+              onChange={(v) => onSetupChange({ ...setup, overallRating: v })}
+              required
+            />
+          </div>
         </section>
       ) : null}
 
       <section className="card space-y-3">
         <div className="eyebrow text-[11px]">Your Observations and Notes</div>
         <p className="text-sm text-ink-secondary leading-relaxed">
-          Rough notes, bullet points, or thoughts about the recipient. The AI weaves these into
-          the letter&apos;s &quot;My Observations&quot; and &quot;Your Plan&quot; sections.
-          Without these, the letter reads like a document summary; with them, it reads like a
-          letter you actually wrote.
+          Rough notes, bullet points, anything you want reflected in the letter. The AI weaves
+          these into the &quot;My Observations&quot; and &quot;Your Plan&quot; sections — without
+          them the letter reads like a document summary.
         </p>
         <textarea
-          className="input min-h-[200px] font-body leading-relaxed"
-          placeholder={`e.g.\n• Amazing in the classroom this year, students loved her\n• Struggled with the committee work but research was top-notch\n• Goals: improve PhD placements, launch certificate program, write 2 papers`}
+          className="input min-h-[180px] font-body leading-relaxed"
+          placeholder={`e.g.\n• Amazing in the classroom this year, students loved her\n• Struggled with committee work, but research was top-notch\n• Goals: improve PhD placements, launch certificate program, write 2 papers`}
           value={notes}
           onChange={(e) => onNotesChange(e.target.value)}
         />
       </section>
+
+      {!canContinue && files.length > 0 ? (
+        <div className="text-xs text-status-warning border border-status-warning/40 bg-status-warning/5 rounded-md px-3 py-2">
+          Before continuing, confirm the recipient&apos;s name, title, role category, and the
+          overall rating.
+        </div>
+      ) : null}
 
       <div className="flex justify-between gap-4">
         <button type="button" onClick={onBack} className="btn-secondary">
@@ -331,7 +375,7 @@ export default function UploadStep({
         <button
           type="button"
           onClick={onContinue}
-          disabled={files.length === 0 || !recipientReady}
+          disabled={!canContinue}
           className="btn-primary"
         >
           Continue to Generate →
@@ -361,6 +405,44 @@ function InlineField({
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
       />
+    </label>
+  );
+}
+
+function RatingField({
+  label,
+  value,
+  onChange,
+  required,
+  optional,
+}: {
+  label: string;
+  value: Rating | undefined;
+  onChange: (v: Rating | undefined) => void;
+  required?: boolean;
+  optional?: boolean;
+}) {
+  return (
+    <label className="block">
+      <div className="label">
+        {label}
+        {required ? ' *' : ''}
+        {optional ? (
+          <span className="text-ink-muted normal-case tracking-normal text-[11px] ml-2 font-normal">
+            (optional)
+          </span>
+        ) : null}
+      </div>
+      <select
+        className="input"
+        value={value || ''}
+        onChange={(e) => onChange((e.target.value as Rating) || undefined)}
+      >
+        <option value="">— Select —</option>
+        {RATING_LEVELS.map((r) => (
+          <option key={r} value={r}>{r}</option>
+        ))}
+      </select>
     </label>
   );
 }

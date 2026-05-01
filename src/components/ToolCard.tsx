@@ -22,10 +22,10 @@ export default function ToolCard({
       <div className="flex items-center justify-between mb-4">
         <span className="eyebrow text-[11px]">{category ?? 'Tool'}</span>
         <span
-          className={`text-[10px] tracking-[0.2em] uppercase px-2 py-1 rounded ${
+          className={`text-[10px] tracking-[0.18em] uppercase px-2 py-1 rounded font-semibold ${
             live
-              ? 'text-status-success border border-status-success/40'
-              : 'text-ink-muted border border-line'
+              ? 'text-status-success border border-status-success/40 bg-status-success/5'
+              : 'text-ink-muted border border-line bg-bg-subtle'
           }`}
         >
           {live ? 'Live' : 'Coming Soon'}

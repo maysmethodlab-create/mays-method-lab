@@ -12,7 +12,7 @@ export default function HomePage() {
           <div className="eyebrow-lg mb-6">Our Mission</div>
         </ScrollReveal>
         <ScrollReveal>
-          <p className="text-2xl md:text-3xl font-light text-ink-primary leading-snug max-w-4xl">
+          <p className="text-2xl md:text-3xl font-normal text-ink-primary leading-snug max-w-4xl">
             The Mays Method Lab works in the tradition of a research and development lab inside
             a great university. We produce pedagogical innovations that can be branded,
             disseminated, and exported as the Mays Method.
@@ -35,7 +35,7 @@ export default function HomePage() {
           <div className="eyebrow-lg mb-6">Our Vision</div>
         </ScrollReveal>
         <ScrollReveal>
-          <p className="text-2xl md:text-3xl font-light text-ink-primary leading-snug max-w-4xl">
+          <p className="text-2xl md:text-3xl font-normal text-ink-primary leading-snug max-w-4xl">
             Within five years, recognized as the leading center of pedagogical invention in
             American business education.
           </p>
@@ -62,14 +62,14 @@ export default function HomePage() {
             <LeaderCard
               name="'Jon Jasperson"
               role="Co-Director"
-              note="Associate Dean for Academic Innovation; Clinical Professor."
+              note="Associate Dean for Academic Innovation; Clinical Professor of Information and Operations Management."
             />
           </ScrollReveal>
           <ScrollReveal>
             <LeaderCard
               name="Shrihari Sridhar"
               role="Co-Director"
-              note="Senior Associate Dean of Mays Business School; Professor and Joe Foster '56 Chair in Business Leadership; Editor-in-Chief, Journal of Marketing."
+              note="Senior Associate Dean of Mays Business School; Professor and Joe Foster '56 Chair in Business Leadership."
             />
           </ScrollReveal>
         </div>
