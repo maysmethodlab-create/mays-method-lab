@@ -50,5 +50,6 @@ desktop.ini
 # Playwright/test artifacts
 /.playwright-mcp/
 /test-results/
+/test-output/
 phase-*.png
 page-*.png

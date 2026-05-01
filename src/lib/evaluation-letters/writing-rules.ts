@@ -124,6 +124,43 @@ export const TONAL_RULES = [
 ];
 
 /**
+ * Compact, high-priority rules block to prepend to the prompt. Keeps the
+ * model's attention on the specific banned words it tends to slip in
+ * (leverage, enhance, trajectory, comprehensive, notable, navigate, foster).
+ */
+export function renderTopPriorityRules(): string {
+  return `=== TOP PRIORITY ===
+
+ABSOLUTE BANS (the model has been observed using these — do not):
+- "leverage"  → use "use" or "draw on"
+- "enhance"   → use "strengthen" or "build"
+- "trajectory" (career sense) → use "path" or "direction"
+- "comprehensive" → use "thorough" or "full"
+- "notable" / "notably" → drop the word entirely
+- "navigate" (metaphorical) → use "manage" or "work through"
+- "foster" → use "support" or "build"
+- "robust", "nuanced", "multifaceted", "innovative", "seamless"
+- "showcase", "garner", "spearhead", "bolster", "catalyze", "underscore"
+- "delve", "harness", "embark", "transcend"
+- "landscape" / "realm" / "ecosystem" / "tapestry" / "paradigm" / "synergy"
+- "cornerstone", "bedrock", "testament", "beacon", "hallmark"
+- Any em-dash (—) or en-dash (–). Use a comma, semicolon, or two sentences.
+
+SENTENCE-OPENER VARIETY:
+- Do NOT start three sentences in a row with "Your" or "You". Mix in
+  transitions like "On the service side,...", "Beyond the classroom,...",
+  "In the doctoral program,..." or just lead with the noun ("The four
+  publications include...").
+
+PHRASE BANS:
+- "the fact that" → "that"
+- "in order to" → "to"
+- "It is important to note that..." → drop entirely
+
+=================`;
+}
+
+/**
  * Render the full writing-rules block that gets embedded in every prompt.
  */
 export function renderWritingRules(): string {

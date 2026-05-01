@@ -1,6 +1,6 @@
 import { DEFAULT_MODEL, getClient, isApiKeyConfigured, buildCachedSystem } from '@/lib/evaluation-letters/claude';
 import { writingPrompt } from '@/lib/evaluation-letters/prompts';
-import { loadLetterSkill } from '@/lib/evaluation-letters/letter-skills';
+import { loadLetterSkill, loadPeerComments, loadStyleBundle } from '@/lib/evaluation-letters/letter-skills';
 import { getRoleCategory } from '@/lib/evaluation-letters/role-categories';
 import { getWriter } from '@/lib/evaluation-letters/writers';
 import { placeholderNotice, requireAuth } from '@/lib/evaluation-letters/api-helpers';
@@ -48,7 +48,11 @@ export async function POST(req: Request) {
   }
 
   const hasResearch = role.required.includes('research');
-  const skill = await loadLetterSkill(role.letterSkill).catch(() => null);
+  const [skill, styleBundle, peerComments] = await Promise.all([
+    loadLetterSkill(role.letterSkill).catch(() => null),
+    loadStyleBundle().catch(() => ''),
+    loadPeerComments().catch(() => ''),
+  ]);
   if (!skill) {
     return new Response('Failed to load letter skill.', { status: 500 });
   }
@@ -65,6 +69,8 @@ export async function POST(req: Request) {
     roleCategory: role.label,
     letterSkill: skill.primary,
     patternsAnalysis: skill.patternsAnalysis,
+    styleBundle,
+    peerComments,
     teachingRating: body.setup.teachingRating,
     researchRating: body.setup.researchRating,
     serviceRating: body.setup.serviceRating,

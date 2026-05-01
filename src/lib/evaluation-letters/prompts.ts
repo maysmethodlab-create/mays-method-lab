@@ -1,4 +1,4 @@
-import { renderWritingRules } from './writing-rules';
+import { renderWritingRules, renderTopPriorityRules } from './writing-rules';
 
 /* ==========================================================================
  * Phase 1 — Research Agent
@@ -73,6 +73,10 @@ export type WritingPromptArgs = {
   roleCategory: string;
   letterSkill: string;
   patternsAnalysis: string;
+  /** Full bundle of style skills (human-writing, hari-admin, etc.) loaded from disk */
+  styleBundle: string;
+  /** Optional peer-review comments (Rich's full-prof tallies, etc.) */
+  peerComments: string;
   teachingRating?: string;
   researchRating?: string;
   serviceRating?: string;
@@ -83,16 +87,39 @@ export type WritingPromptArgs = {
 };
 
 export function writingPrompt(args: WritingPromptArgs) {
-  // Long static parts go in the cached system block.
-  const cachedReference = `${renderWritingRules()}
+  // Long static parts go in the cached system block. Anthropic prompt caching
+  // makes this cheap on repeat calls within the 5-minute window.
+  const cachedReference = `${renderTopPriorityRules()}
 
-LETTER SKILL REFERENCE FOR THIS FACULTY CATEGORY:
+${renderWritingRules()}
+
+================================================================
+WRITING SKILL BUNDLE — apply ALL of these to every sentence
+================================================================
+
+${args.styleBundle}
+
+================================================================
+LETTER SKILL FOR THIS FACULTY CATEGORY
+================================================================
 ${args.letterSkill}
 
-CROSS-DEPARTMENT PATTERNS REFERENCE:
-${args.patternsAnalysis}`;
+================================================================
+CROSS-DEPARTMENT PATTERN ANALYSIS
+================================================================
+${args.patternsAnalysis}
 
-  const role = `You are writing a formal annual performance evaluation letter on behalf of ${args.writerName}, ${args.writerTitle} at Mays Business School, Texas A&M University.
+${args.peerComments ? `================================================================
+PEER-REVIEW COMMENTS (raw notes from full professors / senior clinical
+faculty about this department's faculty members). When the recipient
+appears here, weave the relevant feedback verbatim or near-verbatim
+into the letter — these are the real human voices the writer relies on.
+================================================================
+${args.peerComments}` : ''}`;
+
+  const role = `${renderTopPriorityRules()}
+
+You are writing a formal annual performance evaluation letter on behalf of ${args.writerName}, ${args.writerTitle} at Mays Business School, Texas A&M University.
 
 The letter evaluates ${args.recipientName}, ${args.recipientTitle}${
     args.recipientDepartment ? `, ${args.recipientDepartment}` : ''
