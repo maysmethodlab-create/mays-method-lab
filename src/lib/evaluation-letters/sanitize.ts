@@ -131,14 +131,41 @@ function wordSwap(text: string, from: string, to: string): string {
 }
 
 /**
- * Break up runs of 3+ consecutive sentences starting with "Your" or "You".
- * Rewrites the second sentence in a run with a soft transition.
+ * Break up runs of 3+ consecutive sentences starting with "Your" or "You",
+ * but only WITHIN a single paragraph (so headings and section breaks act as
+ * natural reset points). Rotates a small set of soft transitions so the
+ * fix doesn't read mechanically.
  */
 function breakYourRuns(text: string): string {
-  // Split into sentences while preserving boundaries.
-  const parts = text.split(/(?<=[.!?])(\s+)/);
-  // parts is alternating [sentence, whitespace, sentence, whitespace, ...]
+  const paragraphs = text.split(/(\n{2,})/); // keep blank-line separators
+  const out: string[] = [];
+  let transitionCursor = 0;
 
+  for (const block of paragraphs) {
+    if (!block.trim() || /^\n+$/.test(block)) {
+      out.push(block);
+      continue;
+    }
+    const result = processParagraph(block, transitionCursor);
+    out.push(result.text);
+    transitionCursor = result.cursor;
+  }
+  return out.join('');
+}
+
+const TRANSITIONS = [
+  'On the same point, you',
+  'Beyond that, you',
+  'In a related vein, you',
+  'On a related note, you',
+];
+
+function processParagraph(
+  paragraph: string,
+  startCursor: number,
+): { text: string; cursor: number } {
+  // Split into sentences while preserving separators.
+  const parts = paragraph.split(/(?<=[.!?])(\s+)/);
   const sentences: string[] = [];
   const separators: string[] = [];
   for (let i = 0; i < parts.length; i += 2) {
@@ -146,33 +173,41 @@ function breakYourRuns(text: string): string {
     separators.push(parts[i + 1] ?? '');
   }
 
-  // Detect runs by index.
+  let cursor = startCursor;
+
+  // Find runs of consecutive Your-starting sentences (skipping headings).
   let i = 0;
   while (i < sentences.length) {
-    if (!startsWithYou(sentences[i])) {
+    if (!isLikelySentence(sentences[i]) || !startsWithYou(sentences[i])) {
       i += 1;
       continue;
     }
-    // Find end of run
     let j = i;
-    while (j < sentences.length && startsWithYou(sentences[j])) j += 1;
+    while (
+      j < sentences.length &&
+      isLikelySentence(sentences[j]) &&
+      startsWithYou(sentences[j])
+    ) {
+      j += 1;
+    }
     const runLen = j - i;
     if (runLen >= 3) {
-      // Rewrite every 2nd, 4th, ... sentence in the run by softening the opener.
+      // Rewrite every 2nd, 4th, … sentence in the run.
       for (let k = i + 1; k < j; k += 2) {
-        sentences[k] = softenOpener(sentences[k]);
+        const t = TRANSITIONS[cursor % TRANSITIONS.length];
+        cursor += 1;
+        sentences[k] = softenOpener(sentences[k], t);
       }
     }
     i = j;
   }
 
-  // Re-stitch.
-  const out: string[] = [];
+  const stitched: string[] = [];
   for (let i = 0; i < sentences.length; i += 1) {
-    out.push(sentences[i]);
-    if (i < separators.length) out.push(separators[i]);
+    stitched.push(sentences[i]);
+    if (i < separators.length) stitched.push(separators[i]);
   }
-  return out.join('');
+  return { text: stitched.join(''), cursor };
 }
 
 function startsWithYou(sentence: string): boolean {
@@ -180,14 +215,36 @@ function startsWithYou(sentence: string): boolean {
   return first === 'your' || first === 'you';
 }
 
-function softenOpener(sentence: string): string {
-  const trimmed = sentence.trimStart();
-  // Replace the very first word "Your" / "You" with a soft transition.
-  if (/^Your\b/.test(trimmed)) {
-    return sentence.replace(/^(\s*)Your\b/, '$1In addition, your');
+/**
+ * A "real sentence" must:
+ *  - be longer than 25 chars OR end with terminal punctuation, AND
+ *  - not look like a markdown heading or label (no leading **, no trailing colon-only)
+ */
+function isLikelySentence(s: string): boolean {
+  const trimmed = s.trim();
+  if (!trimmed) return false;
+  if (/^\*\*[^*]+\*\*\.?$/.test(trimmed)) return false; // **Heading**
+  if (/^#{1,6}\s/.test(trimmed)) return false; // # markdown heading
+  if (trimmed.length < 25 && !/[.!?]$/.test(trimmed)) return false; // probably a label
+  return true;
+}
+
+function softenOpener(sentence: string, transition: string): string {
+  // transition already starts with capital and ends with "you" or "Your".
+  // We want: replace leading "You" or "Your" with the transition.
+  const lower = transition.toLowerCase();
+  if (lower.endsWith('your')) {
+    // We're targeting Your sentences
+    return sentence.replace(/^(\s*)Your\b/, `$1${transition}r`);
+    // Note: "you" + "r" = "your" — keeps capitalization correct
   }
-  if (/^You\b/.test(trimmed)) {
-    return sentence.replace(/^(\s*)You\b/, '$1In addition, you');
+  // For "you" transitions, we need the next word from the original sentence.
+  if (/^Your\b/.test(sentence.trimStart())) {
+    // Convert "Your X" to "<Transition> X" (drop the "your")
+    return sentence.replace(/^(\s*)Your\s+/, `$1${transition.replace(/, you$/, ',')} your `);
+  }
+  if (/^You\b/.test(sentence.trimStart())) {
+    return sentence.replace(/^(\s*)You\b/, `$1${transition}`);
   }
   return sentence;
 }

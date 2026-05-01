@@ -146,11 +146,19 @@ ABSOLUTE BANS (the model has been observed using these — do not):
 - "cornerstone", "bedrock", "testament", "beacon", "hallmark"
 - Any em-dash (—) or en-dash (–). Use a comma, semicolon, or two sentences.
 
-SENTENCE-OPENER VARIETY:
-- Do NOT start three sentences in a row with "Your" or "You". Mix in
-  transitions like "On the service side,...", "Beyond the classroom,...",
-  "In the doctoral program,..." or just lead with the noun ("The four
-  publications include...").
+SENTENCE-OPENER VARIETY (this is the model's most-violated rule):
+- INSIDE A SINGLE PARAGRAPH, never start more than 2 sentences with
+  "Your" or "You". Three in a row reads as AI-generated.
+- After two "Your"/"You" sentences, switch to one of:
+    "On the [teaching/service/research] side, …"
+    "In the [doctoral / undergraduate / committee / classroom] …"
+    "Beyond that, …"
+    "Within the department, …"
+    "The [four publications / two grants / committee work] …" — just lead
+    with the concrete noun.
+- Headings ("**Summary of Major Accomplishments**") do NOT count as
+  sentences for this rule, but the first sentence after a heading still
+  counts.
 
 PHRASE BANS:
 - "the fact that" → "that"
