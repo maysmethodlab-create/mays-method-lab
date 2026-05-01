@@ -46,3 +46,9 @@ desktop.ini
 # Generated files (uploaded by users in app workflows)
 /tmp/
 /uploads/
+
+# Playwright/test artifacts
+/.playwright-mcp/
+/test-results/
+phase-*.png
+page-*.png

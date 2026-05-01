@@ -1,55 +1,33 @@
+import EvaluationLetterWorkflow from '@/components/evaluation-letters/EvaluationLetterWorkflow';
 import Link from 'next/link';
-import ScrollReveal from '@/components/ScrollReveal';
 
 export const metadata = {
   title: 'Evaluation Letter Writer — Mays Method Lab',
 };
 
-export default function EvaluationLettersPlaceholder() {
+export default function EvaluationLettersPage() {
   return (
-    <section className="section pt-40 max-w-3xl">
-      <ScrollReveal>
-        <Link
-          href="/admin"
-          className="text-xs uppercase tracking-[0.2em] text-ink-secondary hover:text-ink-primary transition-colors"
-        >
-          &larr; Back to Admin Tools
-        </Link>
-      </ScrollReveal>
+    <section className="section pt-32 max-w-5xl">
+      <Link
+        href="/admin"
+        className="text-xs uppercase tracking-[0.2em] text-ink-secondary hover:text-ink-primary transition-colors"
+      >
+        ← Back to Admin Tools
+      </Link>
 
-      <ScrollReveal>
-        <div className="eyebrow-lg mt-8 mb-4">Evaluation Letter Writer</div>
-      </ScrollReveal>
-
-      <ScrollReveal>
-        <h1 className="headline text-5xl md:text-6xl mb-6">
-          Coming online in the next build.
+      <div className="mt-8 mb-10">
+        <div className="eyebrow-lg mb-4">Evaluation Letter Writer</div>
+        <h1 className="headline text-4xl md:text-5xl mb-4">
+          Generate an annual evaluation letter.
         </h1>
-      </ScrollReveal>
-
-      <ScrollReveal>
-        <p className="text-lg text-ink-secondary leading-relaxed mb-8">
-          The four-step workflow — Setup, Upload, Generate, Download — and the three-phase AI
-          pipeline are built by Prompt 2 (the Evaluation Letter Writer specification). This route
-          is reserved as the host page.
+        <p className="text-base text-ink-secondary max-w-3xl leading-relaxed">
+          Four steps: setup, upload, generate (research → draft → verify), download. The letter
+          tracks the recipient&apos;s role category and the Mays four-level rating scale, and is
+          checked against your source documents before download.
         </p>
-      </ScrollReveal>
+      </div>
 
-      <ScrollReveal>
-        <div className="card">
-          <div className="eyebrow text-[11px] mb-3">Status</div>
-          <div className="text-sm text-ink-secondary space-y-2">
-            <div className="flex items-center gap-3">
-              <span className="inline-block w-2 h-2 rounded-full bg-status-success" />
-              Route is live at <code className="text-ink-primary">/admin/evaluation-letters</code>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="inline-block w-2 h-2 rounded-full bg-status-warning" />
-              UI, file upload, AI pipeline, and .docx export — pending Prompt 2
-            </div>
-          </div>
-        </div>
-      </ScrollReveal>
+      <EvaluationLetterWorkflow />
     </section>
   );
 }
