@@ -10,7 +10,6 @@ export const maxDuration = 90;
 type Body = {
   writerId: string;
   recipientName: string;
-  ccName: string;
   letterText: string;
 };
 
@@ -46,7 +45,7 @@ Thank you for our recent meeting and for the thoughtful self-evaluation you subm
 
 (With a real ANTHROPIC_API_KEY, this email would mention 2-3 specific highlights from the letter and close with a warm, personal note.)
 
-I am copying ${body.ccName || 'Dean Sharp'}. The formal letter will be sent for your signature and personnel file.
+The formal letter will be sent for your signature and personnel file.
 
 Warm regards,
 ${writer.firstName}
@@ -59,7 +58,6 @@ ${writer.firstName}
     writerFirstName: writer.firstName,
     recipientName: body.recipientName,
     recipientFirstName: firstNameOf(body.recipientName),
-    ccName: body.ccName || 'Dean Sharp',
     letterText: body.letterText,
   });
 

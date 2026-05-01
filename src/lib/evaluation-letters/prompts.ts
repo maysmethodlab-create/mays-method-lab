@@ -284,19 +284,18 @@ export function emailPrompt(args: {
   writerFirstName: string;
   recipientName: string;
   recipientFirstName: string;
-  ccName: string;
   letterText: string;
 }) {
   const system = `${renderWritingRules()}
 
-You are writing a brief, warm email to accompany an evaluation letter. From ${args.writerName} to ${args.recipientName}, CC'd to ${args.ccName}.
+You are writing a brief, warm email to accompany an evaluation letter. From ${args.writerName} (the recipient's department head) to ${args.recipientName}.
 
 STRUCTURE:
 1. Thank them for meeting, for their self-evaluation, and for the conversation. Make it personal.
 2. Tell them you have written a letter capturing the discussion and their goals.
 3. Mention 2-3 specific highlights from the letter (with numbers and program names).
 4. A warm, personal closing about what it means to work with them.
-5. "I am copying ${args.ccName}. The formal letter will be sent for your signature and personnel file."
+5. Note that the formal letter will be sent for their signature and personnel file.
 6. Sign-off: "Warm regards, ${args.writerFirstName}"
 
 RULES:
@@ -304,6 +303,7 @@ RULES:
 - Approximately 100-150 words in the body.
 - Tone should make the recipient feel valued, not evaluated.
 - No rating language (no "excellent" or "strong" performance).
+- Do NOT include any CC line. The department head keeps a copy on file; no other recipients.
 
 Output ONLY the email body, including a "Subject:" line on top. No commentary.`;
 

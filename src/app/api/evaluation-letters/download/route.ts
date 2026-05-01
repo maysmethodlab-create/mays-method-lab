@@ -31,7 +31,11 @@ export async function POST(req: Request) {
   try {
     const buf =
       body.kind === 'letter'
-        ? await generateLetterDocx({ letterText: body.text, letterhead: writer?.department })
+        ? await generateLetterDocx({
+            letterText: body.text,
+            letterhead: writer?.department,
+            letterheadImage: writer?.letterheadImage,
+          })
         : await generateEmailDocx(body.text);
 
     const filename = `${body.kind === 'letter' ? 'evaluation_letter' : 'accompanying_email'}${namePart}.docx`;

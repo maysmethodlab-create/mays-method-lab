@@ -4,7 +4,15 @@ export type Writer = {
   firstName: string;
   title: string;
   department: string;
+  /**
+   * File name (relative to /public/letterheads/) of the letterhead image to
+   * embed at the top of the .docx letter. All writers fall back to the shared
+   * Mays/TAMU header if a per-department letterhead is not available yet.
+   */
+  letterheadImage: string;
 };
+
+export const DEFAULT_LETTERHEAD = 'mays-default.jpg';
 
 /**
  * Hardcoded list of department heads / academic leaders authorized to write
@@ -18,6 +26,8 @@ export const WRITERS: Writer[] = [
     firstName: 'Keith',
     title: 'Department Head, Department of Marketing',
     department: 'Department of Marketing',
+    // Per-department: drop a file at /public/letterheads/mktg.jpg to override.
+    letterheadImage: DEFAULT_LETTERHEAD,
   },
   {
     id: 'metters',
@@ -25,6 +35,7 @@ export const WRITERS: Writer[] = [
     firstName: 'Rich',
     title: 'Department Head, Department of Information and Operations Management',
     department: 'Department of Information and Operations Management',
+    letterheadImage: DEFAULT_LETTERHEAD,
   },
   {
     id: 'mcguire',
@@ -32,6 +43,7 @@ export const WRITERS: Writer[] = [
     firstName: 'Sean',
     title: 'Department Head, James Benjamin Department of Accounting',
     department: 'James Benjamin Department of Accounting',
+    letterheadImage: DEFAULT_LETTERHEAD,
   },
   {
     id: 'brown',
@@ -39,6 +51,7 @@ export const WRITERS: Writer[] = [
     firstName: 'Jamie',
     title: "Department Head, Adam C. Sinn '00 Department of Finance",
     department: "Adam C. Sinn '00 Department of Finance",
+    letterheadImage: DEFAULT_LETTERHEAD,
   },
   {
     id: 'paruchuri',
@@ -46,6 +59,7 @@ export const WRITERS: Writer[] = [
     firstName: 'Srikanth',
     title: 'Department Head, Department of Management',
     department: 'Department of Management',
+    letterheadImage: DEFAULT_LETTERHEAD,
   },
 ];
 

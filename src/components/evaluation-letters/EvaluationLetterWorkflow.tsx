@@ -24,7 +24,6 @@ const initialSetup: SetupData = {
   recipientTitle: '',
   recipientDepartment: '',
   roleCategoryId: '',
-  ccName: 'Dean Sharp',
 };
 
 export default function EvaluationLetterWorkflow() {
@@ -73,8 +72,10 @@ export default function EvaluationLetterWorkflow() {
           <UploadStep
             files={files}
             notes={notes}
+            setup={setup}
             onFilesChange={setFiles}
             onNotesChange={setNotes}
+            onSetupChange={setSetup}
             onBack={() => setStep(1)}
             onContinue={() => setStep(3)}
           />

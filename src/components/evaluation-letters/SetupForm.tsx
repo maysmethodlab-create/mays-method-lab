@@ -47,12 +47,9 @@ export default function SetupForm({ value, onChange, onContinue }: Props) {
   const showService = role?.required.includes('service') || role?.optional.includes('service');
   const showTeaching = role?.required.includes('teaching') || role?.optional.includes('teaching');
 
-  const valid =
-    value.writerId &&
-    value.roleCategoryId &&
-    value.recipientName.trim().length > 0 &&
-    value.recipientTitle.trim().length > 0 &&
-    value.overallRating;
+  // Step 1 only requires writer + role + overall rating. Name and title can
+  // be filled in here OR auto-detected from uploads on Step 2.
+  const valid = Boolean(value.writerId && value.roleCategoryId && value.overallRating);
 
   function update<K extends keyof SetupData>(k: K, v: SetupData[K]) {
     onChange({ ...value, [k]: v });
@@ -85,6 +82,9 @@ export default function SetupForm({ value, onChange, onContinue }: Props) {
           <div className="text-sm text-ink-secondary">
             <div className="text-ink-primary">{writer.title}</div>
             <div className="text-ink-muted">{writer.department}</div>
+            <div className="text-[11px] text-ink-muted mt-2">
+              Letterhead for this department will be applied to the downloaded letter.
+            </div>
           </div>
         ) : null}
       </section>
@@ -107,19 +107,24 @@ export default function SetupForm({ value, onChange, onContinue }: Props) {
 
       {/* Recipient */}
       <section className="card space-y-5">
-        <div className="eyebrow text-[11px]">Recipient</div>
-        <Field label="Recipient's full name">
+        <div className="flex items-center justify-between gap-4">
+          <div className="eyebrow text-[11px]">Recipient</div>
+          <div className="text-[11px] text-ink-muted">
+            Name &amp; title can be auto-detected from your uploads
+          </div>
+        </div>
+        <Field label="Recipient's full name (optional — auto-detected from CV)">
           <input
             className="input"
-            placeholder="e.g., Jane Smith, Ph.D."
+            placeholder="e.g., Jane Smith, Ph.D. — or leave blank"
             value={value.recipientName}
             onChange={(e) => update('recipientName', e.target.value)}
           />
         </Field>
-        <Field label="Recipient's title / role">
+        <Field label="Recipient's title / role (optional — auto-detected from CV)">
           <input
             className="input"
-            placeholder="e.g., Associate Professor of Marketing"
+            placeholder="e.g., Associate Professor of Marketing — or leave blank"
             value={value.recipientTitle}
             onChange={(e) => update('recipientTitle', e.target.value)}
           />
@@ -155,14 +160,6 @@ export default function SetupForm({ value, onChange, onContinue }: Props) {
             {role.warning}
           </div>
         ) : null}
-        <Field label="Dean / supervisor to CC">
-          <input
-            className="input"
-            placeholder="e.g., Dean Sharp"
-            value={value.ccName}
-            onChange={(e) => update('ccName', e.target.value)}
-          />
-        </Field>
       </section>
 
       {/* Ratings */}

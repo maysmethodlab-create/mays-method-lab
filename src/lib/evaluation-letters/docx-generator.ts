@@ -1,8 +1,11 @@
 import 'server-only';
+import { promises as fs } from 'fs';
+import path from 'path';
 import {
   AlignmentType,
   Document,
   HeightRule,
+  ImageRun,
   LevelFormat,
   Packer,
   Paragraph,
@@ -166,12 +169,63 @@ function paragraphsFromLetterText(letter: string): Paragraph[] {
 
 export type LetterDocOptions = {
   letterText: string;
-  /** Optional plain-text letterhead (e.g. department name) on the first line. */
+  /** Plain-text letterhead line under the image (typically the department name). */
   letterhead?: string;
+  /**
+   * File name (relative to /public/letterheads/) of the letterhead image to
+   * embed at the top of the page. If the file is missing, we fall back to text.
+   */
+  letterheadImage?: string;
 };
+
+async function loadLetterheadImage(name: string): Promise<Buffer | null> {
+  try {
+    const filePath = path.join(process.cwd(), 'public', 'letterheads', name);
+    return await fs.readFile(filePath);
+  } catch {
+    return null;
+  }
+}
 
 export async function generateLetterDocx(opts: LetterDocOptions): Promise<Buffer> {
   const body = paragraphsFromLetterText(opts.letterText);
+
+  const headerImage = opts.letterheadImage
+    ? await loadLetterheadImage(opts.letterheadImage)
+    : null;
+
+  const headerParagraphs: Paragraph[] = [];
+  if (headerImage) {
+    headerParagraphs.push(
+      new Paragraph({
+        alignment: AlignmentType.CENTER,
+        spacing: { after: 120 },
+        children: [
+          new ImageRun({
+            type: 'jpg',
+            data: headerImage,
+            transformation: { width: 540, height: 90 },
+          }),
+        ],
+      }),
+    );
+  }
+  if (opts.letterhead) {
+    headerParagraphs.push(
+      new Paragraph({
+        alignment: AlignmentType.CENTER,
+        spacing: { after: 240 },
+        children: [
+          new TextRun({
+            text: opts.letterhead,
+            font: FONT,
+            size: SIZE_HALF_POINTS,
+            bold: true,
+          }),
+        ],
+      }),
+    );
+  }
 
   const doc = new Document({
     creator: 'Mays Method Lab — Evaluation Letter Writer',
@@ -213,25 +267,7 @@ export async function generateLetterDocx(opts: LetterDocOptions): Promise<Buffer
             },
           },
         },
-        children: [
-          ...(opts.letterhead
-            ? [
-                new Paragraph({
-                  alignment: AlignmentType.CENTER,
-                  spacing: { after: 240 },
-                  children: [
-                    new TextRun({
-                      text: opts.letterhead,
-                      font: FONT,
-                      size: SIZE_HALF_POINTS,
-                      bold: true,
-                    }),
-                  ],
-                }),
-              ]
-            : []),
-          ...body,
-        ],
+        children: [...headerParagraphs, ...body],
       },
     ],
   });

@@ -55,21 +55,21 @@ export default function HomePage() {
             <LeaderCard
               name="Levi Belnap"
               role="Co-Director"
-              note="Industry leader in education technology and venture-building inside higher education."
+              note="Executive Director of Entrepreneurship and Innovation."
             />
           </ScrollReveal>
           <ScrollReveal>
             <LeaderCard
               name="'Jon Jasperson"
               role="Co-Director"
-              note="Clinical professor and head of the Department of Information and Operations Management at Mays Business School."
+              note="Associate Dean for Academic Innovation; Clinical Professor."
             />
           </ScrollReveal>
           <ScrollReveal>
             <LeaderCard
               name="Shrihari Sridhar"
               role="Co-Director"
-              note="Senior associate dean for faculty and research, Mays Business School, Texas A&M University."
+              note="Senior Associate Dean of Mays Business School; Professor and Joe Foster '56 Chair in Business Leadership; Editor-in-Chief, Journal of Marketing."
             />
           </ScrollReveal>
         </div>

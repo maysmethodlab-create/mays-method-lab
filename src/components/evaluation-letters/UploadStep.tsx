@@ -1,15 +1,18 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import type { UploadedFile } from '@/lib/evaluation-letters/types';
+import type { SetupData, UploadedFile } from '@/lib/evaluation-letters/types';
+import { ROLE_CATEGORIES, getRoleCategory } from '@/lib/evaluation-letters/role-categories';
 
 const MAX_BYTES = 10 * 1024 * 1024;
 
 type Props = {
   files: UploadedFile[];
   notes: string;
+  setup: SetupData;
   onFilesChange: (next: UploadedFile[]) => void;
   onNotesChange: (next: string) => void;
+  onSetupChange: (next: SetupData) => void;
   onBack: () => void;
   onContinue: () => void;
 };
@@ -17,12 +20,22 @@ type Props = {
 export default function UploadStep({
   files,
   notes,
+  setup,
   onFilesChange,
   onNotesChange,
+  onSetupChange,
   onBack,
   onContinue,
 }: Props) {
   const [busy, setBusy] = useState(false);
+  const [identifying, setIdentifying] = useState(false);
+  const [identified, setIdentified] = useState<{
+    name: string | null;
+    title: string | null;
+    department: string | null;
+    roleCategoryId: string | null;
+    source: string;
+  } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [drag, setDrag] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -60,12 +73,68 @@ export default function UploadStep({
       if (failed.length) {
         setError(failed.map((f: { filename: string; error?: string }) => `${f.filename}: ${f.error}`).join(' · '));
       }
-      onFilesChange([...files, ...accepted]);
+      const allFiles = [...files, ...accepted];
+      onFilesChange(allFiles);
+
+      // Auto-identify if name/title are still blank
+      if (accepted.length > 0 && (!setup.recipientName || !setup.recipientTitle)) {
+        await runIdentify(allFiles);
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Network error.');
     } finally {
       setBusy(false);
       if (inputRef.current) inputRef.current.value = '';
+    }
+  }
+
+  async function runIdentify(allFiles: UploadedFile[]) {
+    setIdentifying(true);
+    setIdentified(null);
+    try {
+      const sourceDocuments = allFiles
+        .map((f) => `===== ${f.kind.toUpperCase()} — ${f.filename} =====\n${f.text}`)
+        .join('\n\n');
+      const res = await fetch('/api/evaluation-letters/identify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sourceDocuments }),
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      setIdentified({
+        name: data.name || null,
+        title: data.title || null,
+        department: data.department || null,
+        roleCategoryId: data.roleCategoryId || null,
+        source: data.source || 'unknown',
+      });
+
+      // Apply detected values to setup state, only filling blanks (don't
+      // overwrite anything the user already typed).
+      const next = { ...setup };
+      let changed = false;
+      if (data.name && !next.recipientName) {
+        next.recipientName = data.name;
+        changed = true;
+      }
+      if (data.title && !next.recipientTitle) {
+        next.recipientTitle = data.title;
+        changed = true;
+      }
+      if (data.department && !next.recipientDepartment) {
+        next.recipientDepartment = data.department;
+        changed = true;
+      }
+      if (data.roleCategoryId && !next.roleCategoryId) {
+        next.roleCategoryId = data.roleCategoryId;
+        changed = true;
+      }
+      if (changed) onSetupChange(next);
+    } catch {
+      // identify is best-effort — silently swallow errors
+    } finally {
+      setIdentifying(false);
     }
   }
 
@@ -84,12 +153,17 @@ export default function UploadStep({
     onFilesChange(files.map((f) => (f.id === id ? { ...f, kind } : f)));
   }
 
+  const role = getRoleCategory(setup.roleCategoryId);
+  const recipientReady =
+    setup.recipientName.trim().length > 0 && setup.recipientTitle.trim().length > 0 && Boolean(role);
+
   return (
     <div className="space-y-8">
       <section className="card space-y-4">
         <div className="eyebrow text-[11px]">Documents</div>
         <p className="text-sm text-ink-secondary leading-relaxed">
-          Upload the recipient&apos;s self-evaluation and CV. Optional supporting documents are welcome.
+          Upload the recipient&apos;s self-evaluation and CV. After upload, we&apos;ll auto-detect
+          the recipient&apos;s name, title, and department from the documents.
           Accepted formats: .docx, .pdf, .txt, .md. 10MB max per file.
         </p>
 
@@ -167,6 +241,73 @@ export default function UploadStep({
         ) : null}
       </section>
 
+      {/* Auto-identify panel */}
+      {files.length > 0 ? (
+        <section className="card space-y-4">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="eyebrow text-[11px]">Recipient (auto-detected)</div>
+            <div className="flex items-center gap-3">
+              {identifying ? (
+                <span className="text-[11px] text-ink-secondary">Identifying…</span>
+              ) : identified ? (
+                <span className="text-[11px] text-ink-muted">
+                  Source: {identified.source}
+                </span>
+              ) : null}
+              <button
+                type="button"
+                onClick={() => runIdentify(files)}
+                disabled={identifying || files.length === 0}
+                className="text-xs uppercase tracking-[0.15em] text-ink-secondary hover:text-ink-primary transition-colors"
+              >
+                {identified ? 'Re-detect' : 'Detect now'}
+              </button>
+            </div>
+          </div>
+          <p className="text-sm text-ink-secondary leading-relaxed">
+            We pull these from the documents you uploaded. Edit anything that&apos;s wrong before
+            you continue — the letter will use exactly what&apos;s here.
+          </p>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <InlineField
+              label="Recipient name"
+              value={setup.recipientName}
+              onChange={(v) => onSetupChange({ ...setup, recipientName: v })}
+              placeholder="e.g., Jane Smith, Ph.D."
+            />
+            <InlineField
+              label="Recipient title"
+              value={setup.recipientTitle}
+              onChange={(v) => onSetupChange({ ...setup, recipientTitle: v })}
+              placeholder="e.g., Associate Professor of Marketing"
+            />
+            <InlineField
+              label="Department"
+              value={setup.recipientDepartment}
+              onChange={(v) => onSetupChange({ ...setup, recipientDepartment: v })}
+            />
+            <label className="block">
+              <div className="label">Role category</div>
+              <select
+                className="input"
+                value={setup.roleCategoryId}
+                onChange={(e) => onSetupChange({ ...setup, roleCategoryId: e.target.value })}
+              >
+                <option value="">— Select —</option>
+                {ROLE_CATEGORIES.map((r) => (
+                  <option key={r.id} value={r.id}>{r.label}</option>
+                ))}
+              </select>
+            </label>
+          </div>
+          {!recipientReady ? (
+            <div className="text-xs text-status-warning border border-status-warning/40 bg-status-warning/10 rounded-md px-3 py-2">
+              Fill in name, title, and role category before continuing.
+            </div>
+          ) : null}
+        </section>
+      ) : null}
+
       <section className="card space-y-3">
         <div className="eyebrow text-[11px]">Your Observations and Notes</div>
         <p className="text-sm text-ink-secondary leading-relaxed">
@@ -190,12 +331,36 @@ export default function UploadStep({
         <button
           type="button"
           onClick={onContinue}
-          disabled={files.length === 0}
+          disabled={files.length === 0 || !recipientReady}
           className="btn-primary"
         >
           Continue to Generate →
         </button>
       </div>
     </div>
+  );
+}
+
+function InlineField({
+  label,
+  value,
+  onChange,
+  placeholder,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+}) {
+  return (
+    <label className="block">
+      <div className="label">{label}</div>
+      <input
+        className="input"
+        value={value}
+        placeholder={placeholder}
+        onChange={(e) => onChange(e.target.value)}
+      />
+    </label>
   );
 }

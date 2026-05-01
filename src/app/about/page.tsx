@@ -1,4 +1,5 @@
 import ScrollReveal from '@/components/ScrollReveal';
+import AboutNav from '@/components/AboutNav';
 
 export const metadata = {
   title: 'About — Mays Method Lab',
@@ -10,6 +11,8 @@ export default function AboutPage() {
   return (
     <>
       <section className="section pt-40">
+        <AboutNav />
+
         <ScrollReveal>
           <div className="eyebrow-lg mb-6">About</div>
         </ScrollReveal>
@@ -21,37 +24,9 @@ export default function AboutPage() {
         <ScrollReveal>
           <p className="text-lg text-ink-secondary leading-relaxed max-w-3xl">
             The Mays Method Lab exists to discover, test, and codify a new way of teaching
-            business for the AI era. We work in the tradition of an R&amp;D lab inside a great
-            university, producing pedagogical innovations that can be branded, disseminated, and
-            exported as the Mays Method.
+            business for the AI era.
           </p>
         </ScrollReveal>
-      </section>
-
-      <div className="divider" />
-
-      <section className="section">
-        <div className="grid md:grid-cols-2 gap-12">
-          <ScrollReveal>
-            <div>
-              <div className="eyebrow mb-4">Our Mission</div>
-              <p className="text-base text-ink-secondary leading-relaxed">
-                Build tools, frameworks, and curricula that change how business education is
-                taught — not at the margin, but at the foundation. The work begins inside Mays
-                Business School at Texas A&amp;M University and is meant to scale.
-              </p>
-            </div>
-          </ScrollReveal>
-          <ScrollReveal>
-            <div>
-              <div className="eyebrow mb-4">Our Vision</div>
-              <p className="text-base text-ink-secondary leading-relaxed">
-                Within five years, recognized as the leading center of pedagogical invention in
-                American business education.
-              </p>
-            </div>
-          </ScrollReveal>
-        </div>
       </section>
 
       <div className="divider" />
@@ -65,22 +40,22 @@ export default function AboutPage() {
           <ScrollReveal>
             <Bio
               name="Levi Belnap"
-              role="Co-Director"
-              bio="Industry leader in education technology and venture-building inside higher education. Leads the Lab's work on translating research into shippable products."
+              title="Executive Director of Entrepreneurship and Innovation"
             />
           </ScrollReveal>
           <ScrollReveal>
             <Bio
               name="'Jon Jasperson"
-              role="Co-Director"
-              bio="Clinical professor and head of the Department of Information and Operations Management. Leads the Lab's work on faculty capability and adoption."
+              title="Associate Dean for Academic Innovation; Clinical Professor"
             />
           </ScrollReveal>
           <ScrollReveal>
             <Bio
               name="Shrihari Sridhar"
-              role="Co-Director"
-              bio="Senior associate dean for faculty and research at Mays Business School. Leads the Lab's work on faculty workflow tools and the academic-leadership stack."
+              title={`Senior Associate Dean of Mays Business School;
+Professor and Joe Foster '56 Chair in Business Leadership;
+Presidential Impact Fellow;
+Editor-in-Chief, Journal of Marketing`}
             />
           </ScrollReveal>
         </div>
@@ -95,8 +70,7 @@ export default function AboutPage() {
         <ScrollReveal>
           <p className="text-base text-ink-secondary leading-relaxed max-w-3xl">
             The Mays Method Lab is part of Mays Business School at Texas A&amp;M University in
-            College Station, Texas. The Lab's work is non-commercial and intended to benefit the
-            field of business education broadly.
+            College Station, Texas.
           </p>
         </ScrollReveal>
       </section>
@@ -104,12 +78,12 @@ export default function AboutPage() {
   );
 }
 
-function Bio({ name, role, bio }: { name: string; role: string; bio: string }) {
+function Bio({ name, title }: { name: string; title: string }) {
   return (
     <div className="card h-full">
-      <div className="eyebrow text-[11px] mb-3">{role}</div>
+      <div className="eyebrow text-[11px] mb-3">Co-Director</div>
       <h3 className="text-2xl font-bold text-ink-primary mb-3 leading-tight">{name}</h3>
-      <p className="text-sm text-ink-secondary leading-relaxed">{bio}</p>
+      <p className="text-sm text-ink-secondary leading-relaxed whitespace-pre-line">{title}</p>
     </div>
   );
 }
