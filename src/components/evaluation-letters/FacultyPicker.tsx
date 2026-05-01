@@ -9,16 +9,18 @@ import {
 
 type Props = {
   value: string; // current recipient name
-  /** Writer (department head) id — used to scope the dropdown to that dept by default */
+  /** Writer (department head) id — used to scope the dropdown to that dept */
   writerId?: string;
   onPick: (entry: FacultyEntry & { departmentSlug: string }) => void;
 };
 
 /**
- * Searchable combobox over the 215 evaluable Mays faculty across the 5
- * academic departments. By default scoped to the writer's own department
- * (since a department head normally only writes letters for their own
- * faculty); a "Show other departments" toggle reveals the rest.
+ * Searchable combobox over the evaluable Mays faculty in the writer's own
+ * department. Strict scoping: a department head only writes letters for
+ * their own faculty, never for someone in another department, and never
+ * for a dean (deans' letters are written by the senior associate dean).
+ *
+ * If no writer is selected upstream, the picker shows an empty state.
  */
 export default function FacultyPicker({ value, writerId, onPick }: Props) {
   const allGroups = useMemo(() => evaluableFacultyByDepartment(), []);
@@ -30,32 +32,26 @@ export default function FacultyPicker({ value, writerId, onPick }: Props) {
 
   const [filter, setFilter] = useState('');
   const [open, setOpen] = useState(false);
-  const [showAll, setShowAll] = useState(false);
-
-  // Default scope: writer's department only (if known). Toggle expands to all.
-  const scoped = useMemo(() => {
-    if (!writerDept || showAll) return allGroups;
-    return [writerDept];
-  }, [allGroups, writerDept, showAll]);
 
   const filtered = useMemo(() => {
+    if (!writerDept) return [];
     const q = filter.trim().toLowerCase();
-    if (!q) return scoped;
-    return scoped
-      .map((g) => ({
-        ...g,
-        faculty: g.faculty.filter(
+    if (!q) return [writerDept];
+    return [
+      {
+        ...writerDept,
+        faculty: writerDept.faculty.filter(
           (f) =>
             f.name.toLowerCase().includes(q) ||
             (f.title || '').toLowerCase().includes(q) ||
             (f.email || '').toLowerCase().includes(q),
         ),
-      }))
-      .filter((g) => g.faculty.length > 0);
-  }, [scoped, filter]);
+      },
+    ].filter((g) => g.faculty.length > 0);
+  }, [writerDept, filter]);
 
   const matchCount = filtered.reduce((n, g) => n + g.faculty.length, 0);
-  const scopedCount = scoped.reduce((n, g) => n + g.faculty.length, 0);
+  const deptCount = writerDept ? writerDept.faculty.length : 0;
 
   function handlePick(entry: FacultyEntry, departmentSlug: string) {
     onPick({ ...entry, departmentSlug });
@@ -63,19 +59,21 @@ export default function FacultyPicker({ value, writerId, onPick }: Props) {
     setFilter('');
   }
 
-  const scopeLabel = writerDept && !showAll
-    ? `${scopedCount} faculty in ${writerDept.departmentName}`
-    : `${scopedCount} faculty across the 5 academic departments at Mays`;
-
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
           <div className="label">Faculty</div>
-          <div className="text-[11px] text-ink-muted">
-            {scopeLabel}. Pick once and we fill in name, title, department, role category,
-            and email.
-          </div>
+          {writerDept ? (
+            <div className="text-[11px] text-ink-muted">
+              {deptCount} evaluable faculty in {writerDept.departmentName}. Pick once and we
+              fill in name, title, department, role category, and email.
+            </div>
+          ) : (
+            <div className="text-[11px] text-status-warning">
+              Choose a writer in the previous step first.
+            </div>
+          )}
         </div>
         {value ? (
           <button
@@ -88,32 +86,18 @@ export default function FacultyPicker({ value, writerId, onPick }: Props) {
         ) : null}
       </div>
 
-      {!value || open ? (
-        <div className="border border-line rounded-card p-3 bg-bg-subtle">
-          <div className="flex items-center gap-2 mb-3">
-            <input
-              type="text"
-              autoFocus
-              placeholder="Type a name, title, or email…"
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-              className="input flex-1"
-            />
-            {writerDept ? (
-              <button
-                type="button"
-                onClick={() => setShowAll((v) => !v)}
-                className="text-[11px] uppercase tracking-[0.15em] font-semibold text-maroon hover:text-maroon-deep transition-colors whitespace-nowrap px-3 py-2 border border-maroon rounded"
-              >
-                {showAll ? 'Show only my dept' : 'Show all departments'}
-              </button>
-            ) : null}
-          </div>
+      {writerDept && (!value || open) ? (
+        <div className="border border-line p-3 bg-bg-subtle">
+          <input
+            type="text"
+            autoFocus
+            placeholder={`Type a name, title, or email in ${writerDept.departmentName}…`}
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="input mb-3"
+          />
           <div className="text-[11px] text-ink-muted mb-2">
-            {matchCount} match{matchCount === 1 ? '' : 'es'}
-            {writerDept && !showAll
-              ? ` (filtered to ${writerDept.departmentName})`
-              : ''}
+            {matchCount} match{matchCount === 1 ? '' : 'es'} in {writerDept.departmentName}
           </div>
           <div className="max-h-[360px] overflow-y-auto space-y-3 pr-1">
             {filtered.map((g) => (
@@ -142,21 +126,7 @@ export default function FacultyPicker({ value, writerId, onPick }: Props) {
             ))}
             {matchCount === 0 ? (
               <div className="text-sm text-ink-muted px-2 py-6 text-center">
-                No faculty match &quot;{filter}&quot;
-                {writerDept && !showAll ? ` in ${writerDept.departmentName}` : ''}.
-                {writerDept && !showAll ? (
-                  <>
-                    {' '}
-                    <button
-                      type="button"
-                      onClick={() => setShowAll(true)}
-                      className="text-maroon font-semibold underline"
-                    >
-                      Search all departments
-                    </button>
-                    .
-                  </>
-                ) : null}
+                No faculty in {writerDept.departmentName} match &quot;{filter}&quot;.
               </div>
             ) : null}
           </div>

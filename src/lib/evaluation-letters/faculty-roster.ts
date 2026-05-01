@@ -31,12 +31,23 @@ export const FACULTY_ROSTER: FacultyRoster = roster as FacultyRoster;
 
 /**
  * Tight filter that keeps real evaluable academic faculty and drops staff,
- * coordinators, PhD students, and other non-faculty who happen to be
- * affiliated with one of the academic departments in the directory.
+ * coordinators, PhD students, deans, and other non-faculty who happen to
+ * be affiliated with one of the academic departments in the directory.
+ *
+ * Deans (associate, assistant, senior associate) are explicitly excluded
+ * because their letters are written by the senior associate dean, not by
+ * a department head. They should not appear in the FacultyPicker that a
+ * department head uses.
  */
 export function isEvaluableFaculty(f: FacultyEntry): boolean {
   if (!f.title) return false;
   const t = f.title.toLowerCase();
+
+  // Hard exclusions — never include these even if they also hold a faculty
+  // title in the same string.
+  if (/^(senior )?associate dean\b|^assistant dean\b|^vice dean\b|^dean of\b/.test(t))
+    return false;
+  if (/\bdean of mays\b|\bdean of the\b/.test(t)) return false;
 
   // Anchor patterns that match canonical academic titles
   if (
@@ -50,7 +61,6 @@ export function isEvaluableFaculty(f: FacultyEntry): boolean {
   if (/dean emeritus|dean emerita/.test(t)) return true;
   if (/^department head|^assistant department head|^associate department head/.test(t))
     return true;
-  if (/^associate dean (?:for|of)|^senior associate dean/.test(t)) return true;
   // Named endowed chairs — typically held by full professors
   if (/chair (?:of|in) /.test(t)) return true;
   if (/^mays teaching fellow$/.test(t)) return true;
