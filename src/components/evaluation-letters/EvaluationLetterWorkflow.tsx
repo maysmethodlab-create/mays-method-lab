@@ -51,8 +51,8 @@ export default function EvaluationLetterWorkflow() {
         <>
           <StepHeader
             step={1}
-            title="Set up the letter."
-            subtitle="Identify yourself, the recipient, and assign per-area performance ratings using the Mays four-level scale."
+            title="Choose the writer."
+            subtitle="Pick yourself (the department head writing this letter) and the evaluation year. Recipient details come from the upload in the next step."
           />
           <SetupForm
             value={setup}
@@ -66,8 +66,8 @@ export default function EvaluationLetterWorkflow() {
         <>
           <StepHeader
             step={2}
-            title="Upload documents and add notes."
-            subtitle="Self-evaluation and CV are required. Your free-text notes shape the &quot;My Observations&quot; and &quot;Your Plan&quot; sections — write in shorthand, the AI will weave them in."
+            title="Upload &amp; review the recipient."
+            subtitle="Upload the recipient's self-evaluation and CV. We auto-detect their name, title, department, and role category from the documents. Then add your own observation notes — these shape the letter's tone."
           />
           <UploadStep
             files={files}
@@ -86,8 +86,8 @@ export default function EvaluationLetterWorkflow() {
         <>
           <StepHeader
             step={3}
-            title="Generate the letter."
-            subtitle="Three phases: Research extracts every fact from your uploads, Draft writes the letter in your voice, Verify fact-checks every claim against the sources and flags AI-language patterns."
+            title="Generate, review, rate."
+            subtitle="Research extracts the facts. Draft writes the letter body. Verify fact-checks every claim. Then you assign per-area ratings — with the Mays definitions visible — and the formal Summary is appended."
           />
           <GenerateStep
             setup={setup}
@@ -96,6 +96,7 @@ export default function EvaluationLetterWorkflow() {
             brief={brief}
             draft={draft}
             verification={verification}
+            onSetupChange={setSetup}
             onBriefChange={setBrief}
             onDraftChange={setDraft}
             onVerificationChange={setVerification}

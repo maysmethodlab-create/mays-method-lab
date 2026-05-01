@@ -13,16 +13,14 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
+const APP_DIR = path.join(ROOT, 'apps', 'Annual Evaluation Letters');
 const BASE = process.env.BASE_URL || 'http://localhost:3000';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'mml-dev-2026';
-const OUT_DIR = path.join(ROOT, 'test-output');
+// Test output stays inside the app folder so the project root stays clean
+// across all 50+ apps the platform will eventually host.
+const OUT_DIR = path.join(APP_DIR, 'test-output');
 
-const TEMPLATE_DIR = path.join(
-  ROOT,
-  'apps',
-  'Annual Evaluation Letters',
-  'Template Letters',
-);
+const TEMPLATE_DIR = path.join(APP_DIR, 'Template Letters');
 
 /**
  * Test cases derived from filenames in Template Letters/. Each case names the

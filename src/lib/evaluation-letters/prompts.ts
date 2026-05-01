@@ -85,6 +85,8 @@ export type WritingPromptArgs = {
   writerName: string;
   writerTitle: string;
   writerFirstName: string;
+  /** Multi-line FROM block (name, title, chair, honors) */
+  writerFromLines: string[];
   recipientName: string;
   recipientFirstName: string;
   recipientTitle: string;
@@ -97,10 +99,6 @@ export type WritingPromptArgs = {
   styleBundle: string;
   /** Optional peer-review comments (Rich's full-prof tallies, etc.) */
   peerComments: string;
-  teachingRating?: string;
-  researchRating?: string;
-  serviceRating?: string;
-  overallRating?: string;
   hasResearchEvaluation: boolean;
   researchBrief: string;
   writerNotes: string;
@@ -152,11 +150,7 @@ The letter evaluates ${args.recipientName}, ${args.recipientTitle}${
 
 Recipient's role category: ${args.roleCategory}.
 
-PERFORMANCE RATINGS (per Mays Business School Guidelines, Section 6.4):
-- Teaching: ${args.teachingRating || 'N/A'}
-- Research and Publication: ${args.hasResearchEvaluation ? args.researchRating || 'N/A' : 'NOT EVALUATED — APT/lecturer category. Do NOT mention research or its absence.'}
-- Service: ${args.serviceRating || 'N/A'}
-- Overall: ${args.overallRating || 'N/A'}
+${args.hasResearchEvaluation ? '' : 'NOTE: This is an APT / lecturer category. Do NOT include any research evaluation. Do NOT reference the absence of research negatively.'}
 
 Use the LETTER SKILL REFERENCE (in the cached system block above) to match the expected structure, tone, and section ordering for this faculty category.
 
@@ -169,15 +163,47 @@ REQUIRED STRUCTURE:
 3. TO/FROM/SUBJECT block:
    TO: ${args.recipientName}
        ${args.recipientTitle}
-   FROM: ${args.writerName}
-         ${args.writerTitle}
+   FROM: ${args.writerFromLines.map((l, i) => (i === 0 ? l : `         ${l}`)).join('\n   ')}
    SUBJECT: ${args.evaluationYear} Performance Evaluation
 
 4. SALUTATION: "Dear ${args.recipientFirstName},"
 
 5. OPENING PARAGRAPH: thank them, reference their Professional Activity Report (faculty) or self-evaluation (staff/APT), note this letter follows the annual performance review meeting.
 
-6. **Summary of Major Accomplishments** (bold heading): 4-6 paragraphs of flowing narrative prose. NO bullet points in this section. Each paragraph focuses on a coherent area. Weave specific accomplishments into a story about why they matter. Every praise statement must be tied to a specific accomplishment with names and numbers.
+SUBHEADING FORMATTING — CRITICAL:
+Every section heading below (Summary of Major Accomplishments, My Observations
+and Our Discussion, Your Plan for the Upcoming Year) MUST be wrapped in
+double-asterisk markdown so it renders as bold in the .docx. Like this:
+
+    **Summary of Major Accomplishments**
+
+NOT like this:
+
+    Summary of Major Accomplishments
+
+If you forget the asterisks, the section header will render as plain body
+text and the letter will look broken.
+
+PAPER-QUOTING DISCIPLINE:
+- Name a journal article when its identity matters. Quote the exact title in
+  quotation marks ONLY when the title is striking, the contribution is
+  uniquely identified by it, or the writer would naturally quote it (e.g.,
+  for a P&T-style "anchor paper" treatment).
+- For routine publications, name the journal and the topic / contribution
+  without the exact title. "Your paper with Bo Li in *Production and
+  Operations Management* on conditional value-at-risk" is better than
+  "Your paper, 'Minimizing Conditional Value-at-Risk under a Modified
+  Base-Stock Policy,' in *Production and Operations Management*".
+- Co-authors should be named because the relationship matters, not because
+  every author needs to be listed.
+
+6. **Summary of Major Accomplishments** (this is the heading — output it
+   exactly as **Summary of Major Accomplishments** wrapped in double
+   asterisks): 4-6 paragraphs of flowing narrative prose. NO bullet points
+   in this section. Each paragraph focuses on a coherent area. Weave
+   specific accomplishments into a story about why they matter. Every
+   praise statement must be tied to a specific accomplishment with names
+   and numbers.
 
    ${args.hasResearchEvaluation ? `**RESEARCH-PARAGRAPH STRUCTURE (mandatory ordering — mirrors Hari Sridhar's P&T pattern):**
 
@@ -193,29 +219,28 @@ REQUIRED STRUCTURE:
 
    For Teaching and Service paragraphs (after the research paragraphs above for research faculty, or as the primary content for APT faculty), do NOT just list courses and committees. READ the recipient's self-evaluation narrative carefully and EXPAND on the points they themselves emphasize. Pull in specific student-comment themes, course-development efforts, mentoring stories, and service-leadership episodes. Quote or paraphrase the recipient's own framing of their year where it adds color. The goal is a letter the recipient reads and thinks "they actually read what I wrote."
 
-7. **My Observations and Our Discussion** (bold heading): 2-3 paragraphs.
+7. **My Observations and Our Discussion** (output the heading wrapped in
+   double asterisks as shown): 2-3 paragraphs.
    - Paragraph 1: personal observations about their performance, drawn HEAVILY from the writer's notes below.
    - Paragraph 2: growth area, framed constructively as a natural next step.
    - Paragraph 3 (optional): additional nuance or context.
 
-8. **Your Plan for the Upcoming Year** (bold heading):
+8. **Your Plan for the Upcoming Year** (output the heading wrapped in
+   double asterisks as shown):
    - Opening sentence connecting their goals to the institutional moment.
    - 3-5 bullet points of specific goals from the self-evaluation and writer's notes.
    - Closing sentence affirming confidence.
 
-9. **Summary** (bold heading): 2-3 sentences using their first name. State per-area ratings explicitly:
-   "My evaluation of your performance is as follows: Teaching: ${args.teachingRating || 'N/A'}; ${args.hasResearchEvaluation ? `Research and Publication: ${args.researchRating || 'N/A'}; ` : ''}Service: ${args.serviceRating || 'N/A'}. Overall, my evaluation is that you have demonstrated ${args.overallRating || 'N/A'} performance."
-   Then: "Please return a signed copy of this annual performance review for our personnel files. Thank you."
+DO NOT include a "Summary" section or any rating language at the end. The
+formal Summary paragraph (with the per-area ratings and the signature
+block) will be APPENDED separately after the writer reviews this body and
+assigns ratings. Stop after the closing sentence of section 8.
 
-10. SIGNATURE BLOCK: a line of underscores, then "Signature" left-aligned and "Date" right-aligned.
-
-TONE CALIBRATION (per the overall rating and per-area ratings):
-- Excellent: expansive, celebratory; "this was a year that set a new standard."
-- Effective: warm and substantive; "a strong and productive year, you met the expectations for your role and in several areas exceeded them."
-- Needs Improvement: direct but constructive; specific about what needs to change; growth areas are clear priorities.
-- Unsatisfactory: extra care; honest but respectful; growth areas are requirements.
-
-When ratings differ across areas, the letter must reflect both realities. Do not let praise in one area dilute the directness needed in another.
+TONE: write a balanced, evidence-based body. Be warm where the evidence
+supports it and direct where the recipient needs to hear something hard.
+Do NOT presuppose any particular rating outcome — let the facts and
+observations stand on their own. The growth-area paragraph should be
+framed constructively as a natural next step.
 
 ${args.hasResearchEvaluation ? '' : 'CRITICAL: This is an APT / lecturer category. Do NOT include any research evaluation. Do NOT reference the absence of research negatively. Per Mays Guidelines Section 6.2, lack of research activity must NOT be viewed as a negative factor.'}
 
@@ -230,6 +255,46 @@ WRITER'S PERSONAL OBSERVATIONS AND NOTES (these MUST appear naturally in the "My
 ${args.writerNotes || '(none provided)'}`;
 
   return { cachedReference, role, user };
+}
+
+/* ==========================================================================
+ * Append Summary — runs AFTER the writer reviews the body and assigns ratings
+ * ========================================================================== */
+
+export type AppendSummaryArgs = {
+  recipientFirstName: string;
+  hasResearchEvaluation: boolean;
+  teachingRating: string;
+  researchRating?: string;
+  serviceRating?: string;
+  overallRating: string;
+};
+
+/**
+ * Build the formal Summary section that gets appended to the letter body
+ * once the writer has assigned ratings. This is deterministic — no LLM call
+ * required — because the language is canonical per Mays Guidelines.
+ */
+export function buildSummarySection(args: AppendSummaryArgs): string {
+  const ratingLine = args.hasResearchEvaluation
+    ? `Teaching: ${args.teachingRating}; Research and Publication: ${args.researchRating || 'N/A'}; Service: ${args.serviceRating || 'N/A'}`
+    : `Teaching: ${args.teachingRating}; Service: ${args.serviceRating || 'N/A'}`;
+
+  // Lead sentence varies by overall rating — short and authentic.
+  const lead: Record<string, string> = {
+    Excellent: `${args.recipientFirstName}, this was an excellent year, and your contributions have been outstanding across the dimensions described above.`,
+    Effective: `${args.recipientFirstName}, you had a productive year, and your contributions across the dimensions described above met the expectations of your role.`,
+    'Needs Improvement': `${args.recipientFirstName}, there are areas described above where your performance fell below expectations, and we will need to see clear improvement in the coming year.`,
+    Unsatisfactory: `${args.recipientFirstName}, your performance this year fell below the expectations of your role in the areas described above. We will work together on a written improvement plan in the near term.`,
+  };
+
+  const leadSentence = lead[args.overallRating] || `${args.recipientFirstName}, here is the formal summary of my evaluation.`;
+
+  return `**Summary**
+
+${leadSentence} My evaluation of your performance is as follows: ${ratingLine}. Overall, my evaluation is that you have demonstrated ${args.overallRating} performance.
+
+Please return a signed copy of this annual performance review for our personnel files. Thank you.`;
 }
 
 /* ==========================================================================

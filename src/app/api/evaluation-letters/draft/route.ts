@@ -1,8 +1,17 @@
-import { DEFAULT_MODEL, getClient, isApiKeyConfigured, buildCachedSystem } from '@/lib/evaluation-letters/claude';
+import {
+  DEFAULT_MODEL,
+  getClient,
+  isApiKeyConfigured,
+  buildCachedSystem,
+} from '@/lib/evaluation-letters/claude';
 import { writingPrompt } from '@/lib/evaluation-letters/prompts';
-import { loadLetterSkill, loadPeerComments, loadStyleBundle } from '@/lib/evaluation-letters/letter-skills';
+import {
+  loadLetterSkill,
+  loadPeerComments,
+  loadStyleBundle,
+} from '@/lib/evaluation-letters/letter-skills';
 import { getRoleCategory } from '@/lib/evaluation-letters/role-categories';
-import { getWriter } from '@/lib/evaluation-letters/writers';
+import { fromBlockLines, getWriter } from '@/lib/evaluation-letters/writers';
 import { placeholderNotice, requireAuth } from '@/lib/evaluation-letters/api-helpers';
 
 export const runtime = 'nodejs';
@@ -16,10 +25,6 @@ type Body = {
     recipientTitle: string;
     recipientDepartment: string;
     roleCategoryId: string;
-    teachingRating?: string;
-    researchRating?: string;
-    serviceRating?: string;
-    overallRating?: string;
   };
   researchBrief: string;
   writerNotes: string;
@@ -57,10 +62,13 @@ export async function POST(req: Request) {
     return new Response('Failed to load letter skill.', { status: 500 });
   }
 
+  const writerFromLines = fromBlockLines(writer);
+
   const args = {
     writerName: writer.name,
     writerTitle: writer.title,
     writerFirstName: writer.firstName,
+    writerFromLines,
     recipientName: body.setup.recipientName,
     recipientFirstName: firstNameOf(body.setup.recipientName),
     recipientTitle: body.setup.recipientTitle,
@@ -71,10 +79,6 @@ export async function POST(req: Request) {
     patternsAnalysis: skill.patternsAnalysis,
     styleBundle,
     peerComments,
-    teachingRating: body.setup.teachingRating,
-    researchRating: body.setup.researchRating,
-    serviceRating: body.setup.serviceRating,
-    overallRating: body.setup.overallRating,
     hasResearchEvaluation: hasResearch,
     researchBrief: body.researchBrief,
     writerNotes: body.writerNotes || '',
@@ -82,19 +86,18 @@ export async function POST(req: Request) {
 
   const { cachedReference, role: instruction, user } = writingPrompt(args);
 
-  // Streaming response — text chunks back to the browser.
   const encoder = new TextEncoder();
 
   if (!isApiKeyConfigured()) {
+    const fromLines = writerFromLines.map((l, i) => (i === 0 ? l : `        ${l}`)).join('\n');
     const placeholderLetter = `${placeholderNotice('Draft')}
 May ${args.evaluationYear + 1}
 
 MEMORANDUM
 
-TO: ${args.recipientName}
-    ${args.recipientTitle}
-FROM: ${args.writerName}
-      ${args.writerTitle}
+TO:     ${args.recipientName}
+        ${args.recipientTitle}
+FROM:   ${fromLines}
 SUBJECT: ${args.evaluationYear} Performance Evaluation
 
 Dear ${args.recipientFirstName},
@@ -103,7 +106,7 @@ Thank you for your Professional Activity Report covering January 1 to December 3
 
 **Summary of Major Accomplishments**
 
-(With a real ANTHROPIC_API_KEY, Claude would draft 3-5 paragraphs of flowing narrative here, citing specific publications, courses, and service contributions from the research brief.)
+(With a real ANTHROPIC_API_KEY, Claude would draft 4-6 paragraphs of flowing narrative here, citing specific publications, courses, and service contributions from the research brief.)
 
 **My Observations and Our Discussion**
 
@@ -112,24 +115,13 @@ Thank you for your Professional Activity Report covering January 1 to December 3
 **Your Plan for the Upcoming Year**
 
 - (Goals from the self-evaluation and your notes would be listed.)
-
-**Summary**
-
-${args.recipientFirstName}, my evaluation of your performance is as follows: Teaching: ${args.teachingRating || 'N/A'}; ${hasResearch ? `Research and Publication: ${args.researchRating || 'N/A'}; ` : ''}Service: ${args.serviceRating || 'N/A'}. Overall, my evaluation is that you have demonstrated ${args.overallRating || 'N/A'} performance.
-
-Please return a signed copy of this annual performance review for our personnel files. Thank you.
-
-______________________________________________________________________
-Signature                                                         Date
 `;
 
     const stream = new ReadableStream({
       async start(controller) {
-        // Simulate a streaming response so the UI exercises the streaming path.
         const chunks = placeholderLetter.match(/.{1,40}/gs) || [placeholderLetter];
         for (const c of chunks) {
           controller.enqueue(encoder.encode(c));
-          // Tiny delay
           await new Promise((r) => setTimeout(r, 12));
         }
         controller.close();

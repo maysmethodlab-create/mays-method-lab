@@ -5,7 +5,8 @@ import mammoth from 'mammoth';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
-const DIR = path.join(ROOT, 'apps', 'Annual Evaluation Letters', 'Template Letters');
+const APP_DIR = path.join(ROOT, 'apps', 'Annual Evaluation Letters');
+const DIR = path.join(APP_DIR, 'Template Letters');
 const FILES = [
   'Annual review comments of associate profs.docx',
   'Annual review comments junior clinicals and lecturers.docx',

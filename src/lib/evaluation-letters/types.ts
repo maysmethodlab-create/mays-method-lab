@@ -8,6 +8,7 @@ export type SetupData = {
   /** Optional in Step 1 — auto-detected from uploads in Step 2 if blank. */
   recipientTitle: string;
   recipientDepartment: string;
+  recipientEmail?: string;
   roleCategoryId: string;
   /** Per-area ratings (research may be undefined if not applicable) */
   teachingRating?: Rating;

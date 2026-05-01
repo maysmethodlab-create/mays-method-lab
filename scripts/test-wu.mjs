@@ -4,10 +4,11 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
+const APP_DIR = path.join(ROOT, 'apps', 'Annual Evaluation Letters');
 const BASE = process.env.BASE_URL || 'http://localhost:3000';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'mml-dev-2026';
-const OUT = path.join(ROOT, 'test-output', 'wu-v3');
-const TEMPLATE_DIR = path.join(ROOT, 'apps', 'Annual Evaluation Letters', 'Template Letters');
+const OUT = path.join(APP_DIR, 'test-output', 'wu-v3');
+const TEMPLATE_DIR = path.join(APP_DIR, 'Template Letters');
 
 fs.mkdirSync(OUT, { recursive: true });
 

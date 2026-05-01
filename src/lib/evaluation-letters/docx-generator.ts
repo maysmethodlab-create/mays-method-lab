@@ -160,12 +160,25 @@ function signatureBlock(): Paragraph[] {
  *  - Underscore lines → signature block (consume the rest)
  *  - Otherwise → body
  */
+/**
+ * Canonical section headings used in evaluation letters. If the AI emits
+ * one of these as a plain line (no asterisks), we still render it bold.
+ */
+const KNOWN_SUBHEADINGS = new Set([
+  'summary of major accomplishments',
+  'my observations and our discussion',
+  'your plan for the upcoming year',
+  'summary',
+  'memorandum',
+]);
+
+function isKnownSubheading(line: string): boolean {
+  return KNOWN_SUBHEADINGS.has(line.toLowerCase().trim());
+}
+
 function paragraphsFromLetterText(letter: string): Paragraph[] {
   const out: Paragraph[] = [];
   const lines = letter.replace(/\r\n/g, '\n').split('\n');
-
-  let inBulletBlock = false;
-  let signatureRendered = false;
 
   for (let i = 0; i < lines.length; i += 1) {
     const raw = lines[i];
@@ -174,7 +187,6 @@ function paragraphsFromLetterText(letter: string): Paragraph[] {
 
     // Skip signature block — we render our own at the end.
     if (/^_{10,}$/.test(trimmed)) {
-      // Skip following "Signature  Date" lines
       while (i + 1 < lines.length) {
         const peek = lines[i + 1].trim();
         if (
@@ -187,25 +199,21 @@ function paragraphsFromLetterText(letter: string): Paragraph[] {
           break;
         }
       }
-      signatureRendered = false; // we'll add our own
       continue;
     }
 
-    if (trimmed === '') {
-      inBulletBlock = false;
-      continue;
-    }
+    if (trimmed === '') continue;
 
-    // Stripped markdown bold around the whole line → heading.
+    // Markdown-bolded line → heading.
     const stripped = trimmed.replace(/^\*\*(.+)\*\*$/, '$1');
     if (stripped !== trimmed && stripped.length < 80) {
       out.push(headingParagraph(stripped));
       continue;
     }
 
-    // MEMORANDUM line
-    if (trimmed === 'MEMORANDUM') {
-      out.push(headingParagraph('MEMORANDUM'));
+    // Plain known-section heading → also render as bold heading.
+    if (isKnownSubheading(trimmed)) {
+      out.push(headingParagraph(trimmed));
       continue;
     }
 
@@ -219,19 +227,15 @@ function paragraphsFromLetterText(letter: string): Paragraph[] {
     if (/^([-*•]|\d+[.)])\s+/.test(trimmed)) {
       const text = trimmed.replace(/^([-*•]|\d+[.)])\s+/, '');
       out.push(bulletParagraph(text));
-      inBulletBlock = true;
       continue;
     }
 
     // Otherwise body paragraph
-    inBulletBlock = false;
     out.push(bodyParagraph(trimmed));
   }
 
   // Always render our own clean signature block at the end.
-  if (!signatureRendered) {
-    out.push(...signatureBlock());
-  }
+  out.push(...signatureBlock());
 
   return out;
 }

@@ -10,6 +10,7 @@ export const maxDuration = 90;
 type Body = {
   writerId: string;
   recipientName: string;
+  recipientEmail?: string;
   letterText: string;
 };
 
@@ -34,9 +35,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Unknown writer.' }, { status: 400 });
   }
 
+  const toLine = body.recipientEmail
+    ? `To: ${body.recipientName} <${body.recipientEmail}>`
+    : `To: ${body.recipientName}`;
+
   if (!isApiKeyConfigured()) {
     return NextResponse.json({
       email: `${placeholderNotice('Email')}
+${toLine}
 Subject: Annual Performance Review
 
 Dear ${firstNameOf(body.recipientName)},
@@ -69,9 +75,14 @@ ${writer.firstName}
       system,
       messages: [{ role: 'user', content: user }],
     });
-    const email = response.content
+    let email = response.content
       .map((b) => (b.type === 'text' ? b.text : ''))
       .join('');
+    // Make sure the To: line is present at the top so the user can paste
+    // straight into Outlook / Gmail.
+    if (!/^To:/im.test(email)) {
+      email = `${toLine}\n${email}`;
+    }
     return NextResponse.json({ email });
   } catch (e) {
     return NextResponse.json(

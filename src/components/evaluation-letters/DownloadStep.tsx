@@ -25,6 +25,7 @@ export default function DownloadStep({ setup, draft, onBack, onStartOver }: Prop
         body: JSON.stringify({
           writerId: setup.writerId,
           recipientName: setup.recipientName,
+          recipientEmail: setup.recipientEmail || '',
           letterText: draft.text,
         }),
       });

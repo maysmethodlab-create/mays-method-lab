@@ -50,9 +50,11 @@ desktop.ini
 # Playwright/test artifacts
 /.playwright-mcp/
 /test-results/
-/test-output/
 phase-*.png
 page-*.png
+
+# All app-level test output stays inside the app folder, never at the root.
+apps/*/test-output/
 
 # Claude scheduler internals
 /.claude/scheduled_tasks.lock

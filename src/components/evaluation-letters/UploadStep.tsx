@@ -2,12 +2,8 @@
 
 import { useRef, useState } from 'react';
 import type { SetupData, UploadedFile } from '@/lib/evaluation-letters/types';
-import {
-  ROLE_CATEGORIES,
-  RATING_LEVELS,
-  getRoleCategory,
-  type Rating,
-} from '@/lib/evaluation-letters/role-categories';
+import { ROLE_CATEGORIES, getRoleCategory } from '@/lib/evaluation-letters/role-categories';
+import FacultyPicker from './FacultyPicker';
 
 const MAX_BYTES = 10 * 1024 * 1024;
 
@@ -33,8 +29,6 @@ export default function UploadStep({
   onContinue,
 }: Props) {
   const [busy, setBusy] = useState(false);
-  const [identifying, setIdentifying] = useState(false);
-  const [identifySource, setIdentifySource] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [drag, setDrag] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -78,56 +72,12 @@ export default function UploadStep({
       }
       const allFiles = [...files, ...accepted];
       onFilesChange(allFiles);
-      if (accepted.length > 0) {
-        await runIdentify(allFiles);
-      }
+      // Recipient is set via the FacultyPicker — no need to auto-identify here.
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Network error.');
     } finally {
       setBusy(false);
       if (inputRef.current) inputRef.current.value = '';
-    }
-  }
-
-  async function runIdentify(allFiles: UploadedFile[]) {
-    setIdentifying(true);
-    try {
-      const sourceDocuments = allFiles
-        .map((f) => `===== ${f.kind.toUpperCase()} — ${f.filename} =====\n${f.text}`)
-        .join('\n\n');
-      const res = await fetch('/api/evaluation-letters/identify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sourceDocuments }),
-      });
-      if (!res.ok) return;
-      const data = await res.json();
-      setIdentifySource(data.source || null);
-
-      // Apply detected values, only overwriting blanks (do not clobber edits).
-      const next = { ...setup };
-      let changed = false;
-      if (data.name && !next.recipientName) {
-        next.recipientName = data.name;
-        changed = true;
-      }
-      if (data.title && !next.recipientTitle) {
-        next.recipientTitle = data.title;
-        changed = true;
-      }
-      if (data.department && !next.recipientDepartment) {
-        next.recipientDepartment = data.department;
-        changed = true;
-      }
-      if (data.roleCategoryId && !next.roleCategoryId) {
-        next.roleCategoryId = data.roleCategoryId;
-        changed = true;
-      }
-      if (changed) onSetupChange(next);
-    } catch {
-      /* identify is best-effort */
-    } finally {
-      setIdentifying(false);
     }
   }
 
@@ -147,23 +97,98 @@ export default function UploadStep({
   }
 
   const role = getRoleCategory(setup.roleCategoryId);
-  const showResearch = role?.required.includes('research') || role?.optional.includes('research');
-  const showService = role?.required.includes('service') || role?.optional.includes('service');
-  const showTeaching = role?.required.includes('teaching') || role?.optional.includes('teaching');
-
   const recipientReady =
     setup.recipientName.trim().length > 0 && setup.recipientTitle.trim().length > 0 && Boolean(role);
-  const ratingsReady = Boolean(setup.overallRating);
-  const canContinue = files.length > 0 && recipientReady && ratingsReady;
+  const canContinue = files.length > 0 && recipientReady;
 
   return (
     <div className="space-y-6">
+      {/* 1. PICK THE RECIPIENT FROM THE FACULTY ROSTER */}
+      <section className="card space-y-4">
+        <div className="eyebrow text-[11px]">Recipient</div>
+        <FacultyPicker
+          value={setup.recipientName}
+          onPick={(entry) => {
+            onSetupChange({
+              ...setup,
+              recipientName: entry.name,
+              recipientTitle: entry.title || '',
+              recipientDepartment: entry.department,
+              recipientEmail: entry.email || '',
+              roleCategoryId: entry.roleCategoryHint || setup.roleCategoryId,
+            });
+          }}
+        />
+        {setup.recipientName ? (
+          <div className="border border-line rounded-card p-4 bg-white space-y-3">
+            <div className="text-xs uppercase tracking-[0.18em] text-status-success font-semibold">
+              ✓ Selected
+            </div>
+            <div>
+              <div className="text-base font-bold text-ink-primary">{setup.recipientName}</div>
+              <div className="text-sm text-ink-secondary">{setup.recipientTitle}</div>
+              <div className="text-sm text-ink-muted">{setup.recipientDepartment}</div>
+              {setup.recipientEmail ? (
+                <div className="text-xs text-ink-muted mt-1">{setup.recipientEmail}</div>
+              ) : null}
+            </div>
+            <details className="text-xs text-ink-muted">
+              <summary className="cursor-pointer hover:text-ink-secondary">
+                Edit name / title / department / role category
+              </summary>
+              <div className="grid sm:grid-cols-2 gap-3 mt-3">
+                <InlineField
+                  label="Recipient name"
+                  value={setup.recipientName}
+                  onChange={(v) => onSetupChange({ ...setup, recipientName: v })}
+                />
+                <InlineField
+                  label="Recipient title"
+                  value={setup.recipientTitle}
+                  onChange={(v) => onSetupChange({ ...setup, recipientTitle: v })}
+                />
+                <InlineField
+                  label="Department"
+                  value={setup.recipientDepartment}
+                  onChange={(v) => onSetupChange({ ...setup, recipientDepartment: v })}
+                />
+                <InlineField
+                  label="Email"
+                  value={setup.recipientEmail || ''}
+                  onChange={(v) => onSetupChange({ ...setup, recipientEmail: v })}
+                />
+                <label className="block sm:col-span-2">
+                  <div className="label">Role category</div>
+                  <select
+                    className="input"
+                    value={setup.roleCategoryId}
+                    onChange={(e) =>
+                      onSetupChange({ ...setup, roleCategoryId: e.target.value })
+                    }
+                  >
+                    <option value="">— Select —</option>
+                    {ROLE_CATEGORIES.map((r) => (
+                      <option key={r.id} value={r.id}>{r.label}</option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            </details>
+            {role?.warning ? (
+              <div className="text-xs text-status-warning border border-status-warning/40 bg-status-warning/5 rounded p-2">
+                {role.warning}
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+      </section>
+
       <section className="card space-y-4">
         <div className="eyebrow text-[11px]">Documents</div>
         <p className="text-sm text-ink-secondary leading-relaxed">
           Upload the recipient&apos;s self-evaluation (Faculty 180 / annual report) and CV.
-          We&apos;ll auto-detect their name, title, department, and role category from the
-          documents. Accepted formats: .docx, .pdf, .txt, .md (10MB max each).
+          The AI reads these to write the letter body. Accepted formats: .docx, .pdf, .txt, .md
+          (10MB max each).
         </p>
 
         <div
@@ -240,112 +265,6 @@ export default function UploadStep({
         ) : null}
       </section>
 
-      {/* Auto-identified recipient */}
-      {files.length > 0 ? (
-        <section className="card space-y-4">
-          <div className="flex items-center justify-between gap-4 flex-wrap">
-            <div className="eyebrow text-[11px]">Recipient (auto-detected)</div>
-            <div className="flex items-center gap-3">
-              {identifying ? (
-                <span className="text-[11px] text-ink-muted">Identifying…</span>
-              ) : identifySource ? (
-                <span className="text-[11px] text-ink-muted">Source: {identifySource}</span>
-              ) : null}
-              <button
-                type="button"
-                onClick={() => runIdentify(files)}
-                disabled={identifying || files.length === 0}
-                className="text-xs uppercase tracking-[0.15em] font-semibold text-maroon hover:text-maroon-deep transition-colors"
-              >
-                {identifySource ? 'Re-detect' : 'Detect now'}
-              </button>
-            </div>
-          </div>
-          <p className="text-sm text-ink-secondary leading-relaxed">
-            Edit anything wrong before continuing. The letter uses exactly what you confirm here.
-          </p>
-          <div className="grid sm:grid-cols-2 gap-4">
-            <InlineField
-              label="Recipient name"
-              value={setup.recipientName}
-              onChange={(v) => onSetupChange({ ...setup, recipientName: v })}
-              placeholder="e.g., Jane Smith, Ph.D."
-            />
-            <InlineField
-              label="Recipient title"
-              value={setup.recipientTitle}
-              onChange={(v) => onSetupChange({ ...setup, recipientTitle: v })}
-              placeholder="e.g., Associate Professor of Marketing"
-            />
-            <InlineField
-              label="Department"
-              value={setup.recipientDepartment}
-              onChange={(v) => onSetupChange({ ...setup, recipientDepartment: v })}
-            />
-            <label className="block">
-              <div className="label">Role category</div>
-              <select
-                className="input"
-                value={setup.roleCategoryId}
-                onChange={(e) => onSetupChange({ ...setup, roleCategoryId: e.target.value })}
-              >
-                <option value="">— Select —</option>
-                {ROLE_CATEGORIES.map((r) => (
-                  <option key={r.id} value={r.id}>{r.label}</option>
-                ))}
-              </select>
-            </label>
-          </div>
-          {role?.warning ? (
-            <div className="text-xs text-status-warning border border-status-warning/40 bg-status-warning/5 rounded-md px-3 py-2">
-              {role.warning}
-            </div>
-          ) : null}
-        </section>
-      ) : null}
-
-      {/* Ratings — only after we know the role category */}
-      {role ? (
-        <section className="card space-y-4">
-          <div className="eyebrow text-[11px]">
-            Performance Ratings (Mays Guidelines §6.4)
-          </div>
-          <p className="text-sm text-ink-secondary">
-            Excellent · Effective · Needs Improvement · Unsatisfactory.
-          </p>
-          <div className="grid sm:grid-cols-2 gap-4">
-            {showTeaching ? (
-              <RatingField
-                label="Teaching"
-                value={setup.teachingRating}
-                onChange={(v) => onSetupChange({ ...setup, teachingRating: v })}
-              />
-            ) : null}
-            {showResearch ? (
-              <RatingField
-                label="Research and Publication"
-                value={setup.researchRating}
-                onChange={(v) => onSetupChange({ ...setup, researchRating: v })}
-                optional={role.optional.includes('research')}
-              />
-            ) : null}
-            {showService ? (
-              <RatingField
-                label="Service"
-                value={setup.serviceRating}
-                onChange={(v) => onSetupChange({ ...setup, serviceRating: v })}
-              />
-            ) : null}
-            <RatingField
-              label="Overall"
-              value={setup.overallRating}
-              onChange={(v) => onSetupChange({ ...setup, overallRating: v })}
-              required
-            />
-          </div>
-        </section>
-      ) : null}
-
       <section className="card space-y-3">
         <div className="eyebrow text-[11px]">Your Observations and Notes</div>
         <p className="text-sm text-ink-secondary leading-relaxed">
@@ -363,8 +282,7 @@ export default function UploadStep({
 
       {!canContinue && files.length > 0 ? (
         <div className="text-xs text-status-warning border border-status-warning/40 bg-status-warning/5 rounded-md px-3 py-2">
-          Before continuing, confirm the recipient&apos;s name, title, role category, and the
-          overall rating.
+          Before continuing, confirm the recipient&apos;s name, title, and role category above.
         </div>
       ) : null}
 
@@ -409,40 +327,3 @@ function InlineField({
   );
 }
 
-function RatingField({
-  label,
-  value,
-  onChange,
-  required,
-  optional,
-}: {
-  label: string;
-  value: Rating | undefined;
-  onChange: (v: Rating | undefined) => void;
-  required?: boolean;
-  optional?: boolean;
-}) {
-  return (
-    <label className="block">
-      <div className="label">
-        {label}
-        {required ? ' *' : ''}
-        {optional ? (
-          <span className="text-ink-muted normal-case tracking-normal text-[11px] ml-2 font-normal">
-            (optional)
-          </span>
-        ) : null}
-      </div>
-      <select
-        className="input"
-        value={value || ''}
-        onChange={(e) => onChange((e.target.value as Rating) || undefined)}
-      >
-        <option value="">— Select —</option>
-        {RATING_LEVELS.map((r) => (
-          <option key={r} value={r}>{r}</option>
-        ))}
-      </select>
-    </label>
-  );
-}

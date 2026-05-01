@@ -193,7 +193,7 @@ export async function loadPeerComments(): Promise<string> {
   // mammoth path used at upload time. For now we point at the .txt cache
   // produced by scripts/read-peer-comments.mjs if it exists, falling back to
   // mammoth via dynamic import.
-  const txtPath = path.join(process.cwd(), 'test-output', 'peer-comments-extract.txt');
+  const txtPath = path.join(ROOT, 'test-output', 'peer-comments-extract.txt');
   const fromTxt = await readMaybe(txtPath);
   if (fromTxt) return fromTxt;
 
