@@ -17,6 +17,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
+        {/* Top maroon ribbon — matches mays.tamu.edu pattern */}
+        <div className="brand-ribbon">
+          <a href="https://www.tamu.edu" target="_blank" rel="noreferrer">
+            Texas A&amp;M University
+          </a>
+          <span className="mx-2 opacity-50">·</span>
+          <a href="https://mays.tamu.edu" target="_blank" rel="noreferrer">
+            Mays Business School
+          </a>
+        </div>
         <Header />
         <main>{children}</main>
         <Footer />
