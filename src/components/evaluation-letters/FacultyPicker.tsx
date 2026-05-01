@@ -2,34 +2,46 @@
 
 import { useMemo, useState } from 'react';
 import {
+  deptSlugForWriterId,
   evaluableFacultyByDepartment,
   type FacultyEntry,
 } from '@/lib/evaluation-letters/faculty-roster';
 
 type Props = {
   value: string; // current recipient name
+  /** Writer (department head) id — used to scope the dropdown to that dept by default */
+  writerId?: string;
   onPick: (entry: FacultyEntry & { departmentSlug: string }) => void;
 };
 
 /**
  * Searchable combobox over the 215 evaluable Mays faculty across the 5
- * academic departments. Pick once and the parent fills in name, title,
- * department, role-category, and email.
+ * academic departments. By default scoped to the writer's own department
+ * (since a department head normally only writes letters for their own
+ * faculty); a "Show other departments" toggle reveals the rest.
  */
-export default function FacultyPicker({ value, onPick }: Props) {
-  const groups = useMemo(() => evaluableFacultyByDepartment(), []);
-  const totalCount = useMemo(
-    () => groups.reduce((n, g) => n + g.faculty.length, 0),
-    [groups],
+export default function FacultyPicker({ value, writerId, onPick }: Props) {
+  const allGroups = useMemo(() => evaluableFacultyByDepartment(), []);
+  const writerDeptSlug = useMemo(() => deptSlugForWriterId(writerId), [writerId]);
+  const writerDept = useMemo(
+    () => (writerDeptSlug ? allGroups.find((g) => g.departmentSlug === writerDeptSlug) : null),
+    [allGroups, writerDeptSlug],
   );
 
   const [filter, setFilter] = useState('');
   const [open, setOpen] = useState(false);
+  const [showAll, setShowAll] = useState(false);
+
+  // Default scope: writer's department only (if known). Toggle expands to all.
+  const scoped = useMemo(() => {
+    if (!writerDept || showAll) return allGroups;
+    return [writerDept];
+  }, [allGroups, writerDept, showAll]);
 
   const filtered = useMemo(() => {
     const q = filter.trim().toLowerCase();
-    if (!q) return groups;
-    return groups
+    if (!q) return scoped;
+    return scoped
       .map((g) => ({
         ...g,
         faculty: g.faculty.filter(
@@ -40,9 +52,10 @@ export default function FacultyPicker({ value, onPick }: Props) {
         ),
       }))
       .filter((g) => g.faculty.length > 0);
-  }, [groups, filter]);
+  }, [scoped, filter]);
 
   const matchCount = filtered.reduce((n, g) => n + g.faculty.length, 0);
+  const scopedCount = scoped.reduce((n, g) => n + g.faculty.length, 0);
 
   function handlePick(entry: FacultyEntry, departmentSlug: string) {
     onPick({ ...entry, departmentSlug });
@@ -50,14 +63,18 @@ export default function FacultyPicker({ value, onPick }: Props) {
     setFilter('');
   }
 
+  const scopeLabel = writerDept && !showAll
+    ? `${scopedCount} faculty in ${writerDept.departmentName}`
+    : `${scopedCount} faculty across the 5 academic departments at Mays`;
+
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
           <div className="label">Faculty</div>
           <div className="text-[11px] text-ink-muted">
-            {totalCount} faculty across the 5 academic departments at Mays. Pick once and we
-            fill in name, title, department, role category, and email.
+            {scopeLabel}. Pick once and we fill in name, title, department, role category,
+            and email.
           </div>
         </div>
         {value ? (
@@ -73,16 +90,30 @@ export default function FacultyPicker({ value, onPick }: Props) {
 
       {!value || open ? (
         <div className="border border-line rounded-card p-3 bg-bg-subtle">
-          <input
-            type="text"
-            autoFocus
-            placeholder="Type a name, title, or email…"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="input mb-3"
-          />
+          <div className="flex items-center gap-2 mb-3">
+            <input
+              type="text"
+              autoFocus
+              placeholder="Type a name, title, or email…"
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+              className="input flex-1"
+            />
+            {writerDept ? (
+              <button
+                type="button"
+                onClick={() => setShowAll((v) => !v)}
+                className="text-[11px] uppercase tracking-[0.15em] font-semibold text-maroon hover:text-maroon-deep transition-colors whitespace-nowrap px-3 py-2 border border-maroon rounded"
+              >
+                {showAll ? 'Show only my dept' : 'Show all departments'}
+              </button>
+            ) : null}
+          </div>
           <div className="text-[11px] text-ink-muted mb-2">
             {matchCount} match{matchCount === 1 ? '' : 'es'}
+            {writerDept && !showAll
+              ? ` (filtered to ${writerDept.departmentName})`
+              : ''}
           </div>
           <div className="max-h-[360px] overflow-y-auto space-y-3 pr-1">
             {filtered.map((g) => (
@@ -111,8 +142,21 @@ export default function FacultyPicker({ value, onPick }: Props) {
             ))}
             {matchCount === 0 ? (
               <div className="text-sm text-ink-muted px-2 py-6 text-center">
-                No faculty match &quot;{filter}&quot;. The recipient might still be in the
-                directory under a slightly different name &mdash; try a partial match.
+                No faculty match &quot;{filter}&quot;
+                {writerDept && !showAll ? ` in ${writerDept.departmentName}` : ''}.
+                {writerDept && !showAll ? (
+                  <>
+                    {' '}
+                    <button
+                      type="button"
+                      onClick={() => setShowAll(true)}
+                      className="text-maroon font-semibold underline"
+                    >
+                      Search all departments
+                    </button>
+                    .
+                  </>
+                ) : null}
               </div>
             ) : null}
           </div>

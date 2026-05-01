@@ -70,9 +70,19 @@ export const DEPT_SLUG_TO_WRITER_ID: Record<string, string> = {
   management: 'boswell',
 };
 
+/** Inverse of DEPT_SLUG_TO_WRITER_ID. */
+export const WRITER_ID_TO_DEPT_SLUG: Record<string, string> = Object.fromEntries(
+  Object.entries(DEPT_SLUG_TO_WRITER_ID).map(([slug, wid]) => [wid, slug]),
+);
+
 export function writerIdForDeptSlug(slug: string | null | undefined): string | null {
   if (!slug) return null;
   return DEPT_SLUG_TO_WRITER_ID[slug] || null;
+}
+
+export function deptSlugForWriterId(writerId: string | null | undefined): string | null {
+  if (!writerId) return null;
+  return WRITER_ID_TO_DEPT_SLUG[writerId] || null;
 }
 
 /** Faculty grouped by department, filtered to evaluable academic faculty only. */
