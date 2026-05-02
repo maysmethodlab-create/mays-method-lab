@@ -21,4 +21,12 @@ export const ADMIN_TOOLS: ToolCardProps[] = [
     status: 'live',
     category: 'Endowed Positions',
   },
+  {
+    title: 'Mays Faculty Guidelines Chatbot [Beta]',
+    description:
+      "Consult the October 2025 guidelines before drafting an eval letter, recommendation memo, or response to the dean's office. Ask any question; the chatbot quotes the relevant passage with section and page citations. Same source as the faculty-side chatbot, framed for administrative use.",
+    href: '/apps/faculty-guidelines',
+    status: 'live',
+    category: 'Faculty Reference',
+  },
 ];
