@@ -88,7 +88,7 @@ export const WRITERS: Writer[] = [
     letterheadImage: 'info.jpg',
     styleOverrides: {
       fromBlockMaxLines: 3,
-      useSectionHeadings: true,
+      useSectionHeadings: false,
       targetWords: { min: 450, max: 770 },
       salutationStyle: 'none',
       aacsbPlacement: 'discrete',
