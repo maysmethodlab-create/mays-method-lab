@@ -62,16 +62,12 @@ export const EDITORIAL_STORIES: EditorialStory[] = [
   {
     publishedAt: '2026-05-02',
     role: 'faculty',
-    eyebrow: 'Faculty story this week',
-    headline: 'Twelve papers, four minutes, every theme tagged.',
+    eyebrow: 'Coming soon: Mays Faculty Guidelines Chatbot',
+    headline: 'Ask the guidelines. Get the exact passage with citations.',
     blurb:
-      'A research-heavy associate professor dropped twelve PDFs into NotebookLM and asked it to map themes across the set. The AI did not write the lit review. It got her to the part where she could.',
-    cta: 'Open NotebookLM',
-    href: '/tools#notebooklm',
-    prompt: {
-      text: promptTextFor('literature-review-summary'),
-      caption: DEFAULT_PROMPT_CAPTION,
-    },
+      'A new Lab app in development. Type any question about promotion, evaluation, AACSB criteria, leave, or anything else in the October 2025 guidelines. The chatbot quotes the relevant section verbatim with section and page citations. For questions that need a human ruling on your specific case, one click takes you to the senior associate dean.',
+    cta: 'Tell Hari what you would ask',
+    href: 'mailto:ssridhar@mays.tamu.edu?subject=Faculty%20Guidelines%20Chatbot%20%E2%80%94%20input',
   },
   {
     publishedAt: '2026-04-25',
@@ -88,16 +84,12 @@ export const EDITORIAL_STORIES: EditorialStory[] = [
   {
     publishedAt: '2026-05-02',
     role: 'staff',
-    eyebrow: 'Staff story this week',
-    headline: 'Three bullets in. A polished update out.',
+    eyebrow: 'Coming soon: Academic Calendar Chatbot',
+    headline: 'Ask the TAMU academic calendar. Get the exact date.',
     blurb:
-      'A program coordinator pasted three rough bullets into TAMU AI Chat and got back a clean program announcement. She would have spent twenty minutes drafting it from scratch. The whole loop took under a minute.',
-    cta: 'Try the prompt',
-    href: '/prompts/announcement-writer',
-    prompt: {
-      text: promptTextFor('announcement-writer'),
-      caption: DEFAULT_PROMPT_CAPTION,
-    },
+      'A new Lab app in preview. Type any question about registration windows, drop deadlines, finals, breaks, or graduation. The chatbot returns the specific date with a citation back to the registrar. Live this week as a preview, with the polished version following.',
+    cta: 'Tell Hari what you would ask',
+    href: 'mailto:ssridhar@mays.tamu.edu?subject=Academic%20Calendar%20Chatbot%20%E2%80%94%20input',
   },
   {
     publishedAt: '2026-04-25',

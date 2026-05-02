@@ -168,7 +168,7 @@ const PROMPT_RECRUITER_OUTREACH: LearningItem = {
 const APP_REC_LETTER_HELPER: LearningItem = {
   title: 'Recommendation Letter Helper',
   description:
-    "A polished student recommendation letter from a CV, the role they're applying for, and three short anecdotes. Built by the Lab. Live this weekend.",
+    "A polished student recommendation letter from a CV, the role they're applying for, and three short anecdotes. Built by the Lab. Coming later this term.",
   href: '#',
   comingSoon: true,
   meta: 'Lab app',
@@ -178,11 +178,38 @@ const APP_REC_LETTER_HELPER: LearningItem = {
 const APP_AWARD_NOMINATION: LearningItem = {
   title: 'Award Nomination Drafter',
   description:
-    "A polished award nomination letter for staff or faculty. Pick the award, paste the nominee's record, the app maps it onto the award's criteria. Live next week.",
+    "A polished award nomination letter for staff or faculty. Pick the award, paste the nominee's record, the app maps it onto the award's criteria. Coming later this term.",
   href: '#',
   comingSoon: true,
   meta: 'Lab app',
   buckets: ['writing', 'programs', 'faculty-support'],
+};
+
+/* The featured Stage 2B chatbot apps. The Faculty Guidelines version is
+   in design (a strict quoting service grounded in the October 2025
+   guidelines, with the personal-applicability template baked in — the
+   v3 spec). The Academic Calendar version ships first as a preview
+   since it grounds in public registrar data and has a smaller blast
+   radius. */
+
+const APP_FACULTY_GUIDELINES_CHATBOT: LearningItem = {
+  title: 'Mays Faculty Guidelines Chatbot',
+  description:
+    'Ask any question about promotion, evaluation, AACSB criteria, leave, or any other topic in the October 2025 guidelines. The chatbot quotes the relevant passage verbatim with section and page citations, and points you to the senior associate dean for any question about your specific case. In design.',
+  href: '#',
+  comingSoon: true,
+  meta: 'Lab app',
+  buckets: ['research', 'teaching', 'writing', 'faculty-support'],
+};
+
+const APP_ACADEMIC_CALENDAR_CHATBOT: LearningItem = {
+  title: 'Academic Calendar Chatbot',
+  description:
+    'Ask any question about registration windows, drop deadlines, finals weeks, breaks, or graduation. The chatbot returns the specific date with a citation back to the TAMU registrar. Preview this week.',
+  href: '#',
+  comingSoon: true,
+  meta: 'Lab app',
+  buckets: ['programs', 'faculty-support', 'advising'],
 };
 
 /* =============================================================
@@ -247,7 +274,7 @@ const FACULTY_SECTIONS: LearningSection[] = [
     title: 'Ready-to-use apps',
     blurb:
       'Lab-built apps for the work that comes up every semester. Open the app, paste your inputs, get a reviewable draft.',
-    items: [APP_REC_LETTER_HELPER, APP_AWARD_NOMINATION],
+    items: [APP_FACULTY_GUIDELINES_CHATBOT, APP_REC_LETTER_HELPER, APP_AWARD_NOMINATION],
   },
   {
     id: 'prompts',
@@ -277,7 +304,7 @@ const STAFF_SECTIONS: LearningSection[] = [
     title: 'Ready-to-use apps',
     blurb:
       'Lab-built apps for the work coordinators and staff run every week. Open the app, paste your inputs, get a reviewable draft.',
-    items: [APP_REC_LETTER_HELPER, APP_AWARD_NOMINATION],
+    items: [APP_ACADEMIC_CALENDAR_CHATBOT, APP_AWARD_NOMINATION, APP_REC_LETTER_HELPER],
   },
   {
     id: 'prompts',
