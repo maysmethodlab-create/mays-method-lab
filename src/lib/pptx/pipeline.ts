@@ -347,6 +347,22 @@ CHECKS:
 6. Tables that don't fit into the layout get flagged with "designerNote": "Table omitted; see source deck p. X".
 7. Strip any em dashes, en dashes, or AI cheerleader words ("delve", "leverage", "transformative", "robust", "dive into", "embark", "navigate the landscape", etc.).
 
+HEADLINE / BULLET DEDUPLICATION (mandatory):
+The first bullet must NOT restate or paraphrase the headline. Bullets should ADD substance beyond the headline, not echo it.
+
+If you find a bullet that restates the headline (semantic overlap > 70%), DROP that bullet. Add a different supporting point if you have one in the source content; otherwise leave the slide with N-1 bullets.
+
+Example:
+BAD:
+  Headline: "Warmth is the primary driver"
+  Bullet 1: "Warmth is the key driver"
+  Bullet 2: "Outcomes vary by audience"
+
+GOOD:
+  Headline: "Warmth is the primary driver"
+  Bullet 1: "Effect strongest in high-stakes contexts (beta = 0.42)"
+  Bullet 2: "Outcomes vary by audience"
+
 OUTPUT:
 - Output ONLY valid JSON, the same BrandedDeckPlan shape, with "reviewed": true.
 - Renumber "index" sequentially after any inserts.
