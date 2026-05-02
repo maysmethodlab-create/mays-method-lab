@@ -7,11 +7,14 @@ export const metadata = {
     'Deeper reading on AI for the Mays community. Courses, guides, and reading lists.',
 };
 
+type ResourceCategory = 'Lab-built' | 'TAMU institutional' | 'External';
+
 type Resource = {
   title: string;
   blurb: string;
   href: string;
   audience: string;
+  category: ResourceCategory;
   external: boolean;
   comingSoon?: boolean;
 };
@@ -19,39 +22,76 @@ type Resource = {
 const RESOURCES: Resource[] = [
   {
     title: 'Mays AI quick-start guide',
-    blurb: 'A concise tour of the AI tools available at Mays and which workflows to try first.',
-    href: 'https://maysai.vercel.app/guide',
+    blurb:
+      'A four-step quick-start. Pick the supported chat tools first, try a ready-made prompt, test one repeatable workflow, build bigger only after the manual version works.',
+    href: '/your-ai-edge/start',
     audience: 'Faculty, staff',
+    category: 'Lab-built',
+    external: false,
+  },
+  {
+    title: 'Pick the right tool',
+    blurb:
+      'Compare the eight TAMU-approved AI tools. Use-this-when guidance for faculty and staff work.',
+    href: '/your-ai-edge/pick-a-tool',
+    audience: 'Faculty, staff',
+    category: 'Lab-built',
+    external: false,
+  },
+  {
+    title: 'Mays AI Series (FlexOnline)',
+    blurb:
+      'Lab-built short courses on practical AI for Mays faculty and staff. First course launches fall 2026.',
+    href: '#',
+    audience: 'Faculty, staff',
+    category: 'Lab-built',
+    external: false,
+    comingSoon: true,
+  },
+  {
+    title: 'Anthropic Academy',
+    blurb:
+      'Free courses from Anthropic on prompt engineering, building with Claude, and AI safety. Beginner to advanced.',
+    href: 'https://www.anthropic.com/learn',
+    audience: 'Faculty, staff',
+    category: 'External',
+    external: true,
+  },
+  {
+    title: 'DeepLearning.AI short courses',
+    blurb:
+      "Andrew Ng's short courses on building with LLMs. Most are free, taught with the major AI labs.",
+    href: 'https://www.deeplearning.ai/short-courses/',
+    audience: 'Faculty, staff',
+    category: 'External',
+    external: true,
+  },
+  {
+    title: 'Anthropic Cookbook',
+    blurb:
+      'Working code examples for builders. Tool use, RAG, agents, evaluations, and prompt patterns.',
+    href: 'https://github.com/anthropics/anthropic-cookbook',
+    audience: 'Technical staff, faculty',
+    category: 'External',
     external: true,
   },
   {
     title: 'Student AI tool guide',
-    blurb: 'A practical guide for choosing between TAMU AI Chat, Gemini, NotebookLM, and Codex.',
-    href: 'https://maysai.vercel.app/resources/student-ai-tools',
+    blurb:
+      'Practical guidance for students choosing between TAMU AI Chat, Gemini, NotebookLM, and Codex.',
+    href: '#',
     audience: 'Students',
-    external: true,
-  },
-  {
-    title: 'Anthropic Academy',
-    blurb: 'Free courses from Anthropic on prompt engineering, agent design, and Claude in production.',
-    href: 'https://www.anthropic.com/learn',
-    audience: 'Faculty, staff',
-    external: true,
-    comingSoon: true,
-  },
-  {
-    title: 'DeepLearning.AI short courses',
-    blurb: 'Two-hour courses from DeepLearning.AI on RAG, agents, and prompt engineering for non-engineers.',
-    href: 'https://www.deeplearning.ai/short-courses/',
-    audience: 'Faculty, staff',
-    external: true,
+    category: 'Lab-built',
+    external: false,
     comingSoon: true,
   },
   {
     title: 'Mays AI reading list',
-    blurb: 'A curated set of papers and essays the Lab returns to. Updated quarterly.',
+    blurb:
+      'A curated set of papers and essays the Lab returns to. Updated quarterly with the work that holds up.',
     href: '#',
     audience: 'Faculty',
+    category: 'Lab-built',
     external: false,
     comingSoon: true,
   },
@@ -114,11 +154,19 @@ export default function ResourcesPage() {
   );
 }
 
+function CategoryChip({ category }: { category: ResourceCategory }) {
+  return (
+    <span className="text-[10px] tracking-[0.05em] uppercase px-2 py-1 font-semibold border border-line text-maroon-muted bg-bg-subtle">
+      {category}
+    </span>
+  );
+}
+
 function ResourceTile({ resource }: { resource: Resource }) {
   if (resource.comingSoon) {
     return (
       <div className="relative bg-white border-2 border-dashed border-maroon-muted/50 p-7 md:p-8 h-full flex flex-col text-ink-secondary">
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-3 gap-2">
           <span className="eyebrow text-[11px]">{resource.audience}</span>
           <span className="text-[10px] tracking-[0.05em] uppercase px-2 py-1 font-semibold border border-line bg-bg-subtle">
             Coming soon
@@ -127,17 +175,31 @@ function ResourceTile({ resource }: { resource: Resource }) {
         <h3 className="font-headline text-[20px] font-semibold text-maroon mb-3 leading-tight">
           {resource.title}
         </h3>
-        <p className="text-[15px] text-ink-secondary leading-relaxed flex-1">
+        <p className="text-[15px] text-ink-secondary leading-relaxed flex-1 mb-4">
           {resource.blurb}
         </p>
+        <div className="mt-auto pt-3 border-t border-line">
+          <CategoryChip category={resource.category} />
+        </div>
       </div>
     );
   }
 
   const inner = (
     <>
-      <span className="absolute top-4 right-4 text-maroon" aria-hidden="true">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square">
+      <span
+        className="absolute top-4 right-4 text-maroon"
+        aria-hidden="true"
+      >
+        <svg
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="square"
+        >
           <line x1="6" y1="18" x2="18" y2="6" />
           <polyline points="9,6 18,6 18,15" />
         </svg>
@@ -146,9 +208,12 @@ function ResourceTile({ resource }: { resource: Resource }) {
       <h3 className="font-headline text-[20px] font-semibold text-maroon mb-3 leading-tight pr-8">
         {resource.title}
       </h3>
-      <p className="text-[15px] text-ink-secondary leading-relaxed flex-1">
+      <p className="text-[15px] text-ink-secondary leading-relaxed flex-1 mb-4">
         {resource.blurb}
       </p>
+      <div className="mt-auto pt-3 border-t border-line">
+        <CategoryChip category={resource.category} />
+      </div>
     </>
   );
   if (resource.external) {

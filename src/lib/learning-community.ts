@@ -230,7 +230,7 @@ const LEARN_STEP_3: LearningItem = {
 const LEARN_STEP_4: LearningItem = {
   title: 'Take a course',
   description:
-    'Three options. Mays AI Series on FlexOnline, Lab-built. Anthropic Academy, free and external. DeepLearning.AI Short Courses, two-hour formats.',
+    'Four real options. Mays AI Series on FlexOnline, Lab-built. Anthropic Academy on prompt engineering and Claude. DeepLearning.AI short courses with the major AI labs. Anthropic Cookbook for builders.',
   href: '/resources',
   meta: 'Step 4 · Go deeper',
   buckets: ['learning-ai'],
