@@ -114,7 +114,12 @@ export const WRITERS: Writer[] = [
     styleOverrides: {
       fromBlockMaxLines: 3,
       useSectionHeadings: false,
-      targetWords: { min: 450, max: 700 },
+      // Length policy (per Hari, 2026-05-02): historical Rich letters
+      // run 450-700 words but faculty appreciate somewhat longer
+      // letters. Widened to 350-900 — floor down so genuinely thin
+      // briefs (e.g., Berberian, 360-word historical) still pass, max
+      // up so the AI can write a fuller letter when source supports it.
+      targetWords: { min: 350, max: 900 },
       salutationStyle: 'none',
       // Rich does not include AACSB material in short lecturer letters.
       // For Becker (clinical) the omit branch is acceptable too — Rich's
@@ -145,7 +150,10 @@ export const WRITERS: Writer[] = [
     styleOverrides: {
       fromBlockMaxLines: 2,
       useSectionHeadings: false,
-      targetWords: { min: 550, max: 800 },
+      // Length policy (per Hari, 2026-05-02): widened from historical
+      // 550-800 to 550-1000. Faculty appreciate slightly longer letters
+      // when the source supports it.
+      targetWords: { min: 550, max: 1000 },
       salutationStyle: 'none',
       // Sean's default APT placement is discrete (Lecturer + Practice
       // both use a standalone AACSB paragraph). Clinical diverges: he
@@ -251,7 +259,11 @@ export const WRITERS: Writer[] = [
       useSectionHeadings: false,
       // Panina is ~460 words, McFarland ~425 words. Range 350-550 keeps
       // the letter tight without forcing an artificial floor.
-      targetWords: { min: 350, max: 550 },
+      // Length policy (per Hari, 2026-05-02): widened from historical
+      // 350-550 to 350-750. Wendy's APT-Clinical letters are short by
+      // pattern; ceiling lift gives the AI room when the source has
+      // more substance.
+      targetWords: { min: 350, max: 750 },
       // Memo skips "Dear X," and goes straight from SUBJECT to body.
       salutationStyle: 'none',
       // Wendy does NOT include AACSB material at all in her APT letters.
