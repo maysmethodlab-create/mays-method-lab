@@ -18,8 +18,9 @@ import {
   sectionsForRole,
 } from '@/lib/learning-community';
 import { currentStoryFor } from '@/lib/editorial-stories';
-import { PROMPTS } from '@/lib/prompts';
+import { PROMPTS, promptBySlug } from '@/lib/prompts';
 import type { Prompt } from '@/lib/prompts';
+import PromptSideSheet from '@/components/PromptSideSheet';
 
 const ROLE_COOKIE = 'mml.role.preference';
 
@@ -60,6 +61,9 @@ export default function LearningCommunityClient({
   const [role, setRole] = useState<LearningRole>(initialRole);
   const [bucket, setBucket] = useState<LearningBucket | null>(null);
   const [query, setQuery] = useState<string>('');
+  const [openPromptSlug, setOpenPromptSlug] = useState<string | null>(null);
+
+  const openPrompt = openPromptSlug ? promptBySlug(openPromptSlug) ?? null : null;
 
   // On mount, read the cookie. If it disagrees with SSR, switch.
   useEffect(() => {
@@ -132,10 +136,20 @@ export default function LearningCommunityClient({
                 section.id === 'prompts' ? contributedPrompts : []
               }
               isFirst={idx === 0}
+              onOpenPrompt={setOpenPromptSlug}
             />
           ))}
         </div>
       )}
+
+      {/* Inline side-sheet for prompts — clicking a prompt tile opens the
+          full prompt text right here without leaving Your AI Edge. */}
+      <PromptSideSheet
+        prompt={openPrompt}
+        open={openPromptSlug !== null}
+        onClose={() => setOpenPromptSlug(null)}
+        onOpenSlug={setOpenPromptSlug}
+      />
 
       {/* Throughputs strip — two CTAs. Hidden during search. */}
       {!isSearching && (
@@ -387,10 +401,12 @@ function SectionBlock({
   section,
   contributedPrompts: _contributedPrompts,
   isFirst,
+  onOpenPrompt,
 }: {
   section: LearningSection;
   contributedPrompts: ContributedPrompt[];
   isFirst: boolean;
+  onOpenPrompt: (slug: string) => void;
 }) {
   // Learn AI renders as a 4-tile + course-tile layout, not a card grid.
   if (section.id === 'learn-ai') {
@@ -401,7 +417,7 @@ function SectionBlock({
   // Contribute CTAs. The persona-flavored Recently Contributed row was
   // removed in favor of a denser, more rhythmic prompts surface.
   if (section.id === 'prompts') {
-    return <PromptsSection section={section} isFirst={isFirst} />;
+    return <PromptsSection section={section} isFirst={isFirst} onOpenPrompt={onOpenPrompt} />;
   }
 
   const layout = pickLayout(section.id, section.items.length);
@@ -528,13 +544,14 @@ const MAYS_AI_PROGRAM_URL =
 function PromptsSection({
   section,
   isFirst,
+  onOpenPrompt,
 }: {
   section: LearningSection;
   isFirst: boolean;
+  onOpenPrompt: (slug: string) => void;
 }) {
-  // Show all 9 prompts directly from the prompt library, regardless of
-  // the curated section.items list. The tile grid is meant to read as a
-  // dense, rhythmic catalog, not a curated subset.
+  // Show all 9 prompts directly from the prompt library. Click any tile
+  // to open that prompt's side-sheet inline (no page navigation).
   const tiles = PROMPTS;
 
   return (
@@ -550,22 +567,27 @@ function PromptsSection({
         {section.blurb}
       </p>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-0 border-2 border-maroon">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-0 dotted-frame">
         {tiles.map((p, i) => (
-          <PromptTile key={p.slug} prompt={p} index={i} />
+          <PromptTile
+            key={p.slug}
+            prompt={p}
+            index={i}
+            onOpen={onOpenPrompt}
+          />
         ))}
       </div>
 
       <div className="grid md:grid-cols-2 gap-0 mt-8">
         <Link
           href="/prompts"
-          className="text-center bg-white border-2 border-maroon text-maroon font-headline text-[18px] py-5 hover:bg-maroon/5 transition-colors"
+          className="text-center bg-white dotted-frame text-maroon font-headline text-[18px] py-6 hover:bg-maroon/5 transition-colors"
         >
           Browse all prompts &rarr;
         </Link>
         <Link
           href="/your-ai-edge/contribute-prompt"
-          className="text-center bg-maroon text-white font-headline text-[18px] py-5 hover:bg-maroon-deep transition-colors"
+          className="text-center bg-maroon text-white font-headline text-[18px] py-6 hover:bg-maroon-deep transition-colors"
         >
           Contribute a prompt &rarr;
         </Link>
@@ -574,7 +596,15 @@ function PromptsSection({
   );
 }
 
-function PromptTile({ prompt, index }: { prompt: Prompt; index: number }) {
+function PromptTile({
+  prompt,
+  index,
+  onOpen,
+}: {
+  prompt: Prompt;
+  index: number;
+  onOpen: (slug: string) => void;
+}) {
   // Checkerboard alternation: index % 2 toggles bg + text colors.
   const isMaroon = index % 2 === 1;
   const tileBg = isMaroon ? 'bg-maroon' : 'bg-white';
@@ -584,9 +614,10 @@ function PromptTile({ prompt, index }: { prompt: Prompt; index: number }) {
   const tileLink = isMaroon ? 'text-white' : 'text-maroon';
 
   return (
-    <Link
-      href={`/prompts#${prompt.slug}`}
-      className={`${tileBg} p-7 md:p-8 flex flex-col h-full transition-opacity hover:opacity-90`}
+    <button
+      type="button"
+      onClick={() => onOpen(prompt.slug)}
+      className={`${tileBg} p-7 md:p-8 flex flex-col h-full text-left transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-maroon/30`}
     >
       <div
         className={`text-[10px] uppercase tracking-[0.18em] font-semibold ${tileEyebrow} mb-3`}
@@ -606,7 +637,7 @@ function PromptTile({ prompt, index }: { prompt: Prompt; index: number }) {
       >
         Open prompt &rarr;
       </span>
-    </Link>
+    </button>
   );
 }
 
@@ -627,6 +658,12 @@ const LEARN_TILES: Array<{
     href: '/your-ai-edge/start',
   },
   {
+    title: 'Compare AI tools',
+    body: 'TAMU AI Chat, Microsoft Copilot, Gemini, NotebookLM. A side-by-side decision tree.',
+    cta: 'Compare the tools',
+    href: '/your-ai-edge/pick-a-tool',
+  },
+  {
     title: 'Write better prompts',
     body: 'Three principles plus a paste-ready prompt library. Most of the win is the rewrite, not the model.',
     cta: 'Browse prompts',
@@ -639,10 +676,10 @@ const LEARN_TILES: Array<{
     href: '/agents',
   },
   {
-    title: 'Take an AI course',
-    body: 'Mays AI in Business courses plus the best external short courses we recommend.',
-    cta: 'See the courses',
-    href: '#mays-ai-courses',
+    title: 'Catch up on AI in business',
+    body: 'External courses, reading lists, and curated AI updates from the Lab.',
+    cta: 'Open resources',
+    href: '/resources',
   },
 ];
 
@@ -689,8 +726,8 @@ function LearnSection({
         {section.blurb}
       </p>
 
-      {/* Four horizontal tiles. */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+      {/* Five horizontal tiles. */}
+      <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-4 mb-10">
         {LEARN_TILES.map((tile) => (
           <LearnTile key={tile.title} tile={tile} />
         ))}
@@ -709,7 +746,7 @@ function LearnSection({
               href={MAYS_AI_PROGRAM_URL}
               target="_blank"
               rel="noreferrer"
-              className="aspect-square bg-white border-2 border-maroon p-4 flex flex-col hover:bg-maroon/5 transition-colors"
+              className="aspect-square bg-white dotted-frame p-5 flex flex-col hover:bg-maroon/5 transition-colors"
             >
               <h4 className="font-headline text-[14px] md:text-[15px] font-semibold text-maroon leading-tight mb-2">
                 {course.title}
@@ -755,7 +792,7 @@ function LearnTile({
     </>
   );
   const className =
-    'bg-white border-2 border-maroon p-6 md:p-7 h-full flex flex-col hover:bg-maroon/5 transition-colors';
+    'bg-white dotted-frame p-7 md:p-8 h-full flex flex-col hover:bg-maroon/5 transition-colors';
   if (isAnchor) {
     return (
       <a href={tile.href} className={className}>
