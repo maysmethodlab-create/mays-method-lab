@@ -18,16 +18,15 @@ export default function LearningCommunityPage() {
     stored === 'staff' || stored === 'faculty' ? stored : 'faculty';
 
   return (
-    <section className="section pt-16">
+    <section className="section pt-10">
       <ScrollReveal>
-        <div className="dotted-frame bg-bg-subtle py-12 px-8 md:px-12 mb-10">
-          <div className="eyebrow-lg mb-3">AI Learning Community</div>
-          <h1 className="mb-4 max-w-3xl">
+        <div className="dotted-frame bg-bg-subtle py-8 px-8 md:px-12 mb-8">
+          <div className="eyebrow-lg mb-2">AI Learning Community</div>
+          <h1 className="mb-3 max-w-3xl">
             Practical AI for the Mays community. Mapped to the work you actually do.
           </h1>
-          <p className="text-[18px] text-ink-secondary leading-relaxed max-w-3xl">
-            Pick your role. Pick a bucket. Open one tool, copy one prompt, or build one tutorial. Every
-            link below is a real, TAMU-approved resource you can use today.
+          <p className="text-[16px] text-ink-secondary leading-relaxed max-w-3xl">
+            Pick your role. Pick a bucket. Open one tool, copy one prompt, or build one tutorial.
           </p>
         </div>
       </ScrollReveal>

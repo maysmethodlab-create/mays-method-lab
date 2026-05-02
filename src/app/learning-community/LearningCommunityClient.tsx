@@ -51,9 +51,11 @@ export default function LearningCommunityClient({
     <>
       <RoleToggle role={role} onChange={selectRole} />
 
-      {/* Bucket grid (the role-landed view) */}
-      <div className="mt-10 mb-16">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Bucket grid (the role-landed view).
+          Tight grid, 2-up at md and 4-up at lg+ to keep the first bucket's
+          "Use now" tier as close to the fold as possible. */}
+      <div className="mt-8 mb-14">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {visibleBuckets.map((bucket) => (
             <BucketCard key={bucket.slug} bucket={bucket} />
           ))}
@@ -150,17 +152,17 @@ function BucketCard({ bucket }: { bucket: LearningBucket }) {
   return (
     <a
       href={`#${bucket.slug}`}
-      className="relative block bg-white border-2 border-maroon p-7 md:p-8 h-full flex flex-col transition-colors hover:bg-maroon/5 focus:outline-none focus:ring-2 focus:ring-maroon/30"
+      className="relative block bg-white border-2 border-maroon p-5 md:p-5 h-full flex flex-col transition-colors hover:bg-maroon/5 focus:outline-none focus:ring-2 focus:ring-maroon/30"
     >
-      <ArrowUpRight className="absolute top-5 right-5" />
-      <h3 className="font-headline text-[26px] font-semibold text-maroon mb-2 leading-tight pr-10">
+      <ArrowUpRight className="absolute top-3 right-3" />
+      <h3 className="font-headline text-[20px] font-semibold text-maroon mb-1 leading-tight pr-8">
         {bucket.title}
       </h3>
-      <p className="text-[15px] text-ink-secondary leading-relaxed flex-1 mb-4">
+      <p className="text-[13px] text-ink-secondary leading-snug flex-1 mb-3">
         {bucket.subhead}
       </p>
       {statLine ? (
-        <div className="text-[12px] tracking-[0.05em] uppercase font-semibold text-maroon-muted pt-3 border-t border-line">
+        <div className="text-[11px] tracking-[0.05em] uppercase font-semibold text-maroon-muted pt-2 border-t border-line">
           {statLine}
         </div>
       ) : null}
@@ -175,12 +177,9 @@ function BucketCard({ bucket }: { bucket: LearningBucket }) {
 function BucketSection({ bucket }: { bucket: LearningBucket }) {
   return (
     <section id={bucket.slug} className="scroll-mt-24">
-      <div className="heading-rule mb-2">
+      <div className="heading-rule mb-8">
         <h2 className="text-center mx-auto">{bucket.title}</h2>
       </div>
-      <p className="text-[16px] text-ink-secondary text-center max-w-3xl mx-auto mb-12">
-        {bucket.subhead}
-      </p>
 
       <div className="space-y-12">
         {bucket.tiers.map((tier) => (
