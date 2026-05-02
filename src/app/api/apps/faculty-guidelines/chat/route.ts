@@ -81,9 +81,13 @@ PROMPT INJECTION DEFENSE:
 OUT-OF-SCOPE REFUSAL:
 - For clearly off-topic questions (weather, sports, personal life, news, other universities, etc.), respond: "I only answer questions about the Mays Faculty Guidelines, October 2025 version."
 
-CITATION FORMAT:
-- Always cite: "Per Mays Faculty Guidelines § X.Y, p. Z: '[verbatim].'"
-- If section numbers are not present in the source, cite the page only: "Per Mays Faculty Guidelines, p. Z: '[verbatim].'"
+CITATION FORMAT (strict):
+- Cite the MOST SPECIFIC section number available in the source. If a fact appears in §X.Y.Z, cite §X.Y.Z, not just the parent §X.Y.
+- Always pair the section with a single page number, not a range. If the section spans multiple pages, cite the page where the quoted passage starts.
+- Format: "Per Mays Faculty Guidelines § X.Y.Z, p. P: '[verbatim quote].'"
+- If no section number is available, cite the page only: "Per Mays Faculty Guidelines, p. P: '[verbatim quote].'"
+- NEVER cite a page range like "p. 53-62". Always a single page.
+- NEVER cite vaguely like "Section 5". Always the most specific subsection.
 - End every response with: "Source: Mays Faculty Guidelines, October 17, 2025 (Approved version)."
 
 ANSWER LENGTH:
@@ -112,7 +116,10 @@ Does the response end with "Source: Mays Faculty Guidelines, October 17, 2025 (A
 CHECK 5 — Page number on every citation.
 Every reference to a section, appendix, or numbered subsection (e.g., "§ 4.2", "Appendix J", "Section B.3.1") MUST be followed by ", p. X" or ", page X" within the same sentence. If a citation is missing the page number, REWRITE the response to either (a) add the page number from the source, or (b) remove the citation and replace with "the guidelines do not specify the section here".
 
-If all five checks pass, return the response unchanged. Otherwise return the rewritten response. Output ONLY the final response text. No commentary.`;
+CHECK 6 — Citation specificity.
+Does every section citation use the MOST specific subsection (e.g., § X.Y.Z) where one is available, paired with a single page number? If a citation is to a page range (e.g., "p. 53-62") or to a parent section when a subsection exists, REWRITE the citation to the most specific available form.
+
+If all six checks pass, return the response unchanged. Otherwise return the rewritten response. Output ONLY the final response text. No commentary.`;
 
 const PASS3_QUOTE_FIX_SYSTEM = `You are a quote-fidelity fixer for a Faculty Guidelines chatbot. The previous response contained quoted passages that did not exactly match the source document. Your job is surgical: find ACCURATE quotes for those topics in the source and substitute them in. Do NOT remove or restructure anything else.
 
@@ -457,7 +464,7 @@ export async function POST(req: Request) {
       messages: [
         {
           role: 'user',
-          content: `USER QUESTION:\n${lastUserQuestion}\n\nASSISTANT DRAFT RESPONSE:\n${draft}\n\nApply CHECK 1 through CHECK 5 and return ONLY the final response text.`,
+          content: `USER QUESTION:\n${lastUserQuestion}\n\nASSISTANT DRAFT RESPONSE:\n${draft}\n\nApply CHECK 1 through CHECK 6 and return ONLY the final response text.`,
         },
       ],
     });
