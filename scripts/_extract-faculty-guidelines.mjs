@@ -132,6 +132,16 @@ async function main() {
 
   fs.writeFileSync(OUTPUT_PATH, cleaned, 'utf8');
 
+  // Also copy the canonical PDF into data/sources so the gated download
+  // route can serve it. This keeps the binary out of the Git tree (the
+  // directory is gitignored) and out of the public/ tree (which would be
+  // unauthenticated).
+  if (fs.existsSync(PDF_PATH)) {
+    const pdfDest = path.join(OUTPUT_DIR, 'mays-faculty-guidelines.pdf');
+    fs.copyFileSync(PDF_PATH, pdfDest);
+    console.log(`PDF copy    : ${pdfDest}`);
+  }
+
   console.log('---');
   console.log(`Source used : ${chosenSource}`);
   console.log(`Pages       : ${pages || 'n/a'}`);
