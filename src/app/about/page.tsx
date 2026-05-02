@@ -1,5 +1,5 @@
-import ScrollReveal from '@/components/ScrollReveal';
-import AboutNav from '@/components/AboutNav';
+import ScrollReveal from '../../components/ScrollReveal';
+import AboutNav from '../../components/AboutNav';
 
 export const metadata = {
   title: 'About — Mays Method Lab',
