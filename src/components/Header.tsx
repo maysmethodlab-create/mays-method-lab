@@ -21,7 +21,10 @@ export default function Header() {
             <div className="text-[11px] tracking-[0.05em] uppercase text-ink-secondary font-semibold group-hover:text-maroon transition-colors">
               Texas A&amp;M University
             </div>
-            <div className="text-xl md:text-[22px] text-ink-primary font-normal font-headline leading-[1.15]">
+            <div className="text-[11px] tracking-[0.05em] uppercase text-ink-secondary font-semibold group-hover:text-maroon transition-colors">
+              Mays Business School
+            </div>
+            <div className="text-xl md:text-[22px] text-ink-primary font-normal font-headline leading-[1.15] mt-0.5">
               Mays Method Lab
             </div>
           </div>
