@@ -2,9 +2,34 @@
 
 Use this as the resume point on a new computer. Updated 2026-05-01.
 
-## Top of the queue
+## Top of the queue (in priority order)
 
-1. **APT (non-tenure-track) letter quality pass.**
+1. **🐛 Faculty dropdown not showing in Step 2.**
+   User reported in the last session: when going through the
+   evaluation-letter workflow, the faculty directory dropdown was empty
+   / not displaying any names. Something broke in recent changes.
+   Likely culprits to inspect first:
+   - `src/components/evaluation-letters/FacultyPicker.tsx` — the strict
+     scope change removed the "Show all departments" toggle and the
+     all-groups path. If `writerId` from setup isn't reaching the
+     picker correctly, `writerDept` will be `null` and the dropdown
+     renders an empty state instead of any faculty.
+   - `src/lib/evaluation-letters/faculty-roster.ts` — the dean
+     exclusion regex (`isEvaluableFaculty`) might over-filter. Run:
+     ```
+     node -e "const {evaluableFacultyByDepartment} = require('./src/lib/evaluation-letters/faculty-roster.ts'); /* ts file - use ts-node or compile */"
+     ```
+     Or check the roster JSON directly — should still show ~40 per
+     dept after dean exclusion.
+   - `src/components/evaluation-letters/UploadStep.tsx` — verify that
+     `setup.writerId` is being passed into `<FacultyPicker writerId={...} />`.
+   First action: open the browser, inspect the page in dev tools, see
+   if FacultyPicker rendered the empty-state warning ("Choose a writer
+   in the previous step first") or rendered nothing at all. The
+   browser console + the `evaluableFacultyByDepartment()` return value
+   tells you which side is broken.
+
+2. **APT (non-tenure-track) letter quality pass.**
    The pipeline currently treats APT faculty (lecturers, clinical, professor of
    practice) as a hidden case in the same Hari-style structure. Sean's actual
    letters for Hurta and Curtsinger lean teaching+service hard. Refine the
@@ -29,7 +54,7 @@ Use this as the resume point on a new computer. Updated 2026-05-01.
    walked Sean's letter. Generate, compare to ground truth, refine the
    APT-specific path of the writing prompt.
 
-2. **Rename "Admin Tools".**
+3. **Rename "Admin Tools".**
    The label "Admin Tools" reads bureaucratic and doesn't capture what's
    inside (an evaluation-letter writer; future apps for letters, grants,
    reviews). Brainstorm a better name and update:
@@ -43,13 +68,17 @@ Use this as the resume point on a new computer. Updated 2026-05-01.
    Tools" or "Workflows" reads cleanest. Keep the same routes
    (`/admin/...`) to avoid breaking saved links — only change the label.
 
-## Other open items
+4. **Mays Anthem YouTube hero.** Embed
+   https://www.youtube.com/watch?v=zfZBXZ9wl54 as a paused-by-default
+   YouTube background in `src/components/HeroSection.tsx` with a small
+   play/pause button overlay in the bottom-right corner. Use the
+   YouTube IFrame API (`enablejsapi=1`) and post `playVideo` /
+   `pauseVideo` messages to the iframe via
+   `iframe.contentWindow.postMessage(...)`. Iframe URL format:
+   `https://www.youtube.com/embed/zfZBXZ9wl54?autoplay=0&mute=1&loop=1&playlist=zfZBXZ9wl54&controls=0&modestbranding=1&playsinline=1&enablejsapi=1`.
+   Keep the white `.hero-card` floating over the bottom-left.
 
-- **Mays Anthem hero.** Embed
-  https://www.youtube.com/watch?v=zfZBXZ9wl54 as a paused-by-default
-  YouTube background in `HeroSection.tsx` with a play/pause button overlay.
-  Use the YouTube IFrame API (`enablejsapi=1`) and post `playVideo` /
-  `pauseVideo` messages to the iframe.
+## Other open items
 
 - **Per-department letterhead images.** Right now every writer uses the
   shared `mays-default.jpg` letterhead. Drop department-specific JPGs
