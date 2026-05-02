@@ -6,11 +6,11 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { templateFile } from './_template-files.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const APP_DIR = path.join(ROOT, 'apps', 'Annual Evaluation Letters');
-const TEMPLATE_DIR = path.join(APP_DIR, 'Template Letters');
 const OUT_DIR = path.join(APP_DIR, 'test-output', 'jamie-roleplay-wu');
 const BASE = 'http://localhost:3000';
 const ADMIN_PASSWORD = 'mml-dev-2026';
@@ -52,7 +52,7 @@ function authJson() { return { cookie: COOKIE, 'Content-Type': 'application/json
 async function extract() {
   const fd = new FormData();
   for (const fn of FILES) {
-    const buf = fs.readFileSync(path.join(TEMPLATE_DIR, fn));
+    const buf = fs.readFileSync(templateFile(fn));
     fd.append('files', new Blob([buf]), fn);
   }
   const r = await fetch(`${BASE}/api/evaluation-letters/extract`, {

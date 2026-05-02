@@ -205,7 +205,7 @@ export async function loadPeerComments(): Promise<string> {
   for (const fn of docxFiles) {
     try {
       const mammoth = (await import('mammoth')) as typeof import('mammoth');
-      const buf = await fs.readFile(path.join(TEMPLATE_DIR, fn));
+      const buf = await fs.readFile(path.join(TEMPLATE_DIR, '_bundles', fn));
       const r = await mammoth.extractRawText({ buffer: buf });
       out.push(`===== PEER COMMENTS: ${fn} =====\n${r.value}`);
     } catch {

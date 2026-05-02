@@ -6,11 +6,11 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { templateFile } from './_template-files.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const APP_DIR = path.join(ROOT, 'apps', 'Annual Evaluation Letters');
-const TEMPLATES = path.join(APP_DIR, 'Template Letters');
 const OUT = path.join(APP_DIR, 'test-output', 'rich-roleplay-agrawal');
 fs.mkdirSync(OUT, { recursive: true });
 
@@ -41,7 +41,7 @@ function detectKind(name) {
 async function extract(files) {
   const fd = new FormData();
   for (const f of files) {
-    const buf = fs.readFileSync(path.join(TEMPLATES, f));
+    const buf = fs.readFileSync(templateFile(f));
     fd.append('files', new Blob([buf]), f);
   }
   const r = await fetch(`${BASE}/api/evaluation-letters/extract`, {

@@ -198,6 +198,20 @@ h4 {
                  below provides text contrast, not an overlay tint. */
 }
 
+/* When .hero-video is a YouTube iframe, scale it to a 16:9 cover so the
+   embed always fills the hero with no letterboxing on either axis. */
+iframe.hero-video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, 177.78vh);
+  height: max(56.25vw, 100%);
+  transform: translate(-50%, -50%);
+  border: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
 .hero-fallback {
   position: absolute;
   inset: 0;
@@ -206,6 +220,35 @@ h4 {
     radial-gradient(ellipse at 80% 0%, rgba(80, 0, 0, 0.18), transparent 55%),
     radial-gradient(ellipse at 20% 100%, rgba(115, 47, 47, 0.35), transparent 60%),
     linear-gradient(180deg, #2a0000 0%, #500000 100%);
+}
+
+.hero-anthem-toggle {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #500000;
+  color: #FFFFFF;
+  font-family: 'Work Sans', Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  border: 0;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+.hero-anthem-toggle:hover { background: #732F2F; }
+.hero-anthem-toggle:focus-visible {
+  outline: 2px dotted #FFFFFF;
+  outline-offset: 4px;
+}
+@media (max-width: 768px) {
+  .hero-anthem-toggle { right: 16px; bottom: 16px; padding: 8px 12px; }
 }
 
 .hero-content-outer {
@@ -231,8 +274,8 @@ h4 {
 /* The white content card overlapping the bottom of the video — Mays signature. */
 .hero-card {
   background: #FFFFFF;
-  padding: 48px;
-  max-width: 760px;
+  padding: 56px 64px;
+  max-width: 880px;
   position: relative;
   /* The dotted white outline projects 16px outside the white card,
      mimicking mays.tamu.edu's hero__content. */
@@ -242,7 +285,7 @@ h4 {
 
 @media (max-width: 768px) {
   .hero-card {
-    padding: 28px 24px;
+    padding: 32px 28px;
   }
 }
 

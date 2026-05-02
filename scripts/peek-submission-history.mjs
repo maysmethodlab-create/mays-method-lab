@@ -1,17 +1,8 @@
 import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import { createRequire } from 'module';
+import { templateFile } from './_template-files.mjs';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const ROOT = path.resolve(__dirname, '..');
-const file = path.join(
-  ROOT,
-  'apps',
-  'Annual Evaluation Letters',
-  'Template Letters',
-  'Wu, Wei Submission History.pdf',
-);
+const file = templateFile('Wu, Wei Submission History.pdf');
 
 // pdf-parse is CJS; use createRequire so it works inside ESM.
 const require = createRequire(import.meta.url);

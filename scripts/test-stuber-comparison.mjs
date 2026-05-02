@@ -8,6 +8,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { templateFile } from './_template-files.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -16,7 +17,6 @@ const BASE = process.env.BASE_URL || 'http://localhost:3000';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'mml-dev-2026';
 
 const OUT_DIR = path.join(APP_DIR, 'test-output', 'sean-stuber-comparison-v2');
-const TEMPLATE_DIR = path.join(APP_DIR, 'Template Letters');
 
 const FILES = ['S Stuber CV 20250317 - For Annual Review.pdf'];
 
@@ -57,8 +57,7 @@ function authHeaders(json = false) {
 async function uploadAndExtract(filenames) {
   const fd = new FormData();
   for (const fn of filenames) {
-    const full = path.join(TEMPLATE_DIR, fn);
-    if (!fs.existsSync(full)) throw new Error(`Missing: ${full}`);
+    const full = templateFile(fn);
     const buf = fs.readFileSync(full);
     fd.append('files', new Blob([buf]), fn);
   }

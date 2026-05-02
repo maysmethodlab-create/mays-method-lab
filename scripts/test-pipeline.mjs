@@ -10,6 +10,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { templateFile } from './_template-files.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -20,7 +21,6 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'mml-dev-2026';
 // across all 50+ apps the platform will eventually host.
 const OUT_DIR = path.join(APP_DIR, 'test-output');
 
-const TEMPLATE_DIR = path.join(APP_DIR, 'Template Letters');
 
 /**
  * Test cases derived from filenames in Template Letters/. Each case names the
@@ -151,10 +151,7 @@ async function uploadAndExtract(filenames) {
   // Build multipart form-data manually
   const fd = new FormData();
   for (const fn of filenames) {
-    const full = path.join(TEMPLATE_DIR, fn);
-    if (!fs.existsSync(full)) {
-      throw new Error(`Missing test file: ${full}`);
-    }
+    const full = templateFile(fn);
     const buf = fs.readFileSync(full);
     fd.append('files', new Blob([buf]), fn);
   }

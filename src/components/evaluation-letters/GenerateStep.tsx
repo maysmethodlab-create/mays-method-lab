@@ -35,6 +35,10 @@ type Props = {
   onBriefChange: (b: ResearchBrief | null) => void;
   onDraftChange: (d: LetterDraft | null) => void;
   onVerificationChange: (v: VerificationResult | null) => void;
+  /** Fires once the final letter is ready (after Summary append) so the
+   *  parent can prefetch the accompanying email in the background while
+   *  the user is still on this step. */
+  onLetterFinalized?: (letterText: string) => void;
   onBack: () => void;
   onContinue: () => void;
 };
@@ -61,6 +65,7 @@ export default function GenerateStep({
   onBriefChange,
   onDraftChange,
   onVerificationChange,
+  onLetterFinalized,
   onBack,
   onContinue,
 }: Props) {
@@ -219,6 +224,9 @@ export default function GenerateStep({
       onDraftChange({ text: finalLetter, generatedAt: new Date().toISOString() });
       setStreamedDraft(finalLetter);
       setPhase('done');
+      // Kick off the accompanying-email prefetch so it's ready before the
+      // user clicks Continue to Download.
+      onLetterFinalized?.(finalLetter);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Network error.');
     }
@@ -410,7 +418,7 @@ export default function GenerateStep({
 
 function PhaseTracker({ phase }: { phase: Phase }) {
   const items = [
-    { key: 'research', label: '1 · Research' },
+    { key: 'research', label: '1 · Extract' },
     { key: 'draft', label: '2 · Draft' },
     { key: 'verify', label: '3 · Verify' },
     { key: 'rate', label: '4 · Rate' },

@@ -1,49 +1,62 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
-/**
- * Mays Method Lab hero — recreates mays.tamu.edu's `.hero--main` pattern.
- *
- * Layout: full-bleed video (or maroon gradient fallback) with a flat white
- * content card overlapping the bottom-left, wrapped in a 2px dotted white
- * outline projecting 16px outside the card. Inside the card: superhead
- * (uppercase Work Sans, maroon-muted), Oswald maroon H1 sentence-case,
- * Work Sans 18px gray subhead, primary maroon CTA.
- */
+const YT_VIDEO_ID = 'zfZBXZ9wl54';
+const YT_EMBED_SRC = `https://www.youtube.com/embed/${YT_VIDEO_ID}?autoplay=1&mute=1&loop=1&playlist=${YT_VIDEO_ID}&controls=0&modestbranding=1&playsinline=1&rel=0&iv_load_policy=3&disablekb=1&enablejsapi=1`;
+
 export default function HeroSection() {
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-  const [videoFailed, setVideoFailed] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const [playing, setPlaying] = useState(true);
 
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    const onError = () => setVideoFailed(true);
-    video.addEventListener('error', onError);
-    return () => video.removeEventListener('error', onError);
-  }, []);
+  function toggle() {
+    const iframe = iframeRef.current;
+    if (!iframe || !iframe.contentWindow) return;
+    const func = playing ? 'pauseVideo' : 'playVideo';
+    iframe.contentWindow.postMessage(
+      JSON.stringify({ event: 'command', func, args: [] }),
+      '*',
+    );
+    setPlaying((p) => !p);
+  }
 
   return (
     <section className="hero-section">
       <div className="hero-video-wrap">
-        {!videoFailed ? (
-          <video
-            ref={videoRef}
-            className="hero-video"
-            autoPlay
-            loop
-            muted
-            playsInline
-            poster="/hero-poster.svg"
-          >
-            <source src="/hero-bg.mp4" type="video/mp4" />
-          </video>
-        ) : null}
-        {/* CSS-only animated fallback always rendered behind the video so
-            it appears instantly on first paint and stays visible if the
-            video tag fails to load. */}
+        <iframe
+          ref={iframeRef}
+          className="hero-video"
+          src={YT_EMBED_SRC}
+          title="Mays Anthem"
+          allow="autoplay; encrypted-media; picture-in-picture"
+          loading="eager"
+          aria-hidden="true"
+          tabIndex={-1}
+        />
+        {/* CSS-only animated fallback always rendered behind the iframe so
+            it appears instantly on first paint and stays visible behind the
+            video while it loads. */}
         <div className="hero-fallback" aria-hidden="true" />
+        <button
+          type="button"
+          onClick={toggle}
+          aria-label={playing ? 'Pause Mays Anthem' : 'Play Mays Anthem'}
+          aria-pressed={playing}
+          className="hero-anthem-toggle"
+        >
+          {playing ? (
+            <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+              <rect x="3" y="2" width="3" height="10" fill="currentColor" />
+              <rect x="8" y="2" width="3" height="10" fill="currentColor" />
+            </svg>
+          ) : (
+            <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+              <polygon points="3,2 12,7 3,12" fill="currentColor" />
+            </svg>
+          )}
+          <span>{playing ? 'Pause' : 'Play'} anthem</span>
+        </button>
       </div>
 
       <div className="hero-content-outer">

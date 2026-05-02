@@ -108,6 +108,7 @@ export default function UploadStep({
         <div className="eyebrow text-[11px]">Recipient</div>
         <FacultyPicker
           value={setup.recipientName}
+          writerId={setup.writerId}
           onPick={(entry) => {
             onSetupChange({
               ...setup,
