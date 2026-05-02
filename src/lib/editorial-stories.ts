@@ -14,6 +14,14 @@
  */
 
 import type { LearningRole } from './learning-community';
+import { promptBySlug } from './prompts';
+
+export type EditorialStoryPrompt = {
+  /** Full paste-ready prompt text rendered inline below the editorial card. */
+  text: string;
+  /** Optional one-line caption under the copy button. */
+  caption?: string;
+};
 
 export type EditorialStory = {
   /** ISO date the story was published. Useful for sort and audit. */
@@ -30,7 +38,18 @@ export type EditorialStory = {
   cta?: string;
   /** Optional CTA href. Internal route or external link. */
   href?: string;
+  /** Optional inline copy-ready prompt rendered below the editorial card. */
+  prompt?: EditorialStoryPrompt;
 };
+
+const DEFAULT_PROMPT_CAPTION =
+  'Paste this into TAMU AI Chat or your tool of choice.';
+
+/** Pull a prompt's full text from src/lib/prompts.ts by slug. */
+function promptTextFor(slug: string): string {
+  const found = promptBySlug(slug);
+  return found ? found.promptText : '';
+}
 
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -49,6 +68,10 @@ export const EDITORIAL_STORIES: EditorialStory[] = [
       'A research-heavy associate professor dropped twelve PDFs into NotebookLM and asked it to map themes across the set. The AI did not write the lit review. It got her to the part where she could.',
     cta: 'Open NotebookLM',
     href: '/tools#notebooklm',
+    prompt: {
+      text: promptTextFor('literature-review-summary'),
+      caption: DEFAULT_PROMPT_CAPTION,
+    },
   },
   {
     publishedAt: '2026-04-25',
@@ -71,6 +94,10 @@ export const EDITORIAL_STORIES: EditorialStory[] = [
       'A program coordinator pasted three rough bullets into TAMU AI Chat and got back a clean program announcement. She would have spent twenty minutes drafting it from scratch. The whole loop took under a minute.',
     cta: 'Try the prompt',
     href: '/prompts/announcement-writer',
+    prompt: {
+      text: promptTextFor('announcement-writer'),
+      caption: DEFAULT_PROMPT_CAPTION,
+    },
   },
   {
     publishedAt: '2026-04-25',

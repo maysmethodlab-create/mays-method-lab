@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useState } from 'react';
 import type { EditorialStory } from '@/lib/editorial-stories';
 
 /**
@@ -8,8 +9,10 @@ import type { EditorialStory } from '@/lib/editorial-stories';
  *
  * The weekly hero story at the top of /learning-community. Asymmetric
  * layout: a wide dotted-frame story panel on the left, a quiet "nominate
- * a story" rail on the right. Apple-feel: generous whitespace, sharp
- * corners, no drop shadows.
+ * a story" rail on the right. When the story carries a paste-ready
+ * prompt, an inline prompt block renders directly under the banner with
+ * a COPY button. Apple-feel: generous whitespace, sharp corners, no
+ * drop shadows.
  */
 export default function EditorialStoryCard({
   story,
@@ -34,6 +37,15 @@ export default function EditorialStoryCard({
             ) : null}
           </div>
         </article>
+
+        {/* Inline copy-ready prompt block. Sits flush against the banner so
+            the story and the paste-ready prompt read as one unit. */}
+        {story.prompt ? (
+          <InlinePromptBlock
+            text={story.prompt.text}
+            caption={story.prompt.caption}
+          />
+        ) : null}
       </div>
       <aside className="lg:col-span-1 flex flex-col justify-center">
         <div className="eyebrow text-[11px] mb-2">Refreshed weekly</div>
@@ -49,6 +61,55 @@ export default function EditorialStoryCard({
           Nominate a story &rarr;
         </a>
       </aside>
+    </div>
+  );
+}
+
+/* =============================================================
+   Inline prompt block — eyebrow, code block, COPY button, caption
+   ============================================================= */
+
+function InlinePromptBlock({
+  text,
+  caption,
+}: {
+  text: string;
+  caption?: string;
+}) {
+  const [copied, setCopied] = useState(false);
+
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard may be blocked; do nothing visible.
+    }
+  }
+
+  return (
+    <div className="bg-white border-2 border-maroon border-t-0 px-6 md:px-10 py-7">
+      <div className="flex items-center justify-between mb-4 gap-4 flex-wrap">
+        <div className="text-[11px] tracking-[0.18em] uppercase font-semibold text-maroon-muted">
+          Try this prompt
+        </div>
+        <button
+          type="button"
+          onClick={handleCopy}
+          className="px-5 py-2 bg-maroon text-white text-[12px] uppercase tracking-[0.12em] font-semibold hover:bg-maroon-deep transition-colors"
+        >
+          {copied ? 'Copied!' : 'Copy prompt'}
+        </button>
+      </div>
+      <pre className="whitespace-pre-wrap font-mono text-[13px] text-ink-primary leading-relaxed bg-bg-subtle p-5 mb-3">
+        {text}
+      </pre>
+      {caption ? (
+        <p className="text-[13px] text-ink-secondary leading-relaxed">
+          {caption}
+        </p>
+      ) : null}
     </div>
   );
 }
