@@ -21,10 +21,15 @@ const TEMPLATES_ROOT = path.join(
 export const APT_EXEMPLARS: Record<string, string[]> = {
   'mcguire/apt-lecturer': [
     'Accounting (McGuire)/Hurta, Amy [APT]/Hurta_Annual_Review_2024.txt',
+    'Accounting (McGuire)/Larkin, Ryan [APT-Lecturer]/Larkin_Annual_Review_2024.txt',
     'Accounting (McGuire)/Allen, Natalie [APT]/Allen_Annual_Review_2024.txt',
   ],
   'mcguire/apt-practice': [
+    'Accounting (McGuire)/Harding, Michael [APT-Practice]/Harding_Annual_Review_2024.txt',
     'Accounting (McGuire)/Ranzilla, Sam [APT]/Ranzilla_Annual_Review_2024.txt',
+  ],
+  'mcguire/apt-clinical': [
+    'Accounting (McGuire)/Garza, Brent [APT-Clinical]/Garza_Annual_Review_2024.txt',
   ],
   'metters/apt-lecturer': [
     'Information & Operations (Metters)/Curtsinger, Wanda [APT]/Curtsinger_Annual_Review_2025.txt',
