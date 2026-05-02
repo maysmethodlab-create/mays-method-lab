@@ -177,9 +177,12 @@ function BucketCard({ bucket }: { bucket: LearningBucket }) {
 function BucketSection({ bucket }: { bucket: LearningBucket }) {
   return (
     <section id={bucket.slug} className="scroll-mt-24">
-      <div className="heading-rule mb-8">
+      <div className="heading-rule mb-3">
         <h2 className="text-center mx-auto">{bucket.title}</h2>
       </div>
+      <p className="text-center text-[15px] text-ink-secondary max-w-2xl mx-auto mb-10">
+        {bucket.subhead}
+      </p>
 
       <div className="space-y-12">
         {bucket.tiers.map((tier) => (
@@ -187,13 +190,19 @@ function BucketSection({ bucket }: { bucket: LearningBucket }) {
         ))}
       </div>
 
-      <div className="mt-10 pt-6 border-t border-line text-center">
+      <div className="mt-10 pt-6 border-t border-line flex flex-wrap gap-x-8 gap-y-3 justify-center text-center">
         <Link
           href="/tools"
           className="text-[14px] uppercase tracking-[0.1em] font-semibold text-maroon-muted hover:text-maroon"
         >
           Approved AI tools at Mays &rarr;
         </Link>
+        <a
+          href="mailto:ssridhar@mays.tamu.edu?subject=Mays%20Method%20Lab%20pilot%20request"
+          className="text-[14px] uppercase tracking-[0.1em] font-semibold text-maroon-muted hover:text-maroon"
+        >
+          Pilot a tool with the Lab &rarr;
+        </a>
       </div>
     </section>
   );
@@ -224,8 +233,14 @@ function TierBlock({ tier }: { tier: LearningTier }) {
     deeper: 4,
   };
 
+  // Tier 01 (Use now) gets a subtle bg-bg-subtle panel with extra padding
+  // to mark it as the priority tier. The other tiers stay flat to avoid
+  // visual clutter, in keeping with the Mays brand contract.
+  const wrapperClass =
+    tier.id === 'use-now' ? 'bg-bg-subtle p-6 md:p-8 -mx-2' : '';
+
   return (
-    <div>
+    <div className={wrapperClass}>
       <div className="flex items-baseline gap-3 mb-4 pb-2 border-b border-line">
         <span className="font-headline text-[24px] font-semibold text-maroon-muted leading-none">
           {String(tierIndex[tier.id]).padStart(2, '0')}
