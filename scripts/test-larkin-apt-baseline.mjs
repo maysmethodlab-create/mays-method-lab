@@ -121,11 +121,11 @@ async function draft(setup, researchBrief, writerNotes) {
   return acc;
 }
 
-async function verify(letterText, sourceDocuments) {
+async function verify(letterText, sourceDocuments, writerNotes) {
   const res = await fetch(`${BASE}/api/evaluation-letters/verify`, {
     method: 'POST',
     headers: authHeaders(true),
-    body: JSON.stringify({ letterText, sourceDocuments }),
+    body: JSON.stringify({ letterText, sourceDocuments, writerNotes }),
   });
   if (!res.ok) throw new Error(`verify failed ${res.status}: ${await res.text()}`);
   return res.json();
@@ -199,7 +199,7 @@ function detectKind(name) {
 
   // 5. Verify
   console.log('  5/7 verifying…');
-  const ver = await verify(letter, sourceDocuments);
+  const ver = await verify(letter, sourceDocuments, NOTES);
   fs.writeFileSync(path.join(OUT_DIR, '05-verify.json'), JSON.stringify(ver, null, 2));
   fs.writeFileSync(path.join(OUT_DIR, '05-verify-report.md'), ver.report || '');
   if (ver.correctedText) {

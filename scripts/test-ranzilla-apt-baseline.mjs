@@ -42,7 +42,7 @@ Service: faculty advisor for the Aggie Accounting Association (AAA). The AAA is 
 
 Maintains his CPA license, which more than satisfies AACSB instructional-practice status. Encourage him to be proactive about identifying additional currency-of-practice activities.
 
-Forward-look: continue advising the AAA and continue showing up at research workshops. Especially looking forward to his continued engagement with the audit-track PPA students.`;
+Forward-look (specifics that MUST appear verbatim in the closing paragraph): Sam will continue as faculty advisor for the Aggie Accounting Association in 2025-2026, will continue attending the auditing research workshops on the auditing seminar series, and will continue mentoring audit-track PPA students through Spring 2026 placements. The closing paragraph must name the Aggie Accounting Association by name, the audit-track PPA students by name, and the auditing research workshops by name.`;
 
 let SESSION_COOKIE = '';
 
@@ -111,11 +111,11 @@ async function draft(setup, researchBrief, writerNotes) {
   return acc;
 }
 
-async function verify(letterText, sourceDocuments) {
+async function verify(letterText, sourceDocuments, writerNotes) {
   const res = await fetch(`${BASE}/api/evaluation-letters/verify`, {
     method: 'POST',
     headers: authHeaders(true),
-    body: JSON.stringify({ letterText, sourceDocuments }),
+    body: JSON.stringify({ letterText, sourceDocuments, writerNotes }),
   });
   if (!res.ok) throw new Error(`verify failed ${res.status}: ${await res.text()}`);
   return res.json();
@@ -166,7 +166,7 @@ function detectKind(name) {
   console.log(`      letter ${letter.length} chars`);
 
   console.log('  4/6 verifying...');
-  const ver = await verify(letter, sourceDocuments);
+  const ver = await verify(letter, sourceDocuments, NOTES);
   fs.writeFileSync(path.join(OUT_DIR, '05-verify.json'), JSON.stringify(ver, null, 2));
   if (ver.correctedText) fs.writeFileSync(path.join(OUT_DIR, '05-corrected.md'), ver.correctedText);
   const correctedBody = ver.correctedText || letter;

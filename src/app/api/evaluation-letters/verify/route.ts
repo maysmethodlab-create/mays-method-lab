@@ -11,6 +11,11 @@ export const maxDuration = 240;
 type Body = {
   letterText: string;
   sourceDocuments: string;
+  /** Writer's first-hand notes (forward-look plans, co-teaching, etc.).
+   *  These are ground truth for the Hallucination Agent — without them,
+   *  it flags forward-look claims as fabrications because they do not
+   *  appear in the recipient's CV/F180. */
+  writerNotes?: string;
 };
 
 /**
@@ -76,6 +81,7 @@ ${postLint.length === 0 ? 'READY TO SEND (sanitizer-only check passed)' : 'NEEDS
     const hp = hallucinationPrompt({
       letterText: body.letterText,
       sourceDocuments: body.sourceDocuments || '',
+      writerNotes: body.writerNotes || '',
     });
     const hRes = await client.messages.create({
       model: DEFAULT_MODEL,
