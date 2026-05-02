@@ -18,6 +18,8 @@ import {
   sectionsForRole,
 } from '@/lib/learning-community';
 import { currentStoryFor } from '@/lib/editorial-stories';
+import { PROMPTS } from '@/lib/prompts';
+import type { Prompt } from '@/lib/prompts';
 
 const ROLE_COOKIE = 'mml.role.preference';
 
@@ -383,29 +385,32 @@ function sectionLabel(id: LearningSectionId): string {
 
 function SectionBlock({
   section,
-  contributedPrompts,
+  contributedPrompts: _contributedPrompts,
   isFirst,
 }: {
   section: LearningSection;
   contributedPrompts: ContributedPrompt[];
   isFirst: boolean;
 }) {
-  // Learn AI renders as a vertical 5-step ladder, not a card grid.
+  // Learn AI renders as a 4-tile + course-tile layout, not a card grid.
   if (section.id === 'learn-ai') {
-    return <LearnLadder section={section} isFirst={isFirst} />;
+    return <LearnSection section={section} isFirst={isFirst} />;
+  }
+
+  // Prompts section: alternating maroon/white tile grid plus Browse and
+  // Contribute CTAs. The persona-flavored Recently Contributed row was
+  // removed in favor of a denser, more rhythmic prompts surface.
+  if (section.id === 'prompts') {
+    return <PromptsSection section={section} isFirst={isFirst} />;
   }
 
   const layout = pickLayout(section.id, section.items.length);
 
   return (
-    <section id={section.id} className={`scroll-mt-24 ${isFirst ? 'mt-12' : 'mt-32'}`}>
-      {/* Diagonal divider between sections. Subtle visual energy without
-          decoration. Skipped on the first section. */}
+    <section id={section.id} className={`scroll-mt-24 ${isFirst ? 'mt-10' : 'mt-20'}`}>
       {!isFirst ? <SectionDiagonal /> : null}
 
-      {/* Solid maroon section header band — replaces the quiet eyebrow +
-          maroon-on-white treatment with a Mays-style banner. */}
-      <header className="section-band mb-10">
+      <header className="section-band mb-8">
         <div className="section-band__eyebrow">{labelFor(section.id)}</div>
         <h2 className="section-band__title">{section.title}</h2>
         {section.browseHref && section.browseLabel ? (
@@ -418,16 +423,9 @@ function SectionBlock({
         ) : null}
       </header>
 
-      <p className="text-[16px] text-ink-secondary leading-relaxed mb-10 max-w-3xl">
+      <p className="text-[16px] text-ink-secondary leading-relaxed mb-8 max-w-3xl">
         {section.blurb}
       </p>
-
-      {/* Recently contributed by faculty — only on Prompts section. */}
-      {section.id === 'prompts' ? (
-        <div className="mb-10">
-          <RecentlyContributedRow items={contributedPrompts} />
-        </div>
-      ) : null}
 
       {section.items.length === 0 ? (
         <p className="text-[15px] text-ink-secondary leading-relaxed">
@@ -492,12 +490,12 @@ function pickLayout(
   gridClass: string;
   featuredIndex: number;
 } {
-  // Apps section: bigger tile treatment. Two-up by default.
+  // Apps section: shrunk-card treatment. Two-up by default with tighter gap.
   if (sectionId === 'apps') {
     if (count <= 1) {
-      return { gridClass: 'grid grid-cols-1 gap-8', featuredIndex: -1 };
+      return { gridClass: 'grid grid-cols-1 gap-5', featuredIndex: -1 };
     }
-    return { gridClass: 'grid md:grid-cols-2 gap-8', featuredIndex: -1 };
+    return { gridClass: 'grid md:grid-cols-2 gap-5', featuredIndex: -1 };
   }
 
   if (count <= 1) {
@@ -521,10 +519,157 @@ function pickLayout(
 }
 
 /* =============================================================
-   Learn AI ladder — vertical 5-step
+   Prompts section — alternating maroon/white tile grid
    ============================================================= */
 
-function LearnLadder({
+const MAYS_AI_PROGRAM_URL =
+  'https://mays.tamu.edu/ai/artificial-intelligence-ai-in-business-program/program-details/';
+
+function PromptsSection({
+  section,
+  isFirst,
+}: {
+  section: LearningSection;
+  isFirst: boolean;
+}) {
+  // Show all 9 prompts directly from the prompt library, regardless of
+  // the curated section.items list. The tile grid is meant to read as a
+  // dense, rhythmic catalog, not a curated subset.
+  const tiles = PROMPTS;
+
+  return (
+    <section id={section.id} className={`scroll-mt-24 ${isFirst ? 'mt-10' : 'mt-20'}`}>
+      {!isFirst ? <SectionDiagonal /> : null}
+
+      <header className="section-band mb-8">
+        <div className="section-band__eyebrow">{labelFor(section.id)}</div>
+        <h2 className="section-band__title">{section.title}</h2>
+      </header>
+
+      <p className="text-[16px] text-ink-secondary leading-relaxed mb-8 max-w-3xl">
+        {section.blurb}
+      </p>
+
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-0 border-2 border-maroon">
+        {tiles.map((p, i) => (
+          <PromptTile key={p.slug} prompt={p} index={i} />
+        ))}
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-0 mt-8">
+        <Link
+          href="/prompts"
+          className="text-center bg-white border-2 border-maroon text-maroon font-headline text-[18px] py-5 hover:bg-maroon/5 transition-colors"
+        >
+          Browse all prompts &rarr;
+        </Link>
+        <Link
+          href="/your-ai-edge/contribute-prompt"
+          className="text-center bg-maroon text-white font-headline text-[18px] py-5 hover:bg-maroon-deep transition-colors"
+        >
+          Contribute a prompt &rarr;
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+function PromptTile({ prompt, index }: { prompt: Prompt; index: number }) {
+  // Checkerboard alternation: index % 2 toggles bg + text colors.
+  const isMaroon = index % 2 === 1;
+  const tileBg = isMaroon ? 'bg-maroon' : 'bg-white';
+  const tileTitle = isMaroon ? 'text-white' : 'text-maroon';
+  const tileBody = isMaroon ? 'text-white/85' : 'text-ink-secondary';
+  const tileEyebrow = isMaroon ? 'text-white/70' : 'text-maroon-muted';
+  const tileLink = isMaroon ? 'text-white' : 'text-maroon';
+
+  return (
+    <Link
+      href={`/prompts#${prompt.slug}`}
+      className={`${tileBg} p-7 md:p-8 flex flex-col h-full transition-opacity hover:opacity-90`}
+    >
+      <div
+        className={`text-[10px] uppercase tracking-[0.18em] font-semibold ${tileEyebrow} mb-3`}
+      >
+        {prompt.bucket.replace(/-/g, ' ')}
+      </div>
+      <h3
+        className={`font-headline text-[20px] md:text-[22px] font-semibold ${tileTitle} mb-3 leading-tight`}
+      >
+        {prompt.title}
+      </h3>
+      <p className={`text-[14px] ${tileBody} leading-relaxed flex-1 mb-4`}>
+        {prompt.blurb}
+      </p>
+      <span
+        className={`text-[12px] uppercase tracking-[0.1em] font-semibold ${tileLink}`}
+      >
+        Open prompt &rarr;
+      </span>
+    </Link>
+  );
+}
+
+/* =============================================================
+   Learn AI section — 4 horizontal tiles + course-tile row
+   ============================================================= */
+
+const LEARN_TILES: Array<{
+  title: string;
+  body: string;
+  cta: string;
+  href: string;
+}> = [
+  {
+    title: 'Start with the right AI tool',
+    body: 'Pick the right tool for the task. A four-step orientation for the Mays community.',
+    cta: 'Read the guide',
+    href: '/your-ai-edge/start',
+  },
+  {
+    title: 'Write better prompts',
+    body: 'Three principles plus a paste-ready prompt library. Most of the win is the rewrite, not the model.',
+    cta: 'Browse prompts',
+    href: '/prompts',
+  },
+  {
+    title: 'Build a small tool',
+    body: 'Tutorials from a 20-minute beginner build to multi-week deeper dives.',
+    cta: 'Browse tutorials',
+    href: '/agents',
+  },
+  {
+    title: 'Take an AI course',
+    body: 'Mays AI in Business courses plus the best external short courses we recommend.',
+    cta: 'See the courses',
+    href: '#mays-ai-courses',
+  },
+];
+
+const MAYS_AI_COURSES: Array<{ title: string; body: string }> = [
+  {
+    title: 'AI Foundations for Business Leaders',
+    body: 'What AI is, what it can do for a business, and how to use it responsibly.',
+  },
+  {
+    title: 'Generative AI for Decision-Making',
+    body: 'Use generative AI for analysis, drafting, and structured reasoning.',
+  },
+  {
+    title: 'AI Strategy and Implementation',
+    body: 'Plan, scope, and roll out AI projects in a real business setting.',
+  },
+  {
+    title: 'Responsible AI in Business',
+    body: 'Ethics, governance, bias, and the regulatory landscape.',
+  },
+  {
+    title: 'Building AI Solutions',
+    body: 'From idea to working prototype with no-code and low-code tools.',
+  },
+];
+
+function LearnSection({
   section,
   isFirst,
 }: {
@@ -532,86 +677,95 @@ function LearnLadder({
   isFirst: boolean;
 }) {
   return (
-    <section id={section.id} className={`scroll-mt-24 ${isFirst ? 'mt-12' : 'mt-32'}`}>
+    <section id={section.id} className={`scroll-mt-24 ${isFirst ? 'mt-10' : 'mt-20'}`}>
       {!isFirst ? <SectionDiagonal /> : null}
-      <header className="section-band mb-10">
+
+      <header className="section-band mb-8">
         <div className="section-band__eyebrow">{labelFor(section.id)}</div>
         <h2 className="section-band__title">{section.title}</h2>
       </header>
-      <p className="text-[16px] text-ink-secondary leading-relaxed mb-10 max-w-3xl">
+
+      <p className="text-[16px] text-ink-secondary leading-relaxed mb-8 max-w-3xl">
         {section.blurb}
       </p>
-      {section.items.length === 0 ? (
-        <p className="text-[15px] text-ink-secondary leading-relaxed">
-          No Learn AI steps match the current filter. Reset the chip to see all
-          five.
-        </p>
-      ) : (
-        <ol className="space-y-6">
-          {section.items.map((item, i) => (
-            <li key={`learn-${i}`}>
-              <LearnStepCard item={item} index={i} />
-            </li>
+
+      {/* Four horizontal tiles. */}
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+        {LEARN_TILES.map((tile) => (
+          <LearnTile key={tile.title} tile={tile} />
+        ))}
+      </div>
+
+      {/* Course-tile row. Five squares for the Mays AI in Business
+          program courses, plus one rectangle CTA at the right. */}
+      <div id="mays-ai-courses" className="scroll-mt-24">
+        <div className="text-[12px] tracking-[0.18em] uppercase font-semibold text-maroon-muted mb-4">
+          Mays AI in Business Program
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+          {MAYS_AI_COURSES.map((course) => (
+            <a
+              key={course.title}
+              href={MAYS_AI_PROGRAM_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="aspect-square bg-white border-2 border-maroon p-4 flex flex-col hover:bg-maroon/5 transition-colors"
+            >
+              <h4 className="font-headline text-[14px] md:text-[15px] font-semibold text-maroon leading-tight mb-2">
+                {course.title}
+              </h4>
+              <p className="text-[12px] text-ink-secondary leading-snug flex-1">
+                {course.body}
+              </p>
+            </a>
           ))}
-        </ol>
-      )}
+          <a
+            href={MAYS_AI_PROGRAM_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="aspect-square bg-maroon text-white p-4 flex flex-col items-start justify-end hover:bg-maroon-deep transition-colors"
+          >
+            <div className="font-headline text-[16px] md:text-[18px] font-semibold leading-tight">
+              Take an AI course &rarr;
+            </div>
+          </a>
+        </div>
+      </div>
     </section>
   );
 }
 
-function LearnStepCard({ item, index }: { item: LearningItem; index: number }) {
-  const eyebrow = item.meta || `Step ${index}`;
-  const ctaLabel = ctaLabelFor(item);
-
-  return (
-    <article className="dotted-frame bg-white py-10 px-8 md:px-12">
-      <div className="grid md:grid-cols-[auto,1fr] gap-6 md:gap-10 items-start">
-        <div className="text-[12px] tracking-[0.18em] uppercase font-semibold text-maroon-muted whitespace-nowrap">
-          {eyebrow}
-        </div>
-        <div>
-          <h3 className="font-headline text-[26px] md:text-[28px] font-semibold text-maroon mb-3 leading-tight">
-            {item.title}
-          </h3>
-          <p className="text-[16px] text-ink-secondary leading-relaxed mb-5 max-w-3xl">
-            {item.description}
-          </p>
-          <StepCta href={item.href} label={ctaLabel} />
-        </div>
-      </div>
-    </article>
+function LearnTile({
+  tile,
+}: {
+  tile: { title: string; body: string; cta: string; href: string };
+}) {
+  const isAnchor = tile.href.startsWith('#');
+  const inner = (
+    <>
+      <h3 className="font-headline text-[20px] md:text-[22px] font-semibold text-maroon mb-3 leading-tight">
+        {tile.title}
+      </h3>
+      <p className="text-[14px] text-ink-secondary leading-relaxed flex-1 mb-4">
+        {tile.body}
+      </p>
+      <span className="text-[12px] uppercase tracking-[0.1em] font-semibold text-maroon">
+        {tile.cta} &rarr;
+      </span>
+    </>
   );
-}
-
-function ctaLabelFor(item: LearningItem): string {
-  if (item.href.startsWith('/prompts')) return 'Browse the prompt library';
-  if (item.href.startsWith('/agents')) return 'Browse all tutorials';
-  if (item.href.startsWith('/resources')) return 'See all courses';
-  if (item.href.startsWith('/your-ai-edge/start')) return 'Open the guide';
-  if (item.href.startsWith('/your-ai-edge/pick-a-tool')) return 'Compare the tools';
-  return 'Open';
-}
-
-function StepCta({ href, label }: { href: string; label: string }) {
-  const isExternal = href.startsWith('http') || href.startsWith('mailto:');
-  if (isExternal) {
+  const className =
+    'bg-white border-2 border-maroon p-6 md:p-7 h-full flex flex-col hover:bg-maroon/5 transition-colors';
+  if (isAnchor) {
     return (
-      <a
-        href={href}
-        target={href.startsWith('mailto:') ? undefined : '_blank'}
-        rel={href.startsWith('mailto:') ? undefined : 'noreferrer'}
-        className="text-[14px] uppercase tracking-[0.1em] font-semibold text-maroon hover:text-maroon-deep"
-      >
-        {label} &rarr;
+      <a href={tile.href} className={className}>
+        {inner}
       </a>
     );
   }
   return (
-    <Link
-      href={href}
-      className="text-[14px] uppercase tracking-[0.1em] font-semibold text-maroon hover:text-maroon-deep"
-    >
-      {label} &rarr;
+    <Link href={tile.href} className={className}>
+      {inner}
     </Link>
   );
 }
@@ -660,16 +814,16 @@ function AppCard({
 
   const isExternal = item.href.startsWith('http') || item.href.startsWith('mailto:');
   const padding = big
-    ? 'p-8 md:p-10'
+    ? 'p-6 md:p-7'
     : featured
-    ? 'p-8 md:p-10'
-    : 'p-6 md:p-7';
+    ? 'p-7 md:p-9'
+    : 'p-5 md:p-6';
   const titleSize = big
-    ? 'text-[28px] md:text-[34px]'
+    ? 'text-[22px] md:text-[24px]'
     : featured
-    ? 'text-[28px] md:text-[32px]'
-    : 'text-[22px]';
-  const descSize = big || featured ? 'text-[17px]' : 'text-[15px]';
+    ? 'text-[26px] md:text-[28px]'
+    : 'text-[20px]';
+  const descSize = featured ? 'text-[16px]' : 'text-[14px]';
 
   const inner = (
     <div
