@@ -7,7 +7,7 @@ import { recentApprovedContributedPrompts } from '@/lib/submissions';
 export const metadata = {
   title: 'Your AI Edge | Mays Method Lab',
   description:
-    'Less drag, more work that matters. Apps, prompts, and a five-step Learn AI ladder for the Mays community.',
+    'A place to keep getting better at AI. Apps, prompts, and learning paths for the Mays community.',
 };
 
 const ROLE_COOKIE = 'mml.role.preference';
@@ -69,18 +69,31 @@ export default async function LearningCommunityPage() {
           geometry, no decorative imagery. */}
       <div className="hero-maroon-band">
         <div
-          className="section pt-24 pb-24"
-          style={{ paddingTop: '96px', paddingBottom: '120px' }}
+          className="section pt-16 pb-16"
+          style={{ paddingTop: '72px', paddingBottom: '88px' }}
         >
           <ScrollReveal>
-            <div className="bg-white py-12 px-8 md:py-16 md:px-14 max-w-4xl relative dotted-frame">
+            <div className="bg-white py-12 px-8 md:py-14 md:px-14 max-w-4xl relative dotted-frame">
               <div className="eyebrow-lg mb-4">Your AI Edge</div>
               <h1 className="mb-6 leading-[1.1]" style={{ fontSize: 'clamp(40px, 6vw, 72px)' }}>
-                Less drag. More work that matters.
+                Build the AI fluency that keeps you ahead at Mays.
               </h1>
+              {/*
+                Subhead candidate Hari shipped (1 of 4 drafted). Rejected alternates,
+                kept here so Hari can swap with one edit:
+
+                  A) "Keep getting better at AI. One prompt, one tool, one tutorial at a time."
+                  B) "Practical AI for the work you do today, and the work you'll do next."
+                  C) "Stay sharp on AI. The years ahead reward the people who keep practicing."
+
+                Picked the line that leads with the headline benefit and keeps
+                the second clause about steady practice rather than a promise of
+                speed or ease. Calm-confident, not zero-effort marketing.
+              */}
               <p className="text-[18px] text-ink-secondary leading-relaxed max-w-2xl">
-                Practical AI for the work you actually do at Mays. Open an app,
-                try a prompt, climb the Learn AI ladder. One page, three ways in.
+                A place to keep practicing. Open an app, try a prompt, take a
+                course. The faculty and staff who stay sharp on AI will set the
+                pace at Mays in the years ahead.
               </p>
             </div>
           </ScrollReveal>
