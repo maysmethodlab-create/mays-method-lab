@@ -67,3 +67,6 @@ apps/Endowed Positions Letter Writer/Source Materials/
 
 # Claude scheduler internals
 /.claude/scheduled_tasks.lock
+
+# Form submissions saved by /your-ai-edge intake forms — never commit
+data/submissions/

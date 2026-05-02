@@ -1,15 +1,14 @@
 /**
  * Your AI Edge — content registry.
  *
- * The /learning-community page is a hub with four sections in this order:
+ * The /learning-community page is a hub with three sections in this order:
  *
- *   1. Prompts    — curated paste-ready prompts, "Browse all" links to /prompts
- *   2. Apps       — Lab-built apps for the role. Includes coming-soon cards
- *                   for the Stage 2 apps (Recommendation Letter Helper,
- *                   Announcement Composer)
- *   3. Tutorials  — curated step-by-step builds, "Browse all" links to /agents
- *   4. Resources  — Mays AI courses + DeepLearning.AI / Anthropic Academy,
- *                   "Browse all" links to /resources
+ *   1. Apps      — Lab-built apps for the role. Bigger tile treatment.
+ *                  Includes coming-soon cards for the Stage 2 apps
+ *                  (Recommendation Letter Helper, Award Nomination Drafter).
+ *   2. Prompts   — curated paste-ready prompts. "Browse all" links to /prompts.
+ *   3. Learn AI  — five-step ladder (Step 0 quick-start, Step 1 tool picker,
+ *                  Step 2 prompt basics, Step 3 tutorials, Step 4 courses).
  *
  * The Evaluation Letter Writer does NOT appear here. It lives at
  * /admin/evaluation-letters and is surfaced from Apps for Administrators.
@@ -19,6 +18,40 @@
 
 export type LearningRole = 'faculty' | 'staff';
 
+/**
+ * Buckets used for cross-section tag filtering. Mirrors the slugs in
+ * src/lib/prompts.ts so chips stay consistent.
+ */
+export type LearningBucket =
+  | 'research'
+  | 'teaching'
+  | 'writing'
+  | 'programs'
+  | 'faculty-support'
+  | 'advising'
+  | 'learning-ai';
+
+export const BUCKET_LABELS: Record<LearningBucket, string> = {
+  research: 'Research',
+  teaching: 'Teaching',
+  writing: 'Writing',
+  programs: 'Programs',
+  'faculty-support': 'Faculty support',
+  advising: 'Advising',
+  'learning-ai': 'Learning AI',
+};
+
+/** Order in which chips render. */
+export const BUCKET_ORDER: LearningBucket[] = [
+  'research',
+  'teaching',
+  'writing',
+  'programs',
+  'faculty-support',
+  'advising',
+  'learning-ai',
+];
+
 export type LearningItem = {
   title: string;
   description: string;
@@ -27,9 +60,11 @@ export type LearningItem = {
   comingSoon?: boolean;
   /** Optional small meta line shown under the title (e.g. "Lab app", "Approved tool"). */
   meta?: string;
+  /** Buckets the card belongs to, for the chip filter. May be empty for cards that always show. */
+  buckets?: LearningBucket[];
 };
 
-export type LearningSectionId = 'prompts' | 'apps' | 'tutorials' | 'resources';
+export type LearningSectionId = 'apps' | 'prompts' | 'learn-ai';
 
 export type LearningSection = {
   /** Stable id used as anchor and React key. */
@@ -58,6 +93,7 @@ const PROMPT_ANNOUNCEMENT: LearningItem = {
     'Three rough bullets become a clean program update in under a minute.',
   href: '/prompts/announcement-writer',
   meta: 'Prompt',
+  buckets: ['writing', 'programs'],
 };
 
 const PROMPT_MEETING_NOTES: LearningItem = {
@@ -66,6 +102,7 @@ const PROMPT_MEETING_NOTES: LearningItem = {
     'Raw notes to a one-paragraph summary, decisions, and an action-item table.',
   href: '/prompts/meeting-notes-summary',
   meta: 'Prompt',
+  buckets: ['writing', 'programs'],
 };
 
 const PROMPT_REPORT_DRAFT: LearningItem = {
@@ -74,6 +111,7 @@ const PROMPT_REPORT_DRAFT: LearningItem = {
     'A reviewable one-page report for the dean. Executive summary, shipped, at risk, asks.',
   href: '/prompts/report-draft',
   meta: 'Prompt',
+  buckets: ['writing', 'programs'],
 };
 
 const PROMPT_RESUME_BULLETS: LearningItem = {
@@ -82,6 +120,7 @@ const PROMPT_RESUME_BULLETS: LearningItem = {
     'Tighter, more concrete bullets with verbs and numbers. For staff and student work alike.',
   href: '/prompts/resume-bullet-points',
   meta: 'Prompt',
+  buckets: ['writing', 'advising'],
 };
 
 const PROMPT_LIT_REVIEW: LearningItem = {
@@ -90,6 +129,7 @@ const PROMPT_LIT_REVIEW: LearningItem = {
     'Twelve papers in. A position-mapped table out. The setup work, not the thinking.',
   href: '/prompts/literature-review-summary',
   meta: 'Prompt',
+  buckets: ['research'],
 };
 
 const PROMPT_EXAM_QUESTIONS: LearningItem = {
@@ -98,6 +138,7 @@ const PROMPT_EXAM_QUESTIONS: LearningItem = {
     'Thirty practice questions across three difficulty levels from one syllabus.',
   href: '/prompts/exam-prep-questions',
   meta: 'Prompt',
+  buckets: ['teaching'],
 };
 
 const PROMPT_RUBRIC: LearningItem = {
@@ -106,6 +147,7 @@ const PROMPT_RUBRIC: LearningItem = {
     'A clear four-criterion rubric with descriptors at three performance levels.',
   href: '/prompts/rubric-generator',
   meta: 'Prompt',
+  buckets: ['teaching'],
 };
 
 const PROMPT_RECRUITER_OUTREACH: LearningItem = {
@@ -114,6 +156,7 @@ const PROMPT_RECRUITER_OUTREACH: LearningItem = {
     'A warm, specific email to a recruiter. The one you send every February.',
   href: '/prompts/recruiter-outreach',
   meta: 'Prompt',
+  buckets: ['writing', 'advising'],
 };
 
 /* =============================================================
@@ -125,148 +168,91 @@ const PROMPT_RECRUITER_OUTREACH: LearningItem = {
 const APP_REC_LETTER_HELPER: LearningItem = {
   title: 'Recommendation Letter Helper',
   description:
-    'A polished student recommendation letter from a CV, the role they are applying for, and three short anecdotes. Built by the Lab. Live this weekend.',
+    "A polished student recommendation letter from a CV, the role they're applying for, and three short anecdotes. Built by the Lab. Live this weekend.",
   href: '#',
   comingSoon: true,
   meta: 'Lab app',
+  buckets: ['writing', 'faculty-support'],
 };
 
-const APP_FACULTY_NOMINATE: LearningItem = {
-  title: 'More faculty apps coming.',
+const APP_AWARD_NOMINATION: LearningItem = {
+  title: 'Award Nomination Drafter',
   description:
-    'Email the Lab to nominate one. We pair with a faculty member for an hour and ship a working draft.',
-  href: '#',
-  comingSoon: true,
-  meta: 'Open call',
-};
-
-const APP_ANNOUNCEMENT_COMPOSER: LearningItem = {
-  title: 'Announcement Composer',
-  description:
-    'Three bullets in. A polished program update out. Built by the Lab. Live this weekend.',
+    "A polished award nomination letter for staff or faculty. Pick the award, paste the nominee's record, the app maps it onto the award's criteria. Live next week.",
   href: '#',
   comingSoon: true,
   meta: 'Lab app',
-};
-
-const APP_STAFF_NOMINATE: LearningItem = {
-  title: 'More staff apps coming.',
-  description:
-    'Email the Lab to nominate one. We pair with a coordinator for an hour and ship a working draft.',
-  href: '#',
-  comingSoon: true,
-  meta: 'Open call',
+  buckets: ['writing', 'programs', 'faculty-support'],
 };
 
 /* =============================================================
-   TUTORIALS — curated 3 to 4 builds per role.
-   Hrefs deep-link into /agents (the tutorials index).
+   LEARN AI — five-step ladder.
+   These items are the 5 step cards. Step 3 also surfaces three
+   tutorials (beginner / intermediate / advanced) as nested rows.
    ============================================================= */
 
-const TUTORIAL_NOTEBOOK_LM_DOCS: LearningItem = {
-  title: 'Chatbot over your documents',
+const LEARN_STEP_0: LearningItem = {
+  title: 'Start with the right AI tool',
   description:
-    'Use NotebookLM to ask cited questions across your own approved documents.',
-  href: '/agents#chatbot-own-documents',
-  meta: '45 min · Beginner',
+    'A four-step quick-start. Use the supported chat tools first, try a ready-made prompt, test one repeatable workflow, and only build bigger after the manual version works.',
+  href: '/your-ai-edge/start',
+  meta: 'Step 0 · Start here',
+  buckets: ['learning-ai'],
 };
 
-const TUTORIAL_REC_LETTER_AGENT: LearningItem = {
-  title: 'Recommendation letter agent',
+const LEARN_STEP_1: LearningItem = {
+  title: 'Which AI tool fits your task?',
   description:
-    "Collect a candidate's evidence and draft a reviewable recommendation letter.",
-  href: '/agents#recommendation-letter-agent',
-  meta: '50 min · Beginner',
+    'Compare TAMU AI Chat, Microsoft Copilot, Google Gemini, and Google NotebookLM. A use-this-when grid for faculty and staff work.',
+  href: '/your-ai-edge/pick-a-tool',
+  meta: 'Step 1 · Pick the right tool',
+  buckets: ['learning-ai'],
 };
 
-const TUTORIAL_PAPER_TRACKER: LearningItem = {
-  title: 'Research paper tracker',
+const LEARN_STEP_2: LearningItem = {
+  title: 'Write better prompts',
   description:
-    'Lightweight app for tracking papers, reading status, tags, notes, and summaries.',
-  href: '/agents#research-paper-tracker',
-  meta: '50 min · Intermediate',
+    'Four short principles. Name the audience. Give the AI the data it needs. Review every answer. Iterate fast.',
+  href: '/prompts',
+  meta: 'Step 2 · Prompt engineering basics',
+  buckets: ['learning-ai'],
 };
 
-const TUTORIAL_TAMU_AI_CHATBOT: LearningItem = {
-  title: 'Create and share a TAMU AI chatbot',
+const LEARN_STEP_3: LearningItem = {
+  title: 'Build a small tool you keep using',
   description:
-    'TAMU AI Chat knowledge collection, custom model, and Microsoft Entra group.',
-  href: '/agents#create-and-share-tamu-ai-chatbot',
-  meta: '75 min · Intermediate',
+    'Three hero tutorials. Start with a 20-minute meeting-notes workflow. Move up to a 45-minute NotebookLM chatbot. End with a 90-minute custom TAMU AI Chat agent.',
+  href: '/agents',
+  meta: 'Step 3 · Build something',
+  buckets: ['learning-ai'],
 };
 
-const TUTORIAL_MEETING_NOTES: LearningItem = {
-  title: 'Meeting notes to action items',
+const LEARN_STEP_4: LearningItem = {
+  title: 'Take a course',
   description:
-    'Paste-and-review workflow: rough notes to owners, deadlines, and next steps.',
-  href: '/agents#meeting-notes-action-items',
-  meta: '20 min · Beginner',
-};
-
-const TUTORIAL_SPREADSHEET: LearningItem = {
-  title: 'Spreadsheet analysis agent',
-  description:
-    'Plain-language prompts in Excel Copilot or Gemini to clean, summarize, and explain.',
-  href: '/agents#spreadsheet-analysis-agent',
-  meta: '45 min · Beginner',
-};
-
-const TUTORIAL_FACULTY_GUIDELINES: LearningItem = {
-  title: 'Faculty guidelines chatbot',
-  description:
-    'NotebookLM assistant with cited answers from approved guidelines.',
-  href: '/agents#faculty-guidelines-chatbot',
-  meta: '75 min · Beginner',
-};
-
-/* =============================================================
-   RESOURCES — Mays AI courses (placeholder for now),
-   DeepLearning.AI, Anthropic Academy. "Browse all" tails to /resources.
-   ============================================================= */
-
-const RESOURCE_MAYS_QUICK_START: LearningItem = {
-  title: 'Mays AI quick-start guide',
-  description:
-    'A short read on how to get more out of every AI tool you use at Mays. Start here on visit one.',
-  href: 'https://maysai.vercel.app/guide',
-  meta: 'Guide',
-};
-
-const RESOURCE_MAYS_COURSES: LearningItem = {
-  title: 'Mays AI courses',
-  description:
-    'Short, role-specific courses built by the Lab. First two land this fall.',
-  href: '#',
-  comingSoon: true,
-  meta: 'Course',
-};
-
-const RESOURCE_ANTHROPIC: LearningItem = {
-  title: 'Anthropic Academy',
-  description:
-    'Free courses from Anthropic on prompt engineering, agent design, and Claude in production.',
-  href: 'https://www.anthropic.com/learn',
-  meta: 'External course',
-};
-
-const RESOURCE_DEEPLEARNING: LearningItem = {
-  title: 'DeepLearning.AI short courses',
-  description:
-    'Two-hour courses on RAG, agents, and prompt engineering for non-engineers.',
-  href: 'https://www.deeplearning.ai/short-courses/',
-  meta: 'External course',
+    'Three options. Mays AI Series on FlexOnline, Lab-built. Anthropic Academy, free and external. DeepLearning.AI Short Courses, two-hour formats.',
+  href: '/resources',
+  meta: 'Step 4 · Go deeper',
+  buckets: ['learning-ai'],
 };
 
 /* =============================================================
    SECTION ASSEMBLY — per role.
+   Order: Apps, Prompts, Learn AI.
    ============================================================= */
 
 const FACULTY_SECTIONS: LearningSection[] = [
   {
+    id: 'apps',
+    title: 'Ready-to-use apps',
+    blurb:
+      'Lab-built apps for the work that comes up every semester. Open the app, paste your inputs, get a reviewable draft.',
+    items: [APP_REC_LETTER_HELPER, APP_AWARD_NOMINATION],
+  },
+  {
     id: 'prompts',
     title: 'Ready-to-use prompts',
-    blurb:
-      'Open one. Copy. Paste into TAMU AI Chat. Ship the work.',
+    blurb: 'Open one. Copy. Paste into TAMU AI Chat. Ship the work.',
     items: [
       PROMPT_LIT_REVIEW,
       PROMPT_EXAM_QUESTIONS,
@@ -277,48 +263,26 @@ const FACULTY_SECTIONS: LearningSection[] = [
     browseLabel: 'Browse all prompts',
   },
   {
-    id: 'apps',
-    title: 'Ready-to-use apps',
+    id: 'learn-ai',
+    title: 'Learn AI',
     blurb:
-      'Lab-built apps for the work that comes up every semester.',
-    items: [APP_REC_LETTER_HELPER, APP_FACULTY_NOMINATE],
-  },
-  {
-    id: 'tutorials',
-    title: 'Tutorials',
-    blurb:
-      'Twenty to ninety minute builds. Pair with a student fellow if you want a hand.',
-    items: [
-      TUTORIAL_NOTEBOOK_LM_DOCS,
-      TUTORIAL_REC_LETTER_AGENT,
-      TUTORIAL_PAPER_TRACKER,
-      TUTORIAL_TAMU_AI_CHATBOT,
-    ],
-    browseHref: '/agents',
-    browseLabel: 'Browse all tutorials',
-  },
-  {
-    id: 'resources',
-    title: 'Resources and keep learning',
-    blurb:
-      'Longer reads worth your weekend. Mays-built and best of what is outside.',
-    items: [
-      RESOURCE_MAYS_QUICK_START,
-      RESOURCE_MAYS_COURSES,
-      RESOURCE_ANTHROPIC,
-      RESOURCE_DEEPLEARNING,
-    ],
-    browseHref: '/resources',
-    browseLabel: 'Browse all resources',
+      'A five-step ladder. Pick the right tool, write better prompts, build something small, then go deeper.',
+    items: [LEARN_STEP_0, LEARN_STEP_1, LEARN_STEP_2, LEARN_STEP_3, LEARN_STEP_4],
   },
 ];
 
 const STAFF_SECTIONS: LearningSection[] = [
   {
+    id: 'apps',
+    title: 'Ready-to-use apps',
+    blurb:
+      'Lab-built apps for the work coordinators and staff run every week. Open the app, paste your inputs, get a reviewable draft.',
+    items: [APP_REC_LETTER_HELPER, APP_AWARD_NOMINATION],
+  },
+  {
     id: 'prompts',
     title: 'Ready-to-use prompts',
-    blurb:
-      'Open one. Copy. Paste into TAMU AI Chat. Ship the work.',
+    blurb: 'Open one. Copy. Paste into TAMU AI Chat. Ship the work.',
     items: [
       PROMPT_ANNOUNCEMENT,
       PROMPT_MEETING_NOTES,
@@ -330,39 +294,11 @@ const STAFF_SECTIONS: LearningSection[] = [
     browseLabel: 'Browse all prompts',
   },
   {
-    id: 'apps',
-    title: 'Ready-to-use apps',
+    id: 'learn-ai',
+    title: 'Learn AI',
     blurb:
-      'Lab-built apps for the work coordinators and staff run every week.',
-    items: [APP_ANNOUNCEMENT_COMPOSER, APP_STAFF_NOMINATE],
-  },
-  {
-    id: 'tutorials',
-    title: 'Tutorials',
-    blurb:
-      'Twenty to ninety minute builds. Pair with a student fellow if you want a hand.',
-    items: [
-      TUTORIAL_MEETING_NOTES,
-      TUTORIAL_SPREADSHEET,
-      TUTORIAL_FACULTY_GUIDELINES,
-      TUTORIAL_NOTEBOOK_LM_DOCS,
-    ],
-    browseHref: '/agents',
-    browseLabel: 'Browse all tutorials',
-  },
-  {
-    id: 'resources',
-    title: 'Resources and keep learning',
-    blurb:
-      'Longer reads worth your weekend. Mays-built and best of what is outside.',
-    items: [
-      RESOURCE_MAYS_QUICK_START,
-      RESOURCE_MAYS_COURSES,
-      RESOURCE_ANTHROPIC,
-      RESOURCE_DEEPLEARNING,
-    ],
-    browseHref: '/resources',
-    browseLabel: 'Browse all resources',
+      'A five-step ladder. Pick the right tool, write better prompts, build something small, then go deeper.',
+    items: [LEARN_STEP_0, LEARN_STEP_1, LEARN_STEP_2, LEARN_STEP_3, LEARN_STEP_4],
   },
 ];
 
@@ -376,4 +312,39 @@ export function sectionsForRole(role: LearningRole): LearningSection[] {
 
 export function itemCountForRole(role: LearningRole): number {
   return sectionsForRole(role).reduce((n, s) => n + s.items.length, 0);
+}
+
+/**
+ * Filter sections by bucket. Returns the same shape but with each section's
+ * items narrowed to those whose buckets array contains the chip.
+ * If `bucket` is null, returns the sections unchanged.
+ */
+export function filterSectionsByBucket(
+  sections: LearningSection[],
+  bucket: LearningBucket | null,
+): LearningSection[] {
+  if (!bucket) return sections;
+  return sections.map((s) => ({
+    ...s,
+    items: s.items.filter((item) =>
+      item.buckets ? item.buckets.includes(bucket) : false,
+    ),
+  }));
+}
+
+/**
+ * Return every item across every section, paired with its origin section id.
+ * Used by the global search bar to render a unified filtered grid.
+ */
+export function flattenSections(sections: LearningSection[]): Array<{
+  sectionId: LearningSectionId;
+  item: LearningItem;
+}> {
+  const out: Array<{ sectionId: LearningSectionId; item: LearningItem }> = [];
+  for (const s of sections) {
+    for (const item of s.items) {
+      out.push({ sectionId: s.id, item });
+    }
+  }
+  return out;
 }
