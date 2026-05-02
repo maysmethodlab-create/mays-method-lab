@@ -15,11 +15,15 @@ const STATE_COOKIE = 'mml_oauth_state';
 const NEXT_COOKIE = 'mml_oauth_next';
 const ALLOWED_DOMAIN = 'tamu.edu';
 
-function callbackUrl(req: Request): string {
+function publicBaseUrl(req: Request): string {
   const url = new URL(req.url);
   const proto = req.headers.get('x-forwarded-proto') || url.protocol.replace(':', '');
   const host = req.headers.get('x-forwarded-host') || req.headers.get('host') || url.host;
-  return `${proto}://${host}/api/auth/google/callback`;
+  return `${proto}://${host}`;
+}
+
+function callbackUrl(req: Request): string {
+  return `${publicBaseUrl(req)}/api/auth/google/callback`;
 }
 
 function clearOauthCookies(res: NextResponse) {
@@ -35,7 +39,7 @@ function clearOauthCookies(res: NextResponse) {
 }
 
 function redirectError(req: Request, code: string) {
-  const res = NextResponse.redirect(new URL(`/login?error=${code}`, req.url));
+  const res = NextResponse.redirect(`${publicBaseUrl(req)}/login?error=${code}`);
   clearOauthCookies(res);
   return res;
 }
@@ -131,7 +135,7 @@ export async function GET(req: Request) {
   // Build the same session token the password flow produces.
   const token = buildSessionToken();
   const safeNext = nextPath.startsWith('/') && !nextPath.startsWith('//') ? nextPath : '/admin';
-  const res = NextResponse.redirect(new URL(safeNext, req.url));
+  const res = NextResponse.redirect(`${publicBaseUrl(req)}${safeNext}`);
   res.cookies.set(SESSION_COOKIE, token, {
     httpOnly: true,
     sameSite: 'lax',

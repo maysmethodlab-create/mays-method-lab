@@ -17,19 +17,25 @@ const STATE_COOKIE = 'mml_oauth_state';
 const NEXT_COOKIE = 'mml_oauth_next';
 const STATE_MAX_AGE_SEC = 5 * 60; // 5 minutes
 
-function callbackUrl(req: Request): string {
+function publicBaseUrl(req: Request): string {
   const url = new URL(req.url);
-  // Prefer x-forwarded-* headers when behind Render's proxy.
+  // Prefer x-forwarded-* headers when behind Render's proxy so we don't
+  // leak the internal port (10000) into redirect URLs.
   const proto = req.headers.get('x-forwarded-proto') || url.protocol.replace(':', '');
   const host = req.headers.get('x-forwarded-host') || req.headers.get('host') || url.host;
-  return `${proto}://${host}/api/auth/google/callback`;
+  return `${proto}://${host}`;
+}
+
+function callbackUrl(req: Request): string {
+  return `${publicBaseUrl(req)}/api/auth/google/callback`;
 }
 
 export async function GET(req: Request) {
+  const base = publicBaseUrl(req);
   const clientId = process.env.GOOGLE_OAUTH_CLIENT_ID;
   if (!clientId) {
     // Don't crash; surface a clear error on the login page.
-    return NextResponse.redirect(new URL('/login?error=oauth-not-configured', req.url));
+    return NextResponse.redirect(`${base}/login?error=oauth-not-configured`);
   }
 
   const url = new URL(req.url);
