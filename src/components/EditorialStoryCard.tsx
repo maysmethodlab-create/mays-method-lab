@@ -33,7 +33,9 @@ export default function EditorialStoryCard({
         <div className="editorial-banner__right">
           {story.cta && story.href ? (
             <CtaLink href={story.href} label={story.cta} />
-          ) : null}
+          ) : (
+            <ComingSoonPill />
+          )}
         </div>
       </article>
 
@@ -96,6 +98,14 @@ function InlinePromptBlock({
         </p>
       ) : null}
     </div>
+  );
+}
+
+function ComingSoonPill() {
+  return (
+    <span className="inline-block px-5 py-2 border-2 border-white text-white text-[12px] uppercase tracking-[0.18em] font-semibold whitespace-nowrap">
+      Coming soon
+    </span>
   );
 }
 

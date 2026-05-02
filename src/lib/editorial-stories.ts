@@ -66,8 +66,6 @@ export const EDITORIAL_STORIES: EditorialStory[] = [
     headline: 'Ask the guidelines. Get the exact passage with citations.',
     blurb:
       'A new Lab app in development. Type any question about promotion, evaluation, AACSB criteria, leave, or anything else in the October 2025 guidelines. The chatbot quotes the relevant section verbatim with section and page citations. For questions that need a human ruling on your specific case, one click takes you to the senior associate dean.',
-    cta: 'Tell Hari what you would ask',
-    href: 'mailto:ssridhar@mays.tamu.edu?subject=Faculty%20Guidelines%20Chatbot%20%E2%80%94%20input',
   },
 
   /* ---------- STAFF ---------- */
@@ -78,8 +76,6 @@ export const EDITORIAL_STORIES: EditorialStory[] = [
     headline: 'Ask the TAMU academic calendar. Get the exact date.',
     blurb:
       'A new Lab app in preview. Type any question about registration windows, drop deadlines, finals, breaks, or graduation. The chatbot returns the specific date with a citation back to the registrar.',
-    cta: 'Tell Hari what you would ask',
-    href: 'mailto:ssridhar@mays.tamu.edu?subject=Academic%20Calendar%20Chatbot%20%E2%80%94%20input',
   },
 ];
 
