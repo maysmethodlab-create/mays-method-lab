@@ -15,8 +15,10 @@ export type WriterStyleOverrides = {
    *  SUBJECT line to body. Default = 'first'. Sean = 'none'. */
   salutationStyle?: 'none' | 'first' | 'formal';
 
-  /** Where the AACSB paragraph goes in APT letters. Default = 'discrete'. */
-  aacsbPlacement?: 'discrete' | 'woven';
+  /** Where the AACSB paragraph goes in APT letters. Default = 'discrete'.
+   *  'omit' = skip AACSB entirely (Rich does this for short lecturer
+   *  letters, where AACSB material is replaced with a one-line note). */
+  aacsbPlacement?: 'discrete' | 'woven' | 'omit';
 
   /** Closing line(s) appended verbatim before the writer's name. */
   closingLines?: string[];
@@ -87,9 +89,14 @@ export const WRITERS: Writer[] = [
     styleOverrides: {
       fromBlockMaxLines: 3,
       useSectionHeadings: true,
-      targetWords: { min: 500, max: 850 },
+      targetWords: { min: 450, max: 770 },
       salutationStyle: 'none',
       aacsbPlacement: 'discrete',
+      openingBoilerplate:
+        'Both Texas A&M University and Mays Business School require that the performance of all faculty be reviewed on an annual basis. As noted in the Mays Faculty Promotion and Tenure Guidelines, the purposes of the annual performance review include creating a sound and logical basis for merit compensation recommendations, providing evaluative feedback regarding how well the individual is currently performing, providing developmental feedback regarding areas where the faculty member’s contribution may be enhanced and/or improved in the future, and providing feedback regarding progress toward promotion and as relevant. The senior clinical faculty reviewed your annual report, which contains extensive information on your teaching, and current resume. The following is an abbreviated summary of your accomplishments in the past year, followed by their assessment. This assessment will be the basis for any department resource allocation decisions.',
+      closingLines: [
+        'If you wish to discuss your review, schedule a time.',
+      ],
     },
   },
   {

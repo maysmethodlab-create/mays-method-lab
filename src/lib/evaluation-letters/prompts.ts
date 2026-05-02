@@ -209,6 +209,16 @@ Write the body as flowing paragraphs separated by blank lines. The
 writer's voice is conversational and headings would feel wrong.`;
 
   // -------- APT body structure --------
+  const aacsbInstr = (() => {
+    if (args.styleOverrides.aacsbPlacement === 'omit') {
+      return `AACSB: do NOT include any AACSB paragraph or list of AACSB activities. The writer does not include AACSB material in short APT letters. If the recipient holds a CPA / professional license that is worth mentioning, fold it into the Teaching narrative in one short sentence and stop there.`;
+    }
+    if (args.styleOverrides.aacsbPlacement === 'woven') {
+      return `AACSB: weave one short sentence about maintaining the "currency and relevance" of instruction into the Teaching paragraph. Do NOT add a separate AACSB heading or a bulleted list of AACSB activities.`;
+    }
+    return `AACSB: include a discrete paragraph (or short section) quoting AACSB language about maintaining "currency and relevance" of instruction. Mention CPA / professional license if relevant. Match the exemplar letters' phrasing and length closely.`;
+  })();
+
   const aptBodyStructure = `
 APT BODY STRUCTURE:
 
@@ -217,10 +227,10 @@ ${headerStyleInstr}
 ${args.styleOverrides.useSectionHeadings ? `Use these bold sections in this order:
 1. **Teaching** — primary section, longest. Be specific to courses, evaluations, mentoring, curricular contributions, course development.
 2. **Service** — committee work, student-org advising, BUSN 101, exam proctoring, etc.
-3. **AACSB** — discrete paragraph quoting AACSB language about maintaining "currency and relevance" of instruction. Mention CPA / professional license if relevant.` : `Write 3-5 flowing paragraphs in this order, NO headings:
+3. AACSB section — follow the AACSB rule below. ${aacsbInstr}` : `Write 3-5 flowing paragraphs in this order, NO headings:
 - Paragraph 1-2: Teaching narrative — specific course numbers, evaluations, course development, student feedback, co-teaching, online program contributions, willingness to teach new preps. EXPAND on what the writer's notes emphasize.
 - Paragraph 3 (only if substantial): Service narrative — committee work, advising, BUSN 101, exam proctoring, etc.
-- Paragraph 4: AACSB paragraph — discrete block. Quote AACSB language about maintaining "currency and relevance of their instruction" and "all accounting faculty demonstrate sufficient ongoing professional interaction to support their role in achieving the unit's mission." Mention CPA / professional license if relevant.
+- Paragraph 4 (AACSB): ${aacsbInstr}
 - Paragraph 5 (closing): support stated goals (call out the SPECIFIC goals from the writer's notes — e.g., expanding ACCT 421 into a three-hour course), encourage growth (mentoring from experienced instructors, teaching workshops), warm close.`}
 
 After the body content but BEFORE the closing lines below, include ONE paragraph with the rating sentences placeholders:
