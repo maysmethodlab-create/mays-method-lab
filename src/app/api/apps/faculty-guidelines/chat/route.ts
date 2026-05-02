@@ -148,11 +148,25 @@ For every section citation in the response:
 Be aggressive. The bot must NEVER cite a parent section like "Section 6" when subsections exist. The bot must NEVER cite a page range. If you see either pattern, fix it.
 
 Examples:
-- BAD: "(Section 6, p. 53)" — REWRITE to the actual subsection (e.g., "(§ 6.1, p. 54)")
-- BAD: "(p. 53-62)" — REWRITE to the actual single page
-- GOOD: "(§ 6.3, p. 55)" — leave as-is
+- BAD: "(Section 6, p. 53)" REWRITE to the actual subsection (e.g., "(§ 6.1, p. 54)")
+- BAD: "(p. 53-62)" REWRITE to the actual single page
+- GOOD: "(§ 6.3, p. 55)" leave as-is
 
-If all six checks pass, return the response unchanged. Otherwise return the rewritten response. Output ONLY the final response text. No commentary.`;
+CHECK 7 — Multi-turn context application (REWRITE if missed).
+
+If USER CONTEXT is non-empty (rank, track, department, or career step is named), the response MUST:
+
+1. Use second-person language ("you", "your") to tie the answer to the user's situation.
+2. Acknowledge how the answered topic relates (or does not relate) to the user's stated rank/track/career step.
+3. For comparison questions (e.g., "What's the difference between X and Y?"), explicitly note WHICH option applies to the user given their context, even if the answer is "neither" or "X but not Y."
+
+If the response does not do these things, REWRITE it to add the context-aware framing while keeping all the existing quotes and citations intact.
+
+Example: USER CONTEXT says "Rank: Associate Professor; Career step: preparing for promotion to Full Professor". The user asks "What's the difference between annual review and third-year review?". The response MUST acknowledge: "As an associate professor preparing for promotion to Full Professor, the third-year review (which applies to assistant professors mid-tenure-track) does not apply to your current situation. The annual review does apply to you. Here is how each works: ..."
+
+If USER CONTEXT is "NONE" (no prior turns established context), CHECK 7 is N/A leave the response alone for this check.
+
+If all seven checks pass, return the response unchanged. Otherwise return the rewritten response. Output ONLY the final response text. No commentary.`;
 
 const PASS3_QUOTE_FIX_SYSTEM = `You are a quote-fidelity fixer for a Faculty Guidelines chatbot. The previous response contained quoted passages that did not exactly match the source document. Your job is surgical: find ACCURATE quotes for those topics in the source and substitute them in. Do NOT remove or restructure anything else.
 
@@ -320,6 +334,84 @@ function detectPersonalApplicability(question: string): boolean {
     /\b(will i|do i|can i|am i|should i|if i have|based on my|for me)\b/.test(lowerQ);
   const hasHypothetical = /hypothetic.*faculty.*member|imagine.*someone/.test(lowerQ);
   return (hasFirstPersonPronoun && hasApplicabilityFraming) || hasHypothetical;
+}
+
+/**
+ * Deterministic context extraction. Scan all PRIOR user messages (skip
+ * the latest, which is the current question) to surface stable facts the
+ * user has already established: rank, track, department, career step.
+ * The verifier (CHECK 7) uses this to enforce that the response ties
+ * itself back to the user's situation instead of giving a generic answer.
+ */
+type UserContext = {
+  rank?: string;
+  track?: string;
+  department?: string;
+  careerStep?: string;
+  raw: string[];
+};
+
+function extractUserContext(messages: ChatMessage[]): UserContext {
+  const userMessages = messages
+    .slice(0, -1)
+    .filter((m) => m.role === 'user')
+    .map((m) => m.content.toLowerCase());
+
+  const ctx: UserContext = { raw: [] };
+
+  for (const msg of userMessages) {
+    const rankMatch = msg.match(
+      /(assistant|associate|full|clinical|executive|principal|senior)\s+(professor|lecturer)/i,
+    );
+    if (rankMatch && !ctx.rank) {
+      ctx.rank = rankMatch[0].replace(/\b\w/g, (c) => c.toUpperCase());
+      ctx.raw.push(rankMatch[0]);
+    }
+    if (/\btenure[\s-]track\b|\btenure track\b/i.test(msg) && !ctx.track) {
+      ctx.track = 'Tenure-Track';
+      ctx.raw.push('tenure-track');
+    }
+    if (
+      /\bAPT\b|\bacademic professional track\b|\bclinical\b|\blecturer\b|\bpractice\b/i.test(msg) &&
+      !ctx.track
+    ) {
+      ctx.track = 'Academic Professional Track';
+    }
+    const deptMatch = msg.match(
+      /\b(accounting|finance|information and operations|i&o|management|marketing)\b/i,
+    );
+    if (deptMatch && !ctx.department) {
+      ctx.department = deptMatch[0].replace(/\b\w/g, (c) => c.toUpperCase());
+      ctx.raw.push(deptMatch[0]);
+    }
+    if (
+      /prepping for promotion to full|preparing for promotion to full|going up for full/i.test(
+        msg,
+      ) &&
+      !ctx.careerStep
+    ) {
+      ctx.careerStep = 'preparing for promotion to Full Professor';
+      ctx.raw.push('preparing for promotion to full');
+    }
+    if (/third year|3rd year/i.test(msg) && !ctx.careerStep) {
+      ctx.careerStep = 'in third year';
+      ctx.raw.push('third year');
+    }
+  }
+
+  return ctx;
+}
+
+function formatUserContextForVerifier(ctx: UserContext): string {
+  if (!ctx.rank && !ctx.track && !ctx.department && !ctx.careerStep) {
+    return 'NONE the user has not established any context in prior turns.';
+  }
+  const lines: string[] = [];
+  if (ctx.rank) lines.push(`- Rank: ${ctx.rank}`);
+  if (ctx.track) lines.push(`- Track: ${ctx.track}`);
+  if (ctx.department) lines.push(`- Department: ${ctx.department}`);
+  if (ctx.careerStep) lines.push(`- Career step: ${ctx.careerStep}`);
+  return lines.join('\n');
 }
 
 /**
@@ -495,6 +587,14 @@ export async function POST(req: Request) {
   }
 
   // ---------------- Pass 2: verify / rewrite ----------------
+  // Deterministically extract user context from prior turns so the
+  // verifier can enforce CHECK 7 (multi-turn context application). The
+  // model alone was not reliably tying answers back to the user's stated
+  // rank / track / career step; injecting an extracted block makes the
+  // context impossible for the verifier to miss.
+  const userCtx = extractUserContext(messages);
+  const userCtxBlock = formatUserContextForVerifier(userCtx);
+
   let final = draft;
   try {
     const verifyReply = await client.messages.create({
@@ -504,7 +604,7 @@ export async function POST(req: Request) {
       messages: [
         {
           role: 'user',
-          content: `USER QUESTION:\n${lastUserQuestion}\n\nASSISTANT DRAFT RESPONSE:\n${draft}\n\nApply CHECK 1 through CHECK 6 and return ONLY the final response text.`,
+          content: `USER QUESTION:\n${lastUserQuestion}\n\nASSISTANT RESPONSE:\n${draft}\n\nUSER CONTEXT (from prior turns):\n${userCtxBlock}\n\nApply CHECK 1 through CHECK 7. Rewrite the response if any check fails. Return ONLY the final response text.`,
         },
       ],
     });
