@@ -72,10 +72,12 @@ export const EDITORIAL_STORIES: EditorialStory[] = [
   {
     publishedAt: '2026-05-02',
     role: 'staff',
-    eyebrow: 'Coming soon: Academic Calendar Chatbot',
+    eyebrow: 'Just shipped: Academic Calendar Chatbot',
     headline: 'Ask the TAMU academic calendar. Get the exact date.',
     blurb:
-      'A new Lab app in preview. Type any question about registration windows, drop deadlines, finals, breaks, or graduation. The chatbot returns the specific date with a citation back to the registrar.',
+      'A new Lab app, live as a preview. Type any question about registration windows, drop deadlines, finals, breaks, or graduation. The chatbot returns the specific date with a citation back to the registrar. Grounded in the latest TAMU registrar feeds across the next four semesters.',
+    cta: 'Try it now',
+    href: '/apps/academic-calendar',
   },
 ];
 

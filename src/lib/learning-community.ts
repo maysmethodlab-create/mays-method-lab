@@ -205,9 +205,8 @@ const APP_FACULTY_GUIDELINES_CHATBOT: LearningItem = {
 const APP_ACADEMIC_CALENDAR_CHATBOT: LearningItem = {
   title: 'Academic Calendar Chatbot',
   description:
-    'Ask any question about registration windows, drop deadlines, finals weeks, breaks, or graduation. The chatbot returns the specific date with a citation back to the TAMU registrar. Preview built; surfacing later this week.',
-  href: '#',
-  comingSoon: true,
+    'Ask any question about registration windows, drop deadlines, finals weeks, breaks, or graduation. The chatbot returns the specific date with a citation back to the TAMU registrar. Preview live now.',
+  href: '/apps/academic-calendar',
   meta: 'Lab app',
   buckets: ['programs', 'faculty-support', 'advising'],
 };
