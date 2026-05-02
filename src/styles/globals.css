@@ -429,6 +429,41 @@ iframe.hero-video {
   cursor: not-allowed;
 }
 
+/* Google sign-in button — full-width white with G logo. Sharp 0px corners. */
+.google-signin-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 24px;
+  background: #FFFFFF;
+  color: #1F1F1F;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: normal;
+  text-transform: none;
+  border: 1px solid #DADCE0;
+  border-radius: 0;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.1s, border-color 0.1s;
+  font-family: 'Work Sans', Arial, sans-serif;
+  line-height: 1.5;
+}
+
+.google-signin-btn:hover {
+  background: #F8F9FA;
+  border-color: #C6C9CE;
+  text-decoration: none;
+  color: #1F1F1F;
+}
+
+.google-signin-btn:focus-visible {
+  outline: 2px solid #500000;
+  outline-offset: 2px;
+}
+
 /* CTA arrow glyph wrapper — keeps the right arrow flush with text baseline. */
 .btn-arrow {
   display: inline-block;

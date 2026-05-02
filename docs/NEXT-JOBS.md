@@ -2,6 +2,35 @@
 
 Updated 2026-05-02 morning. Production live at https://mays-method-lab.onrender.com/.
 
+## Auth status (2026-05-01)
+
+**Done:**
+- Google OAuth flow is wired end-to-end. Routes: `/api/auth/google/start` (CSRF
+  state cookie + redirect to Google) and `/api/auth/google/callback` (validates
+  state, exchanges code, fetches userinfo, enforces `@tamu.edu` + verified
+  email, then sets the same `mml_session` cookie the password flow produces).
+- Login page (`/login`) now leads with **Sign in with TAMU Google**. Password
+  flow demoted to a hidden "Use admin password (dev)" link.
+- Error handling: `?error=domain` shows a clear @tamu.edu-only message;
+  `?error=oauth` shows a generic retry; `?error=oauth-not-configured` exposes
+  the password fallback.
+- Setup guide: `docs/AUTH-SETUP.md` walks Hari through Google Cloud Console
+  client registration step-by-step.
+
+**Pending (Hari to do):**
+- Register the OAuth client in Google Cloud Console per `docs/AUTH-SETUP.md`
+  Steps 1-3, then paste `GOOGLE_OAUTH_CLIENT_ID` and
+  `GOOGLE_OAUTH_CLIENT_SECRET` into the Render environment dashboard.
+- Until those env vars are set, the Google button on the login page redirects
+  to `?error=oauth-not-configured`. The password fallback still works.
+
+**Pending (longer horizon):**
+- TAMU CAS SSO registration with TAMU IT — the production-target replacement
+  for the Google OAuth bridge. Requires service registration with TAMU IT and
+  a ZDR (Zero Data Retention) contract with Anthropic before we can route
+  faculty data through the LLM under TAMU policy. Migration plan sketched in
+  `docs/AUTH-SETUP.md`.
+
 ## What landed overnight (2026-05-01 → 2026-05-02)
 
 Six commits shipped and auto-deployed clean to Render. Production verified HTTP 200 at the home, /admin/evaluation-letters (307 → /login), and /admin/endowed-positions (307 → /login).

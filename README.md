@@ -13,7 +13,7 @@ The first app is the [Evaluation Letter Writer](src/app/admin/evaluation-letters
 - **Next.js 14 (App Router) + React + TypeScript**
 - **Tailwind CSS** — custom dark TAMU theme (Aggie Maroon `#500000`)
 - **Anthropic Claude API** — `claude-sonnet-4-20250514` for the evaluation pipeline
-- **Auth (v1)** — shared password gate; replaceable with TAMU CAS SSO
+- **Auth** — Google OAuth restricted to `@tamu.edu` (primary), shared password as a hidden dev fallback. TAMU CAS SSO is the production target. See [docs/AUTH-SETUP.md](docs/AUTH-SETUP.md).
 - **Deploy** — Render (see [render.yaml](render.yaml))
 
 ---
@@ -30,11 +30,13 @@ The site runs at <http://localhost:3000>.
 
 ### Environment variables
 
-| Variable           | Purpose                                                                  |
-|--------------------|--------------------------------------------------------------------------|
-| `ANTHROPIC_API_KEY`| Claude API key. Used by the Evaluation Letter Writer.                    |
-| `ADMIN_PASSWORD`   | Shared password for the v1 admin gate.                                   |
-| `SESSION_SECRET`   | Optional — HMAC secret for session cookies. Falls back to `ADMIN_PASSWORD`. |
+| Variable                     | Purpose                                                                              |
+|------------------------------|--------------------------------------------------------------------------------------|
+| `ANTHROPIC_API_KEY`          | Claude API key. Used by the Evaluation Letter Writer.                                |
+| `ADMIN_PASSWORD`             | Shared password for the dev fallback (hidden behind a link on the login page).       |
+| `SESSION_SECRET`             | Optional — HMAC secret for session cookies. Falls back to `ADMIN_PASSWORD`.          |
+| `GOOGLE_OAUTH_CLIENT_ID`     | Google OAuth client ID. Required for Sign in with TAMU Google. See AUTH-SETUP.md.    |
+| `GOOGLE_OAUTH_CLIENT_SECRET` | Google OAuth client secret. Server-side only.                                        |
 
 A `.env.local` with placeholder values is included to keep local dev running; the AI features won't return real output until `ANTHROPIC_API_KEY` is set to a real key.
 
@@ -46,7 +48,7 @@ A `.env.local` with placeholder values is included to keep local dev running; th
 |--------------------------------|----------------------------------------------------------------------|
 | `/`                            | Cinematic landing page (hero, mission, vision, leadership).          |
 | `/about`                       | About the Lab and the co-directors.                                  |
-| `/login`                       | Shared password gate (placeholder for TAMU CAS SSO).                 |
+| `/login`                       | Sign in with TAMU Google (restricted to @tamu.edu); password fallback for dev. |
 | `/admin`                       | Admin Tools card grid. Auth-required.                                |
 | `/admin/evaluation-letters`    | Evaluation Letter Writer host page (filled in by Prompt 2).          |
 

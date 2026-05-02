@@ -39,6 +39,15 @@ const config: Config = {
           error: '#BF3D3D',
         },
         line: '#D1D1D1', // mays.tamu.edu divider-dots gray-300
+        // Google brand colors — used only by the inline G logo on the
+        // Sign in with TAMU Google button. These are Google's required
+        // marks per their branding guidelines and cannot be re-themed.
+        google: {
+          blue: '#4285F4',
+          green: '#34A853',
+          yellow: '#FBBC05',
+          red: '#EA4335',
+        },
       },
       fontFamily: {
         // Mays uses Oswald for headings and Work Sans for body.

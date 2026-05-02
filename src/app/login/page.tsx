@@ -12,7 +12,8 @@ export default function LoginPage() {
         <div className="eyebrow-lg mb-3">Admin Access</div>
         <h1 className="mb-3">Sign in to the Lab.</h1>
         <p className="text-[15px] text-ink-secondary mb-10 leading-relaxed">
-          Admin Tools require authentication. Enter the shared admin password to continue.
+          Sign in with your TAMU Google account to continue. Admin Tools are
+          restricted to @tamu.edu users.
         </p>
 
         <div className="card">
