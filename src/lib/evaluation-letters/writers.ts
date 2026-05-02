@@ -89,9 +89,13 @@ export const WRITERS: Writer[] = [
     styleOverrides: {
       fromBlockMaxLines: 3,
       useSectionHeadings: false,
-      targetWords: { min: 450, max: 770 },
+      targetWords: { min: 450, max: 700 },
       salutationStyle: 'none',
-      aacsbPlacement: 'discrete',
+      // Rich does not include AACSB material in short lecturer letters.
+      // For Becker (clinical) the omit branch is acceptable too — Rich's
+      // letters lean on Department-Head Assessment language rather than a
+      // separate AACSB paragraph for either group.
+      aacsbPlacement: 'omit',
       openingBoilerplate:
         'Both Texas A&M University and Mays Business School require that the performance of all faculty be reviewed on an annual basis. As noted in the Mays Faculty Promotion and Tenure Guidelines, the purposes of the annual performance review include creating a sound and logical basis for merit compensation recommendations, providing evaluative feedback regarding how well the individual is currently performing, providing developmental feedback regarding areas where the faculty member’s contribution may be enhanced and/or improved in the future, and providing feedback regarding progress toward promotion and as relevant. The senior clinical faculty reviewed your annual report, which contains extensive information on your teaching, and current resume. The following is an abbreviated summary of your accomplishments in the past year, followed by their assessment. This assessment will be the basis for any department resource allocation decisions.',
       closingLines: [
@@ -145,6 +149,36 @@ export const WRITERS: Writer[] = [
     chair: 'Jerry and Kay Cox Endowed Chair in Business',
     // High-resolution TAMU banner extracted from Boswell's Boivie letter.
     letterheadImage: 'mgmt.jpg',
+    styleOverrides: {
+      // Wendy uses a 2-line FROM block: "Wendy Boswell" + "Interim Head,
+      // Department of Management". No chair, no honors on her APT letters.
+      fromBlockMaxLines: 2,
+      // No bold section headings. Wendy's pattern is one classifying
+      // sentence followed by a numbered or bulleted list of supporting
+      // indicators, then a single closing paragraph.
+      useSectionHeadings: false,
+      // Panina is ~460 words, McFarland ~425 words. Range 350-550 keeps
+      // the letter tight without forcing an artificial floor.
+      targetWords: { min: 350, max: 550 },
+      // Memo skips "Dear X," and goes straight from SUBJECT to body.
+      salutationStyle: 'none',
+      // Wendy does NOT include AACSB material at all in her APT letters.
+      aacsbPlacement: 'omit',
+      // Wendy's opening boilerplate runs longer than Sean's. It includes
+      // the three review purposes and the four performance levels as
+      // bulleted lists, ending with the classifying-sentence transition.
+      openingBoilerplate:
+        'Both Texas A&M University and Mays Business School require that the performance of all faculty be reviewed on an annual basis. As noted in the Mays Faculty Promotion and Tenure Guidelines, the purposes of the annual performance review include:\n- Creating a sound and logical basis for merit compensation recommendations\n- Providing evaluative feedback regarding how well the individual is currently performing relative to the expectations and norms for the individual\'s faculty position\n- Providing developmental feedback regarding areas where the faculty member\'s contributions may be enhanced and/or improved in the future\n\nFurther, the Mays Faculty Promotion and Tenure Guidelines define four levels of performance for the key dimensions across which performance is reviewed. These levels of performance are:\n- Excellent Performance: a high level of performance that meets and exceeds norms and expectations and which is reflected by substantive indicators of performance excellence\n- Effective Performance: acceptable and satisfactory performance that meets norms and expectations and which is reflected by substantive indicators of performance effectiveness\n- "Needs Improvement" Performance: performance that does not consistently meet norms and expectations and which is reflected by an absence of some indicators of performance effectiveness\n- Unsatisfactory Performance: performance that consistently fails to meet norms and expectations and which is reflected by a continuous absence of indicators of performance effectiveness',
+      // Wendy's closing always ends with these two sentences verbatim,
+      // before the signature block.
+      closingLines: [
+        'If you would like to meet and discuss this letter, please contact me at your convenience so we can schedule a meeting.',
+        'Please sign and date this letter and return it to me. A signed copy of this letter will be placed in your official personnel file.',
+      ],
+      // Wendy uses "Interim Head, Department of Management" rather than
+      // the longer "Interim Department Head, Department of Management".
+      fromTitleOverride: 'Interim Head, Department of Management',
+    },
   },
 ];
 

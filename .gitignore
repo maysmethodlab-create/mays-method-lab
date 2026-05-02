@@ -56,6 +56,9 @@ page-*.png
 # All app-level test output stays inside the app folder, never at the root.
 apps/*/test-output/
 
+# Local-only scraped content for the AI Learning Community app — never commit
+apps/AI Learning Community/scraped/
+
 # Local-only candidate materials for the endowed-positions app — never commit
 # CVs, dept head letters, or anything else PII-bearing. Only the Boivie
 # example (institutional template) and the candidate metadata in

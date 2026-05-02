@@ -37,6 +37,18 @@ export const APT_EXEMPLARS: Record<string, string[]> = {
   'metters/apt-practice': [
     'Information & Operations (Metters)/Becker, Aaron [APT]/Becker_Annual_Review_2025.txt',
   ],
+  'boswell/apt-clinical': [
+    'Management (Boswell)/Panina, Daria [APT]/Panina_Annual_Review_2025.txt',
+    'Management (Boswell)/McFarland, Ken [APT]/McFarland_Annual_Review_2025.txt',
+  ],
+  'boswell/apt-lecturer': [
+    'Management (Boswell)/Panina, Daria [APT]/Panina_Annual_Review_2025.txt',
+    'Management (Boswell)/McFarland, Ken [APT]/McFarland_Annual_Review_2025.txt',
+  ],
+  'boswell/apt-practice': [
+    'Management (Boswell)/Panina, Daria [APT]/Panina_Annual_Review_2025.txt',
+    'Management (Boswell)/McFarland, Ken [APT]/McFarland_Annual_Review_2025.txt',
+  ],
 };
 
 /**

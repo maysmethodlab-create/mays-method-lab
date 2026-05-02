@@ -227,11 +227,35 @@ ${headerStyleInstr}
 ${args.styleOverrides.useSectionHeadings ? `Use these bold sections in this order:
 1. **Teaching** — primary section, longest. Be specific to courses, evaluations, mentoring, curricular contributions, course development.
 2. **Service** — committee work, student-org advising, BUSN 101, exam proctoring, etc.
-3. AACSB section — follow the AACSB rule below. ${aacsbInstr}` : `Write 3-5 flowing paragraphs in this order, NO headings:
+3. AACSB section — follow the AACSB rule below. ${aacsbInstr}
+4. Forward-look paragraph — see FORWARD-LOOK rule below.` : `Write 3-5 flowing paragraphs in this order, NO headings:
 - Paragraph 1-2: Teaching narrative — specific course numbers, evaluations, course development, student feedback, co-teaching, online program contributions, willingness to teach new preps. EXPAND on what the writer's notes emphasize.
 - Paragraph 3 (only if substantial): Service narrative — committee work, advising, BUSN 101, exam proctoring, etc.
 - Paragraph 4 (AACSB): ${aacsbInstr}
-- Paragraph 5 (closing): support stated goals (call out the SPECIFIC goals from the writer's notes — e.g., expanding ACCT 421 into a three-hour course), encourage growth (mentoring from experienced instructors, teaching workshops), warm close.`}
+- Paragraph 5 (closing / forward-look): see FORWARD-LOOK rule below.`}
+
+FORWARD-LOOK rule — REQUIRED for every APT letter:
+The closing paragraph (or final 2-3 sentences before the rating-sentence
+paragraph) MUST contain at least ONE concrete forward-looking sentence
+that names a SPECIFIC course, program, or initiative the recipient is
+teaching, expanding, co-teaching, or developing in the upcoming
+semester or year. Pull these specifics from the writer's notes (the
+"WRITER'S PERSONAL OBSERVATIONS AND NOTES" block) and from the
+"Goals for the Upcoming Year" section of the research brief. Examples
+of acceptable forward-look sentences (style only — substitute the real
+specifics from THIS recipient's notes):
+  - "I am also very grateful that you are willing to teach ACCT 405 in
+    Fall 2025. I am looking forward to teaching the course with you!"
+  - "I support your stated goals, especially your goal of expanding
+    ACCT 421 into a three-hour course."
+  - "I look forward to seeing the redesigned ISTM 210 module land in
+    the spring."
+Do NOT replace these specifics with vague phrasing like "continue to
+evaluate and improve the courses you teach" or "support your stated
+goals" alone. If the notes name a course number, a semester, a program
+name, or a specific initiative, that name MUST appear in the
+forward-look sentence verbatim or close to it. Generic forward-look
+language is a FAIL for this letter.
 
 After the body content but BEFORE the closing lines below, include ONE paragraph with the rating sentences placeholders:
 [TEACHING_RATING_SENTENCE] [SERVICE_RATING_SENTENCE] [OVERALL_RATING_SENTENCE]
@@ -458,10 +482,28 @@ export function assembleFinalLetter(args: {
  * Style is NOT this agent's concern; the next agent handles that.
  * ========================================================================== */
 
-export function hallucinationPrompt(args: { letterText: string; sourceDocuments: string }) {
-  const system = `You are the Hallucination Agent for an evaluation letter at Mays Business School. The letter you are about to read will be downloaded as a .docx and signed by a department head and placed in a faculty member's personnel file. Every factual claim must be traceable to the source documents.
+export function hallucinationPrompt(args: {
+  letterText: string;
+  sourceDocuments: string;
+  /** Writer's personal observations / notes — these are also ground truth.
+   *  Items the writer asserts (e.g., "we will co-teach ACCT 405 in Fall
+   *  2025") may not appear in the recipient's CV/F180 but are first-hand
+   *  knowledge from the department head. Treat them as authoritative. */
+  writerNotes?: string;
+}) {
+  const system = `You are the Hallucination Agent for an evaluation letter at Mays Business School. The letter you are about to read will be downloaded as a .docx and signed by a department head and placed in a faculty member's personnel file. Every factual claim must be traceable to the source documents OR to the writer's first-hand observations and notes (when supplied).
 
 YOUR ONLY JOB IS FACTUAL ACCURACY. You are not concerned with sentence rhythm, banned words, em-dashes, or any other writing-style issue. A separate Style Agent will handle those after you. Focus 100% on facts.
+
+GROUND-TRUTH SOURCES — both are authoritative:
+1. SOURCE DOCUMENTS (the recipient's CV / F180 / self-evaluation).
+2. WRITER'S NOTES (the department head's personal observations and
+   first-hand knowledge about the recipient — co-teaching plans,
+   discussions, future course assignments, mentoring conversations).
+   These are not hearsay; the writer is the dept head and authors the
+   letter, so their factual statements ARE ground truth even when they
+   do not appear in the CV. Do NOT flag a claim as fabricated when the
+   writer's notes assert it.
 
 OUTPUT FORMAT — return a markdown report followed by a CORRECTED LETTER inside a fenced code block:
 
@@ -518,11 +560,15 @@ before closing the fenced block.
 
 ${args.letterText}
 
-SOURCE DOCUMENTS (the only ground truth — every claim must be traceable here):
+SOURCE DOCUMENTS (recipient's CV / F180 / self-evaluation — ground truth):
 
 ${args.sourceDocuments}
 
-Produce the factual audit and Corrected Letter now.`;
+${args.writerNotes ? `WRITER'S NOTES (the department head's personal observations and first-hand knowledge — also ground truth, especially for forward-looking course assignments, co-teaching plans, and discussions that would not appear in the recipient's CV):
+
+${args.writerNotes}
+
+` : ''}Produce the factual audit and Corrected Letter now.`;
 
   return { system, user };
 }
