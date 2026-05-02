@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import {
+  ADMIN_COOKIE,
   SESSION_COOKIE,
   buildSessionToken,
   verifyAdminPassword,
@@ -63,26 +64,33 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Incorrect password.' }, { status: 401 });
   }
 
+  // Admin password grants both cookies: the member session (so the user can
+  // also use the public Learning Community side) and the admin session (which
+  // gates /admin/*). Google OAuth grants only the member session.
   const token = buildSessionToken();
-  const res = NextResponse.json({ ok: true });
-  res.cookies.set(SESSION_COOKIE, token, {
+  const cookieOpts = {
     httpOnly: true,
-    sameSite: 'lax',
+    sameSite: 'lax' as const,
     secure: process.env.NODE_ENV === 'production',
     path: '/',
     maxAge: 12 * 60 * 60, // 12 hours
-  });
+  };
+  const res = NextResponse.json({ ok: true });
+  res.cookies.set(SESSION_COOKIE, token, cookieOpts);
+  res.cookies.set(ADMIN_COOKIE, token, cookieOpts);
   return res;
 }
 
 export async function DELETE() {
-  const res = NextResponse.json({ ok: true });
-  res.cookies.set(SESSION_COOKIE, '', {
+  const expire = {
     httpOnly: true,
-    sameSite: 'lax',
+    sameSite: 'lax' as const,
     secure: process.env.NODE_ENV === 'production',
     path: '/',
     maxAge: 0,
-  });
+  };
+  const res = NextResponse.json({ ok: true });
+  res.cookies.set(SESSION_COOKIE, '', expire);
+  res.cookies.set(ADMIN_COOKIE, '', expire);
   return res;
 }

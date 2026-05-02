@@ -4,8 +4,16 @@ import crypto from 'crypto';
 // TODO: Replace with TAMU CAS SSO (https://cas.tamu.edu).
 // Users will authenticate via their NetID. The session payload will then carry
 // { netid, role, displayName } instead of the simple boolean used by the v1 password gate.
+//
+// Two-tier session model:
+//   mml_session = TAMU member session (set by Google OAuth or by the admin
+//                 password flow). Gates the Learning Community + general site.
+//   mml_admin   = admin-tools session (set ONLY by the admin password flow).
+//                 Gates /admin/* routes (Evaluation Letter Writer, Endowed
+//                 Positions Letter Writer, etc.).
 
 export const SESSION_COOKIE = 'mml_session';
+export const ADMIN_COOKIE = 'mml_admin';
 
 const sessionSecret = () =>
   process.env.SESSION_SECRET ||
@@ -68,9 +76,20 @@ export function verifySessionToken(token: string | undefined | null): boolean {
 
 /**
  * Async — must be called from a server component / route handler.
- * Returns true if the request carries a valid session cookie.
+ * Returns true if the request carries a valid TAMU member session cookie.
  */
 export function isAuthenticated(): boolean {
   const token = cookies().get(SESSION_COOKIE)?.value;
+  return verifySessionToken(token);
+}
+
+/**
+ * Async — must be called from a server component / route handler.
+ * Returns true if the request carries a valid admin-tools cookie. The admin
+ * cookie is set only by the password flow (see /api/auth POST). A Google
+ * OAuth session alone is not sufficient to access /admin/*.
+ */
+export function isAdminAuthenticated(): boolean {
+  const token = cookies().get(ADMIN_COOKIE)?.value;
   return verifySessionToken(token);
 }

@@ -11,10 +11,11 @@
  *   BUILD YOUR OWN 45-90 min agent tutorials
  *   GO DEEPER      tools, courses, and Lab pilot CTAs
  *
- * Every item below either points to a flat library page already in the
- * codebase (/agents, /prompts, /tools), to a shipped Mays Method Lab app
- * (/admin/...), or to the live student-built site at maysai.vercel.app
- * while migration is still in progress.
+ * Every item below points to a flat library page already in the codebase
+ * (/agents, /prompts, /tools) or to the live student-built site at
+ * maysai.vercel.app while migration is still in progress. Admin Tools
+ * (/admin/*) are intentionally excluded from this catalog — they live
+ * behind a separate password gate and are listed only on /admin.
  */
 
 export type LearningRole = 'faculty' | 'staff';
@@ -322,20 +323,14 @@ export const BUCKETS: LearningBucket[] = [
       {
         id: 'use-now',
         label: 'Use now',
-        blurb: 'Mays Method Lab apps you can open today.',
+        blurb: 'Apps you can open today. No setup.',
         items: [
           {
-            title: 'Evaluation Letter Writer',
+            ...TOOL_TAMU_AI_CHAT,
             description:
-              'Generate annual faculty evaluation letters from a self-evaluation, CV, and writer notes. Three-phase AI pipeline.',
-            href: '/admin/evaluation-letters',
+              'For drafting letters, emails, reports, and recommendations. The fastest place to start.',
           },
-          {
-            title: 'Endowed Positions Letter Writer',
-            description:
-              'For the Associate Dean for Research drafting the recommendation memo to the Dean after the MRC vote.',
-            href: '/admin/endowed-positions',
-          },
+          LAB_PILOT_CTA,
         ],
       },
       {
@@ -492,19 +487,14 @@ export const BUCKETS: LearningBucket[] = [
       {
         id: 'use-now',
         label: 'Use now',
-        blurb: 'Mays apps and tools that drop into your day.',
+        blurb: 'Apps you can open today. No setup.',
         items: [
-          {
-            title: 'Evaluation Letter Writer',
-            description:
-              'Many exec assistants help draft annual letters. Use the Lab\'s evaluation letter pipeline.',
-            href: '/admin/evaluation-letters',
-          },
           {
             ...TOOL_TAMU_AI_CHAT,
             description:
               'Default chat surface for emails, drafts, and quick lookups across faculty support work.',
           },
+          LAB_PILOT_CTA,
         ],
       },
       {

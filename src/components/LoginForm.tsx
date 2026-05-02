@@ -39,11 +39,14 @@ export default function LoginForm() {
   const search = useSearchParams();
   const next = search.get('next') || '/admin';
   const errorParam = search.get('error');
+  const mode = search.get('mode'); // 'admin' when the user came from /admin/*
+
+  const isAdminMode = mode === 'admin' || next.startsWith('/admin');
 
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [showPasswordForm, setShowPasswordForm] = useState(isAdminMode);
 
   useEffect(() => {
     if (errorParam === 'domain') {
