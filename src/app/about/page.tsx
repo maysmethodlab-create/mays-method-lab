@@ -15,13 +15,17 @@ export default function AboutPage() {
 
         <ScrollReveal>
           <div className="dotted-frame bg-bg-subtle py-12 px-8 md:px-12">
-            <div className="eyebrow-lg mb-3">A Research and Development Lab</div>
+            <div className="eyebrow-lg mb-3">About the Lab</div>
             <h1 className="mb-6 max-w-3xl">
-              A research and development lab inside Mays Business School.
+              An AI learning community. World-class offerings. Breakthrough pedagogy.
             </h1>
             <p className="text-[18px] text-ink-secondary leading-relaxed max-w-3xl">
-              The Mays Method Lab exists to discover, test, and codify a new way of teaching
-              business for the AI era.
+              The Mays Method Lab pursues three reinforcing priorities at Mays Business
+              School: making AI a daily advantage for every faculty and staff member,
+              building world-class AI offerings for our students, and translating those
+              breakthroughs into a new pedagogical standard — the Mays Method. AI is the
+              defining transformation in higher education. Mays is running toward it,
+              together.
             </p>
           </div>
         </ScrollReveal>

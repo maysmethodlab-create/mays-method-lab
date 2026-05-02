@@ -6,25 +6,26 @@ export default function HomePage() {
     <>
       <HeroSection />
 
-      {/* Mission — replicates Mays's section-intro pattern: superhead +
-          large Oswald heading + body paragraph. Wrapped in a dotted-frame
-          panel that overlays the section, mirroring Mays's media-feature. */}
+      {/* Mission — three-priority framing from the April 2026 faculty
+          briefing. Same dotted-frame panel pattern as before. */}
       <section className="section">
         <ScrollReveal>
           <div className="dotted-frame bg-bg-subtle py-12 px-8 md:px-12 mb-8">
             <div className="eyebrow-lg mb-3">Our Mission</div>
             <h2 className="mb-6 max-w-4xl">
-              The Mays Method Lab works in the tradition of a research and development lab inside
-              a great university.
+              An AI learning community. World-class offerings. Breakthrough pedagogy.
             </h2>
             <p className="text-[18px] text-ink-secondary leading-relaxed max-w-3xl mb-4">
-              We produce pedagogical innovations that can be branded, disseminated, and exported
-              as the Mays Method.
+              First, we build a learning community where every faculty and staff member at
+              Mays gets really good at using AI in their daily workflow. From there, those
+              workflow gains turn into deep builds — agentic graders, adaptive cases,
+              intelligent simulations — that become world-class AI offerings for our
+              students. Through that process we create breakthrough pedagogy, and Mays is
+              recognized as the center where the next way of teaching business is invented.
             </p>
             <p className="text-[16px] text-ink-secondary leading-relaxed max-w-3xl">
-              Our work sits at the intersection of business education, AI, and the changing nature
-              of professional knowledge. We build tools that make the work of academic leaders at
-              Mays Business School faster, more consistent, and more thoughtful.
+              Each level feeds the next. You cannot reach the apex without the base; without
+              the apex, the base never sees what is possible.
             </p>
           </div>
         </ScrollReveal>
@@ -39,9 +40,16 @@ export default function HomePage() {
         </ScrollReveal>
         <ScrollReveal>
           <h2 className="max-w-4xl mb-4">
-            Within five years, recognized as the leading center of pedagogical invention in
-            American business education.
+            The next way America teaches business — defined at Mays.
           </h2>
+        </ScrollReveal>
+        <ScrollReveal>
+          <p className="text-[18px] text-ink-secondary leading-relaxed max-w-3xl">
+            AI is the defining transformation in higher education. Mays is running toward
+            it, together. The Mays Method Lab is the vehicle through which Mays defines
+            that next way — by inventing the instruments that change how a class is
+            taught, then exporting them.
+          </p>
         </ScrollReveal>
       </section>
 
