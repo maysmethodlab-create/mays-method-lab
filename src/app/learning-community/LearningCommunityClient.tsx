@@ -54,8 +54,8 @@ export default function LearningCommunityClient({
       {/* Bucket grid (the role-landed view).
           Tight grid, 2-up at md and 4-up at lg+ to keep the first bucket's
           "Use now" tier as close to the fold as possible. */}
-      <div className="mt-8 mb-14">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="mt-6 mb-10">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {visibleBuckets.map((bucket) => (
             <BucketCard key={bucket.slug} bucket={bucket} />
           ))}
@@ -63,7 +63,7 @@ export default function LearningCommunityClient({
       </div>
 
       {/* Per-bucket detail sections */}
-      <div className="space-y-20">
+      <div className="space-y-16">
         {visibleBuckets.map((bucket) => (
           <BucketSection key={bucket.slug} bucket={bucket} />
         ))}
@@ -177,10 +177,10 @@ function BucketCard({ bucket }: { bucket: LearningBucket }) {
 function BucketSection({ bucket }: { bucket: LearningBucket }) {
   return (
     <section id={bucket.slug} className="scroll-mt-24">
-      <div className="heading-rule mb-3">
+      <div className="heading-rule mb-2">
         <h2 className="text-center mx-auto">{bucket.title}</h2>
       </div>
-      <p className="text-center text-[15px] text-ink-secondary max-w-2xl mx-auto mb-10">
+      <p className="text-center text-[15px] text-ink-secondary max-w-2xl mx-auto mb-8">
         {bucket.subhead}
       </p>
 
