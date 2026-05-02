@@ -122,6 +122,14 @@ Keep the rest of the response (genuine quotes, citations, the personal-applicabi
 
 Output ONLY the corrected response text.`;
 
+const PASS3_STRICT_FIX_SYSTEM = `The previous response STILL contained fabricated quoted passages after a first rewrite attempt. The fabricated quotes are: {{FABRICATED_QUOTES}}
+
+Rewrite the response as plain prose that paraphrases the substance without using direct quotes. Remove ALL quoted passages (anything wrapped in quotation marks). Cite section and page numbers (e.g., "Per Mays Faculty Guidelines § 4.2, p. 32") but do NOT use quotation marks anywhere in the body.
+
+Keep the personal-applicability template structure if it was used, but in the QUOTE slot put a paraphrase of the criteria with section and page citations rather than a quoted passage. Keep the source citation footer.
+
+Output ONLY the corrected response text.`;
+
 const PASS3_PAGE_FIX_SYSTEM = `The previous response contains references to sections or appendices that are missing required page numbers. The deficient references are: {{MISSING_PAGES}}
 
 Rewrite the response so every reference to a section, appendix, or numbered subsection (e.g., "§ 4.2", "Appendix J", "Section B.3.1") is followed by ", p. X" or ", page X" within the same sentence. If you cannot find an accurate page number from the source, remove the citation entirely and replace with "the guidelines do not specify the section here".
@@ -331,32 +339,39 @@ export async function POST(req: Request) {
   // ---------------- Pass 3: deterministic quote-fidelity + page-number checks ----------------
   // Catch fabricated quotes and missing-page citations that the LLM
   // verifier missed. Quote fabrication is the worse failure mode and is
-  // fixed first; missing page numbers are then patched in a separate
-  // targeted pass. If fabricated quotes remain after the rewrite, fall
-  // back to a hard refusal.
+  // fixed first via a retry loop: the first attempt asks the model to
+  // remove or replace the fabricated quote; if quotes are still
+  // fabricated, a second stricter attempt strips ALL quoted passages and
+  // rewrites as paraphrased prose. Only after both retries fail do we
+  // fall back to a hard refusal so genuine content has multiple chances
+  // to survive.
   let pass3Triggered = false;
   let pass3Reason: 'fabricated' | 'missing-pages' | 'both' | null = null;
   let pass3Fallback = false;
-  let fabricatedQuotes = findFabricatedQuotes(final, guidelinesText);
+  const initialFabricated = findFabricatedQuotes(final, guidelinesText);
   let missingPageRefs = findCitationsMissingPage(final);
 
-  if (fabricatedQuotes.length > 0 || missingPageRefs.length > 0) {
+  if (initialFabricated.length > 0 || missingPageRefs.length > 0) {
     pass3Triggered = true;
     pass3Reason =
-      fabricatedQuotes.length > 0 && missingPageRefs.length > 0
+      initialFabricated.length > 0 && missingPageRefs.length > 0
         ? 'both'
-        : fabricatedQuotes.length > 0
+        : initialFabricated.length > 0
           ? 'fabricated'
           : 'missing-pages';
 
-    if (fabricatedQuotes.length > 0) {
+    const maxPass3Retries = 2;
+    for (let retry = 0; retry < maxPass3Retries; retry++) {
+      const currentFabricated = findFabricatedQuotes(final, guidelinesText);
+      if (currentFabricated.length === 0) break;
+      const systemPrompt = retry === 0 ? PASS3_QUOTE_FIX_SYSTEM : PASS3_STRICT_FIX_SYSTEM;
       try {
         const fixReply = await client.messages.create({
           model: DEFAULT_MODEL,
           max_tokens: 900,
-          system: PASS3_QUOTE_FIX_SYSTEM.replace(
+          system: systemPrompt.replace(
             '{{FABRICATED_QUOTES}}',
-            fabricatedQuotes.map((q) => `"${q}"`).join('; '),
+            currentFabricated.map((q) => `"${q}"`).join('; '),
           ),
           messages: [
             {
@@ -372,12 +387,12 @@ export async function POST(req: Request) {
           .trim();
         if (fixed) final = fixed;
       } catch {
-        // fall through to the page-number pass and hard-refusal check
+        // fall through to the next retry / page-number pass / hard refusal
       }
     }
 
     // Re-evaluate. The quote rewrite may have already resolved the
-    // page-number gap; if not, run a second targeted pass.
+    // page-number gap; if not, run a separate targeted pass.
     missingPageRefs = findCitationsMissingPage(final);
     if (missingPageRefs.length > 0) {
       try {
@@ -412,6 +427,11 @@ export async function POST(req: Request) {
       final = HARD_REFUSAL;
     }
   }
+
+  // Preserve the initial fabricated-quote list for audit logging. The
+  // retry loop mutates `final` in place; logging the original miss list
+  // gives operators visibility into how often Pass 3 had to intervene.
+  const fabricatedQuotes = initialFabricated;
 
   // ---------------- Final post-processing: strip em dashes ----------------
   // Hari's durable rule: no em dashes in user-visible text. Apply this to
