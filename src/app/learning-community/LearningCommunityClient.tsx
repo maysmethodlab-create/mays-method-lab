@@ -648,24 +648,24 @@ const LEARN_TILES: Array<{
 
 const MAYS_AI_COURSES: Array<{ title: string; body: string }> = [
   {
-    title: 'AI Foundations for Business Leaders',
-    body: 'What AI is, what it can do for a business, and how to use it responsibly.',
+    title: 'Business Transformation with Generative AI',
+    body: 'Use prompt engineering to spot market trends, build solutions, and shape strategies through business and economic models.',
   },
   {
-    title: 'Generative AI for Decision-Making',
-    body: 'Use generative AI for analysis, drafting, and structured reasoning.',
+    title: 'Business Storytelling with AI',
+    body: 'Turn clickstream, text, spatial, and social-network data into clear, persuasive stories with Python and AI co-pilots.',
   },
   {
-    title: 'AI Strategy and Implementation',
-    body: 'Plan, scope, and roll out AI projects in a real business setting.',
+    title: 'Introduction to Machine Learning and Business Applications',
+    body: 'ML and AI fundamentals through a business lens. No advanced technical experience needed.',
   },
   {
-    title: 'Responsible AI in Business',
-    body: 'Ethics, governance, bias, and the regulatory landscape.',
+    title: 'Building Multimodal Gen AI Agents',
+    body: 'No-code course. Build digital assistants, chatbots, and content creators from text, visuals, audio, and video inputs.',
   },
   {
-    title: 'Building AI Solutions',
-    body: 'From idea to working prototype with no-code and low-code tools.',
+    title: 'Business Cases for Textual Generative and Agentic AI',
+    body: 'Low-code course on chatbots, document analyzers, semantic search, and agentic models for everyday business work.',
   },
 ];
 
