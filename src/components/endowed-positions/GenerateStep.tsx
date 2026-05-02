@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type {
   GeneratedParts,
   LetterDraft,
@@ -41,6 +41,18 @@ export default function GenerateStep({
   const [error, setError] = useState<string | null>(null);
   const [streamed, setStreamed] = useState<string>(draft?.text || '');
 
+  // Block accidental navigation while a long-running phase is in flight.
+  useEffect(() => {
+    const inFlight = phase === 'drafting' || phase === 'verifying';
+    if (!inFlight) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [phase]);
+
   const sourceDocuments = files
     .map((f) => `===== ${f.kind.toUpperCase()} — ${f.filename} =====\n${f.text}`)
     .join('\n\n');
@@ -64,6 +76,11 @@ export default function GenerateStep({
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let acc = '';
+      // Throttle parent-state writes (and therefore localStorage saves) to
+      // ~500ms during streaming so a mid-stream nav-away doesn't lose
+      // everything.
+      let lastSavedAt = 0;
+      const SAVE_INTERVAL_MS = 500;
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;
@@ -83,6 +100,11 @@ export default function GenerateStep({
           visible = visible.slice(0, open) + visible.slice(close + MODEL_JSON_CLOSE.length);
         }
         setStreamed(visible);
+        const now = Date.now();
+        if (now - lastSavedAt >= SAVE_INTERVAL_MS) {
+          onDraftChange({ text: visible, generatedAt: new Date().toISOString() });
+          lastSavedAt = now;
+        }
       }
       // Finalize
       let finalText = acc;

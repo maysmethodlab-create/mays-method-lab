@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   RATING_LEVELS,
   getRoleCategory,
@@ -83,6 +83,21 @@ export default function GenerateStep({
   const [error, setError] = useState<string | null>(null);
   const [streamedDraft, setStreamedDraft] = useState<string>(draft?.text || '');
 
+  // While a long-running phase is in flight, prompt the browser before the
+  // user navigates away or closes the tab — losing a streaming generation
+  // mid-flight wastes ~minute of compute and the partial-save cadence is
+  // 500ms, not zero.
+  useEffect(() => {
+    const inFlight = phase === 'researching' || phase === 'drafting' || phase === 'verifying';
+    if (!inFlight) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [phase]);
+
   const role = getRoleCategory(setup.roleCategoryId);
   const hasResearch = role?.required.includes('research') || false;
   const hasService = role?.required.includes('service') || false;
@@ -145,11 +160,21 @@ export default function GenerateStep({
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let acc = '';
+      // Throttle writes to the parent (and therefore localStorage) so a
+      // mid-stream tab close or navigation away doesn't lose everything —
+      // we save partial progress every ~500ms instead of only at the end.
+      let lastSavedAt = 0;
+      const SAVE_INTERVAL_MS = 500;
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;
         acc += decoder.decode(value, { stream: true });
         setStreamedDraft(acc);
+        const now = Date.now();
+        if (now - lastSavedAt >= SAVE_INTERVAL_MS) {
+          onDraftChange({ text: acc, generatedAt: new Date().toISOString() });
+          lastSavedAt = now;
+        }
       }
       onDraftChange({ text: acc, generatedAt: new Date().toISOString() });
       setPhase('review-draft');
@@ -355,7 +380,12 @@ export default function GenerateStep({
                 onChange={(v) => onSetupChange({ ...setup, researchRating: v })}
                 required
               />
-            ) : null}
+            ) : (
+              <NotApplicableField
+                label="Research and Publication"
+                note="Per Mays Guidelines §6.2, research is not evaluated for APT faculty."
+              />
+            )}
             {hasService ? (
               <RatingField
                 label="Service"
@@ -364,12 +394,26 @@ export default function GenerateStep({
                 required
               />
             ) : null}
-            <RatingField
-              label="Overall"
-              value={setup.overallRating}
-              onChange={(v) => onSetupChange({ ...setup, overallRating: v })}
-              required
-            />
+          </div>
+
+          {/* Overall rating gets its own row — it is the primary letter
+              outcome and must not be confused with the per-area ratings. */}
+          <div className="border-t border-line pt-5">
+            <div className="max-w-md">
+              <RatingField
+                label="Overall rating"
+                value={setup.overallRating}
+                onChange={(v) => onSetupChange({ ...setup, overallRating: v })}
+                required
+                emphasized
+              />
+              {!setup.overallRating ? (
+                <div className="text-xs text-status-warning mt-2">
+                  Required. The Summary paragraph cannot be appended and the
+                  letter cannot be downloaded until you set the overall rating.
+                </div>
+              ) : null}
+            </div>
           </div>
 
           <div className="flex justify-end">
@@ -544,20 +588,22 @@ function RatingField({
   value,
   onChange,
   required,
+  emphasized,
 }: {
   label: string;
   value: Rating | undefined;
   onChange: (v: Rating | undefined) => void;
   required?: boolean;
+  emphasized?: boolean;
 }) {
   return (
     <label className="block">
-      <div className="label">
+      <div className={emphasized ? 'label text-maroon' : 'label'}>
         {label}
         {required ? ' *' : ''}
       </div>
       <select
-        className="input"
+        className={`input${emphasized ? ' border-maroon' : ''}`}
         value={value || ''}
         onChange={(e) => onChange((e.target.value as Rating) || undefined)}
       >
@@ -566,6 +612,21 @@ function RatingField({
           <option key={r} value={r}>{r}</option>
         ))}
       </select>
+    </label>
+  );
+}
+
+function NotApplicableField({ label, note }: { label: string; note: string }) {
+  return (
+    <label className="block">
+      <div className="label">{label}</div>
+      <div className="input flex items-center justify-between bg-bg-subtle text-ink-muted cursor-not-allowed select-none">
+        <span>Not applicable</span>
+        <span className="text-[10px] uppercase tracking-[0.18em] font-semibold text-ink-muted">
+          APT
+        </span>
+      </div>
+      <div className="text-[11px] text-ink-muted mt-1">{note}</div>
     </label>
   );
 }
