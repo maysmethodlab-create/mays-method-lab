@@ -134,17 +134,41 @@ const HARD_REFUSAL =
   'The Mays Faculty Guidelines (October 2025) do not address this directly. For your specific situation, contact your department head or email Hari Sridhar at ssridhar@mays.tamu.edu. Source: Mays Faculty Guidelines, October 17, 2025 (Approved version).';
 
 /**
+ * Normalize a string for substring matching against the source. Unifies
+ * curly/smart quotes, dash variants, and exotic space characters so that
+ * a genuine quote from the source is not flagged as fabricated just
+ * because the model emitted "smart" punctuation where the source uses
+ * straight punctuation (or vice versa).
+ */
+function normalizeForMatch(s: string): string {
+  return s
+    // Unify all double-quote variants -> straight ASCII double quote
+    .replace(/[“”„‟″«»]/g, '"')
+    // Unify all single-quote / apostrophe variants -> straight ASCII apostrophe
+    .replace(/[‘’‚‛′]/g, "'")
+    // Unify dash variants -> hyphen-minus
+    .replace(/[‐‑‒–—―−]/g, '-')
+    // NBSP and other unicode space variants -> regular space
+    .replace(/[  -​  　]/g, ' ')
+    // Collapse all whitespace runs
+    .replace(/\s+/g, ' ')
+    .toLowerCase()
+    .trim();
+}
+
+/**
  * Pass 3 helper. Find quoted spans (>= 15 chars) in the response that do
- * NOT appear verbatim in the guidelines source. Whitespace and case are
- * normalized so multi-line quoted excerpts still match.
+ * NOT appear verbatim in the guidelines source. Punctuation, whitespace,
+ * and case are normalized so multi-line quoted excerpts still match even
+ * when the model substitutes smart quotes, en dashes, or NBSP characters.
  */
 function findFabricatedQuotes(responseText: string, sourceText: string): string[] {
   const quoteRegex = /"([^"]{15,})"/g;
   const fabricated: string[] = [];
-  const normalizedSource = sourceText.replace(/\s+/g, ' ').toLowerCase();
+  const normalizedSource = normalizeForMatch(sourceText);
   let m: RegExpExecArray | null;
   while ((m = quoteRegex.exec(responseText)) !== null) {
-    const candidate = m[1].replace(/\s+/g, ' ').toLowerCase();
+    const candidate = normalizeForMatch(m[1]);
     if (!normalizedSource.includes(candidate)) {
       fabricated.push(m[1]);
     }
