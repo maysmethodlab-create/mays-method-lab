@@ -19,15 +19,20 @@ export default function EditorialStoryCard({
   return (
     <div className="grid lg:grid-cols-3 gap-6 lg:gap-10">
       <div className="lg:col-span-2">
-        <article className="dotted-frame bg-bg-subtle py-12 px-8 md:px-12">
-          <div className="eyebrow-lg mb-3">{story.eyebrow}</div>
-          <h2 className="mb-5 max-w-2xl leading-tight">{story.headline}</h2>
-          <p className="text-[17px] text-ink-secondary leading-relaxed max-w-2xl mb-7">
-            {story.blurb}
-          </p>
-          {story.cta && story.href ? (
-            <CtaLink href={story.href} label={story.cta} />
-          ) : null}
+        {/* Asymmetric editorial banner — left 60% maroon block (eyebrow,
+            headline, blurb in white), right 40% white block with the CTA.
+            Outer dotted-frame keeps the Mays signature. */}
+        <article className="editorial-banner">
+          <div className="editorial-banner__left">
+            <div className="editorial-banner__eyebrow">{story.eyebrow}</div>
+            <h2 className="editorial-banner__title">{story.headline}</h2>
+            <p className="editorial-banner__blurb">{story.blurb}</p>
+          </div>
+          <div className="editorial-banner__right">
+            {story.cta && story.href ? (
+              <CtaLink href={story.href} label={story.cta} />
+            ) : null}
+          </div>
         </article>
       </div>
       <aside className="lg:col-span-1 flex flex-col justify-center">
