@@ -30,10 +30,13 @@ export default function Header() {
           </div>
         </Link>
 
-        <nav className="flex items-center gap-1">
+        <nav className="flex items-center gap-0">
           <NavLink href="/">Home</NavLink>
-          <NavLink href="/learning-community">AI Learning Community</NavLink>
-          <NavLink href="/admin">Admin Tools</NavLink>
+          <NavLink href="/learning-community">Learning Community</NavLink>
+          <NavLink href="/prompts">Prompts</NavLink>
+          <NavLink href="/agents">Tutorials</NavLink>
+          <NavLink href="/resources">Resources</NavLink>
+          <NavLink href="/admin">Admin</NavLink>
           <NavLink href="/about">About</NavLink>
         </nav>
       </div>
@@ -52,14 +55,14 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
   return (
     <Link
       href={href}
-      className={`relative px-4 py-3 text-[15px] font-semibold tracking-normal transition-colors ${
+      className={`relative px-3 py-3 text-[14px] font-semibold tracking-normal transition-colors ${
         active ? 'text-maroon' : 'text-ink-primary hover:text-maroon'
       }`}
     >
       {children}
       <span
         aria-hidden="true"
-        className={`absolute left-4 right-4 -bottom-[1px] h-[3px] transition-all ${
+        className={`absolute left-3 right-3 -bottom-[1px] h-[3px] transition-all ${
           active ? 'bg-maroon' : 'bg-transparent'
         }`}
       />
