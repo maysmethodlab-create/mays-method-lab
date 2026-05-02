@@ -4,7 +4,7 @@ import ScrollReveal from '@/components/ScrollReveal';
 export const metadata = {
   title: 'Resources | Mays Method Lab',
   description:
-    'AI guides and reference material for the Mays Business School community.',
+    'Deeper reading on AI for the Mays community. Courses, guides, and reading lists.',
 };
 
 type Resource = {
@@ -13,6 +13,7 @@ type Resource = {
   href: string;
   audience: string;
   external: boolean;
+  comingSoon?: boolean;
 };
 
 const RESOURCES: Resource[] = [
@@ -31,45 +32,69 @@ const RESOURCES: Resource[] = [
     external: true,
   },
   {
-    title: 'Approved AI tools at Mays',
-    blurb: 'The catalog of TAMU-approved AI tools with compliance and audience notes.',
-    href: '/tools',
-    audience: 'Faculty, staff, students',
-    external: false,
+    title: 'Anthropic Academy',
+    blurb: 'Free courses from Anthropic on prompt engineering, agent design, and Claude in production.',
+    href: 'https://www.anthropic.com/learn',
+    audience: 'Faculty, staff',
+    external: true,
+    comingSoon: true,
   },
   {
-    title: 'Agent tutorial library',
-    blurb: 'Step-by-step builds for practical AI agents.',
-    href: '/agents',
-    audience: 'Faculty, staff, students',
-    external: false,
+    title: 'DeepLearning.AI short courses',
+    blurb: 'Two-hour courses from DeepLearning.AI on RAG, agents, and prompt engineering for non-engineers.',
+    href: 'https://www.deeplearning.ai/short-courses/',
+    audience: 'Faculty, staff',
+    external: true,
+    comingSoon: true,
   },
   {
-    title: 'Prompt library',
-    blurb: 'Paste-ready AI prompts for teaching, writing, research, and admin work.',
-    href: '/prompts',
-    audience: 'Faculty, staff, students',
+    title: 'Mays AI reading list',
+    blurb: 'A curated set of papers and essays the Lab returns to. Updated quarterly.',
+    href: '#',
+    audience: 'Faculty',
     external: false,
+    comingSoon: true,
   },
+];
+
+const BUCKET_ANCHORS = [
+  'research',
+  'teaching',
+  'writing',
+  'programs',
+  'faculty-support',
+  'advising',
+  'learning-ai',
 ];
 
 export default function ResourcesPage() {
   return (
-    <section className="section pt-16">
+    <section className="section pt-24">
       <ScrollReveal>
-        <div className="dotted-frame bg-bg-subtle py-12 px-8 md:px-12 mb-10">
-          <div className="eyebrow-lg mb-3">Resources</div>
-          <h1 className="mb-4 max-w-3xl">
-            Guides, references, and the Mays AI tool catalog.
+        <div className="max-w-4xl mb-16">
+          <div className="eyebrow-lg mb-4">Resources</div>
+          <h1
+            className="mb-6 leading-[1.1]"
+            style={{ fontSize: 'clamp(40px, 5.5vw, 64px)' }}
+          >
+            Go deeper on AI for academic work.
           </h1>
-          <p className="text-[18px] text-ink-secondary leading-relaxed max-w-3xl">
-            Short reads on how to use AI well at Mays, plus the full catalog of approved
-            tools and tutorials.
+          <p className="text-[18px] text-ink-secondary leading-relaxed max-w-2xl">
+            Courses, guides, and the Lab&apos;s working reading list. The longer
+            reads worth your weekend.
           </p>
         </div>
       </ScrollReveal>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+      {/* Quick-start anchor for /resources#quick-start link from LC page. */}
+      <span id="quick-start" className="block scroll-mt-24" aria-hidden="true" />
+
+      {/* Hidden bucket anchors so /resources#research etc. land at the top. */}
+      {BUCKET_ANCHORS.map((b) => (
+        <span key={b} id={b} className="block scroll-mt-24" aria-hidden="true" />
+      ))}
+
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {RESOURCES.map((r) => (
           <ScrollReveal key={r.title}>
             <ResourceTile resource={r} />
@@ -77,7 +102,7 @@ export default function ResourcesPage() {
         ))}
       </div>
 
-      <div className="mt-12 pt-6 border-t border-line text-center">
+      <div className="mt-24 pt-6 border-t border-line text-center">
         <Link
           href="/learning-community"
           className="text-[14px] uppercase tracking-[0.1em] font-semibold text-maroon-muted hover:text-maroon"
@@ -90,6 +115,25 @@ export default function ResourcesPage() {
 }
 
 function ResourceTile({ resource }: { resource: Resource }) {
+  if (resource.comingSoon) {
+    return (
+      <div className="relative bg-white border-2 border-dashed border-maroon-muted/50 p-7 md:p-8 h-full flex flex-col text-ink-secondary">
+        <div className="flex items-center justify-between mb-3">
+          <span className="eyebrow text-[11px]">{resource.audience}</span>
+          <span className="text-[10px] tracking-[0.05em] uppercase px-2 py-1 font-semibold border border-line bg-bg-subtle">
+            Coming soon
+          </span>
+        </div>
+        <h3 className="font-headline text-[20px] font-semibold text-maroon mb-3 leading-tight">
+          {resource.title}
+        </h3>
+        <p className="text-[15px] text-ink-secondary leading-relaxed flex-1">
+          {resource.blurb}
+        </p>
+      </div>
+    );
+  }
+
   const inner = (
     <>
       <span className="absolute top-4 right-4 text-maroon" aria-hidden="true">
@@ -99,10 +143,10 @@ function ResourceTile({ resource }: { resource: Resource }) {
         </svg>
       </span>
       <div className="eyebrow text-[11px] mb-2 pr-8">{resource.audience}</div>
-      <h3 className="font-headline text-[20px] font-semibold text-maroon mb-2 leading-tight pr-8">
+      <h3 className="font-headline text-[20px] font-semibold text-maroon mb-3 leading-tight pr-8">
         {resource.title}
       </h3>
-      <p className="text-[14px] text-ink-secondary leading-relaxed flex-1">
+      <p className="text-[15px] text-ink-secondary leading-relaxed flex-1">
         {resource.blurb}
       </p>
     </>
@@ -113,7 +157,7 @@ function ResourceTile({ resource }: { resource: Resource }) {
         href={resource.href}
         target="_blank"
         rel="noreferrer"
-        className="relative block bg-white border-2 border-maroon p-6 md:p-7 h-full flex flex-col transition-colors hover:bg-maroon/5"
+        className="relative block bg-white border-2 border-maroon p-7 md:p-8 h-full flex flex-col transition-colors hover:bg-maroon/5"
       >
         {inner}
       </a>
@@ -122,7 +166,7 @@ function ResourceTile({ resource }: { resource: Resource }) {
   return (
     <Link
       href={resource.href}
-      className="relative block bg-white border-2 border-maroon p-6 md:p-7 h-full flex flex-col transition-colors hover:bg-maroon/5"
+      className="relative block bg-white border-2 border-maroon p-7 md:p-8 h-full flex flex-col transition-colors hover:bg-maroon/5"
     >
       {inner}
     </Link>
