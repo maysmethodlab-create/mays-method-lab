@@ -330,6 +330,35 @@ function stripEmDashes(text: string): string {
     .trim();
 }
 
+/**
+ * Final post-processing pass. Pass 3 strict retries replace fabricated
+ * quotes with the literal string "the guidelines do not address this
+ * point directly", which leaves stranded commas and double periods
+ * around the substitution. This pass repairs those artifacts so the
+ * shipped response (and the audit log) reads cleanly.
+ */
+function cleanStitchingArtifacts(text: string): string {
+  return text
+    // ", The guidelines do not address this point directly., " -> clean sentence
+    .replace(
+      /,\s*The guidelines do not address this point directly\.\,?\s*/g,
+      ' The guidelines do not address this point directly. ',
+    )
+    // Stranded sentence-end commas: "X., Y" -> "X. Y"
+    .replace(/\.\s*,\s*/g, '. ')
+    // Stranded comma-period: ".," -> "."
+    .replace(/\.\s*,/g, '.')
+    // Repeated commas: ",," -> ","
+    .replace(/,\s*,/g, ',')
+    // Comma immediately before a period: ",." -> "."
+    .replace(/,\s*\./g, '.')
+    // Double periods (other than ellipses)
+    .replace(/(?<!\.)\.\.(?!\.)/g, '.')
+    // Collapse multiple spaces
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function isKillSwitchOn(): boolean {
   return (process.env.FACULTY_GUIDELINES_BOT_ENABLED || '').toLowerCase() === 'false';
 }
@@ -584,6 +613,14 @@ export async function POST(req: Request) {
   // the response right before returning to the client AND before writing
   // it to the audit log so the stored "final" matches what shipped.
   final = stripEmDashes(final);
+
+  // ---------------- Final post-processing: clean stitching artifacts ----------------
+  // The strict Pass 3 retry replaces fabricated quotes with a literal
+  // "the guidelines do not address this point directly" string, which
+  // leaves mangled punctuation (stranded commas, double periods) around
+  // the substitution site. This sweep repairs those artifacts so the
+  // user-visible response and the audit log are both clean.
+  final = cleanStitchingArtifacts(final);
 
   // ---------------- Audit log (best-effort) ----------------
   writeAuditEntry({
