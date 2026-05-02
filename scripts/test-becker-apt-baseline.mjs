@@ -37,7 +37,9 @@ const NOTES = `Aaron continues to carry an extraordinary teaching load, and the 
 
 Service is the standout this cycle. Aaron is Assistant Department Head, MIS Advisor for the MS program, and on a large number of committees including the curriculum redesign committee. Faculty comments are uniformly excellent on service, teaching, and as a colleague. The department would grind to a halt without his efforts.
 
-Goal next year: keep doing what he is doing. The demands on his time have only increased and his compensation has increased to match. Continue the MS advising work and the Assistant Dept Head role.`;
+Goal next year: keep doing what he is doing. The demands on his time have only increased and his compensation has increased to match. Continue the MS advising work and the Assistant Dept Head role.
+
+Forward-look (specifics that MUST appear in the closing): finishing the EDSIGCON paper on nascent teaching this fall, continued improvements to ISTM 281/481 modules in Spring 2026, and continued chairing of the MIS Clinical Faculty Search Committee through the next hiring cycle. Name ISTM 281/481 and Spring 2026 in the forward-look paragraph.`;
 
 let SESSION_COOKIE = '';
 

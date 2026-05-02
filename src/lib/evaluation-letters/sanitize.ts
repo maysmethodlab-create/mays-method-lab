@@ -96,13 +96,24 @@ const PHRASE_SWAPS: Sub[] = [
   { from: /\bit is important to note that\b/gi, to: '' },
   { from: /\bit is worth noting that\b/gi, to: '' },
   { from: /\bin other words,?\s*/gi, to: '' },
+  // Banned sentence openers: catch them at start-of-line AND
+  // mid-paragraph (after a sentence-ending period + space). The earlier
+  // pass only matched ^ which missed "...students. Furthermore, it is..."
+  // The replacement rewrites to a clean sentence start.
   { from: /^Moreover,\s*/gim, to: '' },
+  { from: /([.!?])\s+Moreover,\s*/g, to: '$1 ' },
   { from: /^Furthermore,\s*/gim, to: '' },
+  { from: /([.!?])\s+Furthermore,\s*/g, to: '$1 ' },
   { from: /^Additionally,\s*/gim, to: '' },
+  { from: /([.!?])\s+Additionally,\s*/g, to: '$1 ' },
   { from: /^Indeed,\s*/gim, to: '' },
+  { from: /([.!?])\s+Indeed,\s*/g, to: '$1 ' },
   { from: /^Notably,\s*/gim, to: '' },
+  { from: /([.!?])\s+Notably,\s*/g, to: '$1 ' },
   { from: /^Importantly,\s*/gim, to: '' },
+  { from: /([.!?])\s+Importantly,\s*/g, to: '$1 ' },
   { from: /^Taken together,\s*/gim, to: '' },
+  { from: /([.!?])\s+Taken together,\s*/g, to: '$1 ' },
 ];
 
 // Em / en dash → comma. Critical: do NOT touch dashes that sit between
@@ -255,6 +266,24 @@ function softenOpener(sentence: string, transition: string): string {
   return sentence;
 }
 
+/**
+ * Strip any markdown heading the model dropped at the very top of the
+ * letter (e.g. "# DRAFT ANNUAL PERFORMANCE EVALUATION" or "# Letter to ...").
+ * Real letters start with the DATE line. Anything before the first non-
+ * heading paragraph is removed.
+ */
+function stripLeadingHeading(text: string): string {
+  const lines = text.split(/\r?\n/);
+  let i = 0;
+  while (
+    i < lines.length &&
+    (lines[i].trim() === '' || /^#{1,6}\s/.test(lines[i].trim()))
+  ) {
+    i += 1;
+  }
+  return lines.slice(i).join('\n');
+}
+
 /** Collapse double spaces / orphaned punctuation introduced by removals. */
 function tidy(text: string): string {
   let t = text
@@ -296,7 +325,7 @@ export type SanitizeResult = {
 };
 
 export function sanitizeLetter(input: string): SanitizeResult {
-  let text = input;
+  let text = stripLeadingHeading(input);
   const changes = { bannedWords: 0, phrases: 0, dashes: 0, yourRuns: 0 };
 
   // Banned single words

@@ -361,7 +361,12 @@ Use the LETTER SKILL REFERENCE (in the cached system block above) to match the e
 
 REQUIRED HEADER (always — applies to every writer):
 
-1. DATE LINE: current month and year, e.g., "May 2026"
+1. DATE LINE: the FIRST non-blank line of the letter is the month and
+   year the evaluation letter was delivered (typically May or April of
+   the year AFTER the evaluationYear). For evaluationYear ${args.evaluationYear},
+   write "May ${args.evaluationYear + 1}" on its own line. Do NOT skip
+   this line. Do NOT prefix it with "DATE:". Do NOT replace it with a
+   markdown heading. Real example for evaluationYear 2024: "May 2025".
 
 2. The word "MEMORANDUM" on its own line, all caps
 
@@ -382,7 +387,7 @@ supports it and direct where the recipient needs to hear something hard.
 
 ${isApt ? 'CRITICAL: This is an APT / lecturer category. Do NOT include any research evaluation. Do NOT reference the absence of research negatively. Per Mays Guidelines Section 6.2, lack of research activity must NOT be viewed as a negative factor.' : ''}
 
-Output ONLY the letter text. No preamble, no commentary, no markdown code fence.`;
+Output ONLY the letter text. No preamble, no commentary, no markdown code fence. Do NOT add a markdown heading at the top (no "# DRAFT", no "# ANNUAL PERFORMANCE EVALUATION", no "# Letter to ..." — start the file with the DATE line and nothing above it).`;
 
   const user = `RESEARCH BRIEF (Phase 1 output, possibly edited by the writer):
 

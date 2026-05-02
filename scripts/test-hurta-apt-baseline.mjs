@@ -35,7 +35,9 @@ const NOTES = `Outstanding teaching year. Loved teaching ACCT 405 with her — s
 
 Great team player, deep dedication to students. Maintains her CPA license. Stated goals: continue to improve courses, expand ACCT 421 into a three-hour course. Encourage her to seek mentoring from more experienced instructors and attend teaching workshops.
 
-Service: discussed tax-track PPA students this past summer, BUSN 101 mentoring, volunteered to proctor exams for the Student Testing Center during final exams.`;
+Service: discussed tax-track PPA students this past summer, BUSN 101 mentoring, volunteered to proctor exams for the Student Testing Center during final exams.
+
+Forward-look (specifics that MUST appear verbatim in the closing): she is teaching ACCT 405 again in Fall 2025 and we will be co-teaching it; she is expanding ACCT 421 into a three-hour course next academic year. The closing paragraph must name Fall 2025, ACCT 405, and the ACCT 421 three-hour expansion.`;
 
 let SESSION_COOKIE = '';
 
