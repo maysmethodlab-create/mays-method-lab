@@ -210,6 +210,15 @@ const APP_ACADEMIC_CALENDAR_CHATBOT: LearningItem = {
   buckets: ['programs', 'faculty-support', 'advising'],
 };
 
+const APP_PPTX_REFORMATTER: LearningItem = {
+  title: 'PowerPoint Reformatter',
+  description:
+    'Upload any messy deck. Get back a Mays-brand-compliant, ADA-accessible version. Six-step AI pipeline runs on the cheapest model so you can use it freely.',
+  href: '/apps/pptx-reformatter',
+  meta: 'Lab app · Beta',
+  buckets: ['teaching', 'writing', 'programs', 'faculty-support'],
+};
+
 /* =============================================================
    LEARN AI — five-step ladder.
    These items are the 5 step cards. Step 3 also surfaces three
@@ -272,7 +281,7 @@ const FACULTY_SECTIONS: LearningSection[] = [
     title: 'Ready-to-use apps',
     blurb:
       'Lab-built apps for the work that comes up every semester. Open the app, paste your inputs, get a reviewable draft.',
-    items: [APP_FACULTY_GUIDELINES_CHATBOT, APP_REC_LETTER_HELPER, APP_AWARD_NOMINATION],
+    items: [APP_FACULTY_GUIDELINES_CHATBOT, APP_PPTX_REFORMATTER, APP_REC_LETTER_HELPER, APP_AWARD_NOMINATION],
   },
   {
     id: 'prompts',
@@ -302,7 +311,7 @@ const STAFF_SECTIONS: LearningSection[] = [
     title: 'Ready-to-use apps',
     blurb:
       'Lab-built apps for the work coordinators and staff run every week. Open the app, paste your inputs, get a reviewable draft.',
-    items: [APP_ACADEMIC_CALENDAR_CHATBOT, APP_AWARD_NOMINATION, APP_REC_LETTER_HELPER],
+    items: [APP_ACADEMIC_CALENDAR_CHATBOT, APP_PPTX_REFORMATTER, APP_AWARD_NOMINATION, APP_REC_LETTER_HELPER],
   },
   {
     id: 'prompts',
