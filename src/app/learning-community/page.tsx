@@ -6,7 +6,7 @@ import type { LearningRole } from '@/lib/learning-community';
 export const metadata = {
   title: 'AI Learning Community | Mays Method Lab',
   description:
-    'Practical AI tools, prompts, and tutorials for Mays Business School faculty and staff. Job-mapped to your daily work.',
+    'Practical AI for the Mays community. Apps mapped to the work you actually do.',
 };
 
 const ROLE_COOKIE = 'mml.role.preference';
@@ -18,15 +18,17 @@ export default function LearningCommunityPage() {
     stored === 'staff' || stored === 'faculty' ? stored : 'faculty';
 
   return (
-    <section className="section pt-10">
+    <section className="section pt-24">
+      {/* Hero. One confident sentence. No clutter. */}
       <ScrollReveal>
-        <div className="dotted-frame bg-bg-subtle py-8 px-8 md:px-12 mb-8">
-          <div className="eyebrow-lg mb-2">AI Learning Community</div>
-          <h1 className="mb-3 max-w-3xl">
-            Practical AI for the Mays community. Mapped to the work you actually do.
+        <div className="max-w-4xl">
+          <div className="eyebrow-lg mb-4">AI Learning Community</div>
+          <h1 className="mb-6 leading-[1.1]" style={{ fontSize: 'clamp(40px, 6vw, 72px)' }}>
+            Practical AI for the Mays community.
           </h1>
-          <p className="text-[16px] text-ink-secondary leading-relaxed max-w-3xl">
-            Pick your role. Pick a bucket. Open one tool, copy one prompt, or build one tutorial.
+          <p className="text-[18px] text-ink-secondary leading-relaxed max-w-2xl">
+            A small set of apps, picked for the work faculty and staff actually do.
+            Open one and start.
           </p>
         </div>
       </ScrollReveal>

@@ -2,14 +2,20 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
-import type { LearningBucket, LearningItem, LearningRole, LearningTier } from '@/lib/learning-community';
-import { BUCKETS, bucketStats } from '@/lib/learning-community';
+import type {
+  LearningBucket,
+  LearningItem,
+  LearningRole,
+} from '@/lib/learning-community';
+import { BUCKETS, EDITORIAL_HIGHLIGHTS } from '@/lib/learning-community';
 
 const ROLE_COOKIE = 'mml.role.preference';
 
 function readRoleCookie(): LearningRole | null {
   if (typeof document === 'undefined') return null;
-  const match = document.cookie.match(new RegExp(`(?:^|; )${ROLE_COOKIE}=(faculty|staff)`));
+  const match = document.cookie.match(
+    new RegExp(`(?:^|; )${ROLE_COOKIE}=(faculty|staff)`),
+  );
   return match ? (match[1] as LearningRole) : null;
 }
 
@@ -27,6 +33,7 @@ export default function LearningCommunityClient({
   initialRole: LearningRole;
 }) {
   const [role, setRole] = useState<LearningRole>(initialRole);
+  const [query, setQuery] = useState('');
 
   // On mount, read the cookie. If it disagrees with SSR, switch.
   useEffect(() => {
@@ -42,34 +49,68 @@ export default function LearningCommunityClient({
     [role],
   );
 
+  // Filter buckets by the search query. We filter items inside each bucket;
+  // a bucket with zero matches is hidden entirely.
+  const filteredBuckets = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return visibleBuckets;
+    return visibleBuckets
+      .map((b) => ({
+        ...b,
+        items: b.items.filter(
+          (item) =>
+            item.title.toLowerCase().includes(q) ||
+            item.description.toLowerCase().includes(q) ||
+            (item.meta ?? '').toLowerCase().includes(q) ||
+            b.title.toLowerCase().includes(q),
+        ),
+      }))
+      .filter((b) => b.items.length > 0);
+  }, [visibleBuckets, query]);
+
   function selectRole(next: LearningRole) {
     setRole(next);
     writeRoleCookie(next);
   }
 
+  const editorial = EDITORIAL_HIGHLIGHTS[role];
+
   return (
     <>
-      <RoleToggle role={role} onChange={selectRole} />
-
-      {/* Bucket grid (the role-landed view).
-          Tight grid, 2-up at md and 4-up at lg+ to keep the first bucket's
-          "Use now" tier as close to the fold as possible. */}
-      <div className="mt-6 mb-10">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {visibleBuckets.map((bucket) => (
-            <BucketCard key={bucket.slug} bucket={bucket} />
-          ))}
-        </div>
+      {/* Role toggle. The page is bilingual; this is the only switch. */}
+      <div className="mt-12">
+        <RoleToggle role={role} onChange={selectRole} />
       </div>
 
-      {/* Per-bucket detail sections */}
-      <div className="space-y-16">
-        {visibleBuckets.map((bucket) => (
-          <BucketSection key={bucket.slug} bucket={bucket} />
-        ))}
-      </div>
+      {/* Editorial row. One curated rectangle that rewards visit five.
+          Asymmetric: 2/3 dotted-frame card, 1/3 supporting note. */}
+      <section className="mt-20">
+        <EditorialRow editorial={editorial} />
+      </section>
 
-      <FlatLibraryFooter />
+      {/* Search. Functional. Filters items as you type.
+          Sits below the editorial row, above the buckets. */}
+      <section className="mt-24">
+        <SearchBox value={query} onChange={setQuery} />
+      </section>
+
+      {/* Bucket grid. Each bucket gets generous space, 2-3 hero apps,
+          and quiet "browse all" links to the dedicated pages.
+          No tiers on this page; the page is apps-only. */}
+      <section className="mt-16 space-y-24">
+        {filteredBuckets.length === 0 ? (
+          <EmptyState query={query} onClear={() => setQuery('')} />
+        ) : (
+          filteredBuckets.map((bucket) => (
+            <BucketSection key={bucket.slug} bucket={bucket} />
+          ))
+        )}
+      </section>
+
+      {/* Trust banner. One line, page bottom, replaces per-card badges. */}
+      <section className="mt-32 pt-10 border-t border-line">
+        <TrustBanner />
+      </section>
     </>
   );
 }
@@ -126,7 +167,7 @@ function RoleChip({
       aria-selected={active}
       onClick={onClick}
       className={[
-        'px-8 py-3 font-headline text-[18px] tracking-wide transition-colors',
+        'px-10 py-3 font-headline text-[18px] tracking-wide transition-colors',
         active
           ? 'bg-maroon text-white'
           : 'bg-white text-maroon hover:bg-maroon/5',
@@ -138,154 +179,198 @@ function RoleChip({
 }
 
 /* =============================================================
-   Bucket card (large, role-landed grid)
+   Editorial row — Netflix "what's hot at Mays" spotlight
    ============================================================= */
 
-function BucketCard({ bucket }: { bucket: LearningBucket }) {
-  const stats = bucketStats(bucket);
-  const parts: string[] = [];
-  if (stats.apps) parts.push(`${stats.apps} ${stats.apps === 1 ? 'app' : 'apps'}`);
-  if (stats.prompts) parts.push(`${stats.prompts} ${stats.prompts === 1 ? 'prompt' : 'prompts'}`);
-  if (stats.tutorials) parts.push(`${stats.tutorials} ${stats.tutorials === 1 ? 'tutorial' : 'tutorials'}`);
-  const statLine = parts.join(' · ');
-
+function EditorialRow({
+  editorial,
+}: {
+  editorial: (typeof EDITORIAL_HIGHLIGHTS)[LearningRole];
+}) {
   return (
-    <a
-      href={`#${bucket.slug}`}
-      className="relative block bg-white border-2 border-maroon p-5 md:p-5 h-full flex flex-col transition-colors hover:bg-maroon/5 focus:outline-none focus:ring-2 focus:ring-maroon/30"
-    >
-      <ArrowUpRight className="absolute top-3 right-3" />
-      <h3 className="font-headline text-[20px] font-semibold text-maroon mb-1 leading-tight pr-8">
-        {bucket.title}
-      </h3>
-      <p className="text-[13px] text-ink-secondary leading-snug flex-1 mb-3">
-        {bucket.subhead}
-      </p>
-      {statLine ? (
-        <div className="text-[11px] tracking-[0.05em] uppercase font-semibold text-maroon-muted pt-2 border-t border-line">
-          {statLine}
+    <div className="grid lg:grid-cols-3 gap-6 lg:gap-10">
+      <div className="lg:col-span-2">
+        <div className="dotted-frame bg-bg-subtle py-12 px-8 md:px-12">
+          <div className="eyebrow-lg mb-3">{editorial.eyebrow}</div>
+          <h2 className="mb-4 max-w-2xl">{editorial.headline}</h2>
+          <p className="text-[17px] text-ink-secondary leading-relaxed max-w-2xl mb-6">
+            {editorial.blurb}
+          </p>
+          {editorial.cta && editorial.href ? (
+            <Link href={editorial.href} className="btn-primary">
+              <span>{editorial.cta}</span>
+              <span className="btn-arrow" aria-hidden="true">
+                &rarr;
+              </span>
+            </Link>
+          ) : null}
         </div>
-      ) : null}
-    </a>
-  );
-}
-
-/* =============================================================
-   Bucket detail section (4 tiers)
-   ============================================================= */
-
-function BucketSection({ bucket }: { bucket: LearningBucket }) {
-  return (
-    <section id={bucket.slug} className="scroll-mt-24">
-      <div className="heading-rule mb-2">
-        <h2 className="text-center mx-auto">{bucket.title}</h2>
       </div>
-      <p className="text-center text-[15px] text-ink-secondary max-w-2xl mx-auto mb-8">
-        {bucket.subhead}
-      </p>
-
-      <div className="space-y-12">
-        {bucket.tiers.map((tier) => (
-          <TierBlock key={tier.id} tier={tier} />
-        ))}
-      </div>
-
-      <div className="mt-10 pt-6 border-t border-line flex flex-wrap gap-x-8 gap-y-3 justify-center text-center">
-        <Link
-          href="/tools"
-          className="text-[14px] uppercase tracking-[0.1em] font-semibold text-maroon-muted hover:text-maroon"
-        >
-          Approved AI tools at Mays &rarr;
-        </Link>
+      <aside className="lg:col-span-1 flex flex-col justify-center">
+        <div className="eyebrow text-[11px] mb-2">Refreshed monthly</div>
+        <p className="text-[15px] text-ink-secondary leading-relaxed">
+          The Lab picks one app, prompt, or workflow each month worth your
+          attention. If you built something the rest of Mays should see, email
+          the Lab.
+        </p>
         <a
-          href="mailto:ssridhar@mays.tamu.edu?subject=Mays%20Method%20Lab%20pilot%20request"
-          className="text-[14px] uppercase tracking-[0.1em] font-semibold text-maroon-muted hover:text-maroon"
+          href="mailto:ssridhar@mays.tamu.edu?subject=Nominate%20a%20Mays%20AI%20highlight"
+          className="mt-4 text-[14px] uppercase tracking-[0.1em] font-semibold text-maroon-muted hover:text-maroon"
         >
-          Pilot a tool with the Lab &rarr;
+          Nominate a highlight &rarr;
         </a>
-      </div>
-    </section>
-  );
-}
-
-/* =============================================================
-   Tier block (renders the tier label + grid of items)
-   ============================================================= */
-
-function TierBlock({ tier }: { tier: LearningTier }) {
-  // Tier visual rules (Apple/Netflix-style activation-cost hierarchy):
-  //   use-now: largest, 2-up grid, big maroon CTA cards
-  //   prompt:  3-up grid, medium cards
-  //   build:   list rows, text-dense
-  //   deeper:  4-up small tiles
-  const layoutByTier: Record<LearningTier['id'], string> = {
-    'use-now': 'grid md:grid-cols-2 gap-6',
-    prompt: 'grid md:grid-cols-2 lg:grid-cols-3 gap-5',
-    build: 'space-y-3',
-    deeper: 'grid sm:grid-cols-2 lg:grid-cols-4 gap-4',
-  };
-
-  // Tier badge number (1..4) signals the activation-cost ladder.
-  const tierIndex: Record<LearningTier['id'], number> = {
-    'use-now': 1,
-    prompt: 2,
-    build: 3,
-    deeper: 4,
-  };
-
-  // Tier 01 (Use now) gets a subtle bg-bg-subtle panel with extra padding
-  // to mark it as the priority tier. The other tiers stay flat to avoid
-  // visual clutter, in keeping with the Mays brand contract.
-  const wrapperClass =
-    tier.id === 'use-now' ? 'bg-bg-subtle p-6 md:p-8 -mx-2' : '';
-
-  return (
-    <div className={wrapperClass}>
-      <div className="flex items-baseline gap-3 mb-4 pb-2 border-b border-line">
-        <span className="font-headline text-[24px] font-semibold text-maroon-muted leading-none">
-          {String(tierIndex[tier.id]).padStart(2, '0')}
-        </span>
-        <div className="flex-1">
-          <div className="font-headline text-[20px] font-semibold text-maroon leading-tight">
-            {tier.label}
-          </div>
-          <div className="text-[13px] text-ink-secondary mt-0.5">{tier.blurb}</div>
-        </div>
-      </div>
-      <div className={layoutByTier[tier.id]}>
-        {tier.items.map((item, i) => (
-          <TierItemCard key={`${tier.id}-${i}`} item={item} tierId={tier.id} />
-        ))}
-      </div>
+      </aside>
     </div>
   );
 }
 
 /* =============================================================
-   Tier item card (renders a single item per tier)
+   Search box
    ============================================================= */
 
-function TierItemCard({
-  item,
-  tierId,
+function SearchBox({
+  value,
+  onChange,
 }: {
-  item: LearningItem;
-  tierId: LearningTier['id'];
+  value: string;
+  onChange: (v: string) => void;
 }) {
-  // Coming soon: dotted-frame info tile, not clickable.
+  return (
+    <div className="max-w-3xl">
+      <label
+        htmlFor="lc-search"
+        className="block text-[12px] tracking-[0.18em] uppercase font-semibold text-maroon-muted mb-2"
+      >
+        Find an app
+      </label>
+      <div className="relative">
+        <input
+          id="lc-search"
+          type="search"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="Search apps by job, tool name, or keyword"
+          className="input w-full pr-12"
+          autoComplete="off"
+        />
+        <span
+          className="absolute right-4 top-1/2 -translate-y-1/2 text-maroon-muted"
+          aria-hidden="true"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="square"
+          >
+            <circle cx="11" cy="11" r="7" />
+            <line x1="21" y1="21" x2="16.5" y2="16.5" />
+          </svg>
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function EmptyState({
+  query,
+  onClear,
+}: {
+  query: string;
+  onClear: () => void;
+}) {
+  return (
+    <div className="text-center py-16">
+      <p className="text-[17px] text-ink-secondary mb-4">
+        No apps match &ldquo;{query}&rdquo; in this role.
+      </p>
+      <button
+        type="button"
+        onClick={onClear}
+        className="text-[14px] uppercase tracking-[0.1em] font-semibold text-maroon hover:text-maroon-deep"
+      >
+        Clear the search &rarr;
+      </button>
+    </div>
+  );
+}
+
+/* =============================================================
+   Bucket section
+   ============================================================= */
+
+function BucketSection({ bucket }: { bucket: LearningBucket }) {
+  // Hero card pattern: when a bucket has just one item, give it the full
+  // row. With two items, split 1:1. With three, run an asymmetric grid
+  // where the first item takes 2/3 and the others stack to the right.
+  const layout = pickLayout(bucket.items.length);
+
+  return (
+    <section id={bucket.slug} className="scroll-mt-24">
+      <div className="mb-8 flex items-end justify-between gap-6 flex-wrap">
+        <div>
+          <div className="eyebrow text-[12px] mb-2">{bucket.title}</div>
+          <h2 className="leading-tight max-w-2xl">{bucket.subhead}</h2>
+        </div>
+      </div>
+
+      <div className={layout.gridClass}>
+        {bucket.items.map((item, i) => (
+          <AppCard
+            key={`${bucket.slug}-${i}`}
+            item={item}
+            featured={layout.featuredIndex === i}
+          />
+        ))}
+      </div>
+
+      <BucketFooterLinks slug={bucket.slug} />
+    </section>
+  );
+}
+
+function pickLayout(count: number): {
+  gridClass: string;
+  featuredIndex: number;
+} {
+  if (count <= 1) {
+    return { gridClass: 'grid grid-cols-1 gap-6', featuredIndex: 0 };
+  }
+  if (count === 2) {
+    return {
+      gridClass: 'grid md:grid-cols-2 gap-6',
+      featuredIndex: -1,
+    };
+  }
+  // 3 items: featured on the left (2 cols wide on lg), other two stacked right.
+  return {
+    gridClass:
+      'grid lg:grid-cols-3 gap-6 [&>*:first-child]:lg:col-span-2 [&>*:first-child]:lg:row-span-2',
+    featuredIndex: 0,
+  };
+}
+
+/* =============================================================
+   App card
+   ============================================================= */
+
+function AppCard({ item, featured }: { item: LearningItem; featured: boolean }) {
   if (item.comingSoon) {
     return (
-      <div className="relative bg-white border-2 border-dashed border-maroon-muted/50 p-5 md:p-6 h-full flex flex-col text-ink-secondary">
+      <div className="relative bg-white border-2 border-dashed border-maroon-muted/50 p-6 md:p-7 h-full flex flex-col text-ink-secondary">
         <div className="flex items-center justify-between mb-2">
           <span className="eyebrow text-[11px]">Heads up</span>
           <span className="text-[10px] tracking-[0.05em] uppercase px-2 py-1 font-semibold border border-line bg-bg-subtle">
             Coming soon
           </span>
         </div>
-        <h4 className="font-headline text-[18px] font-semibold text-maroon mb-2 leading-tight">
+        <h3 className="font-headline text-[20px] font-semibold text-maroon mb-2 leading-tight">
           {item.title}
-        </h4>
-        <p className="text-[14px] text-ink-secondary leading-relaxed flex-1">
+        </h3>
+        <p className="text-[15px] text-ink-secondary leading-relaxed flex-1">
           {item.description}
         </p>
       </div>
@@ -293,159 +378,120 @@ function TierItemCard({
   }
 
   const isExternal = item.href.startsWith('http') || item.href.startsWith('mailto:');
-  const sizeClass = sizeForTier(tierId);
-  const titleClass = titleSizeForTier(tierId);
+  const padding = featured ? 'p-8 md:p-10' : 'p-6 md:p-7';
+  const titleSize = featured ? 'text-[28px] md:text-[32px]' : 'text-[22px]';
+  const descSize = featured ? 'text-[17px]' : 'text-[15px]';
 
-  // build tier renders as a wide list row
-  if (tierId === 'build') {
-    return (
-      <ItemLink href={item.href} external={isExternal}>
-        <div className="relative bg-white border-2 border-maroon p-5 md:p-6 transition-colors hover:bg-maroon/5 flex items-start gap-5">
-          <div className="flex-1">
-            <h4 className="font-headline text-[20px] font-semibold text-maroon mb-1 leading-tight pr-8">
-              {item.title}
-            </h4>
-            <p className="text-[14px] text-ink-secondary leading-relaxed">
-              {item.description}
-            </p>
-            {item.meta ? (
-              <div className="mt-2 text-[12px] tracking-[0.05em] uppercase font-semibold text-maroon-muted">
-                {item.meta}
-              </div>
-            ) : null}
-          </div>
-          <ArrowUpRight className="shrink-0 mt-1" />
-        </div>
-      </ItemLink>
-    );
-  }
-
-  // Default card layout (use-now, prompt, deeper)
-  return (
-    <ItemLink href={item.href} external={isExternal}>
-      <div
-        className={`relative bg-white border-2 border-maroon ${sizeClass} h-full flex flex-col transition-colors hover:bg-maroon/5`}
+  const inner = (
+    <div
+      className={`relative bg-white border-2 border-maroon ${padding} h-full flex flex-col transition-colors hover:bg-maroon/5`}
+    >
+      <ArrowUpRight className="absolute top-5 right-5" />
+      {item.meta ? (
+        <div className="eyebrow text-[11px] mb-3 pr-8">{item.meta}</div>
+      ) : null}
+      <h3
+        className={`font-headline ${titleSize} font-semibold text-maroon mb-3 leading-tight pr-8`}
       >
-        <ArrowUpRight className="absolute top-4 right-4" />
-        {item.meta ? (
-          <div className="eyebrow text-[11px] mb-2 pr-8">{item.meta}</div>
-        ) : null}
-        <h4 className={`font-headline ${titleClass} font-semibold text-maroon mb-2 leading-tight pr-8`}>
-          {item.title}
-        </h4>
-        <p className="text-[14px] text-ink-secondary leading-relaxed flex-1">
-          {item.description}
-        </p>
-      </div>
-    </ItemLink>
+        {item.title}
+      </h3>
+      <p className={`${descSize} text-ink-secondary leading-relaxed flex-1`}>
+        {item.description}
+      </p>
+    </div>
   );
-}
 
-function sizeForTier(tierId: LearningTier['id']): string {
-  switch (tierId) {
-    case 'use-now':
-      return 'p-7 md:p-8';
-    case 'prompt':
-      return 'p-5 md:p-6';
-    case 'deeper':
-      return 'p-4 md:p-5';
-    default:
-      return 'p-5';
-  }
-}
-
-function titleSizeForTier(tierId: LearningTier['id']): string {
-  switch (tierId) {
-    case 'use-now':
-      return 'text-[24px]';
-    case 'prompt':
-      return 'text-[18px]';
-    case 'deeper':
-      return 'text-[16px]';
-    default:
-      return 'text-[18px]';
-  }
-}
-
-function ItemLink({
-  href,
-  external,
-  children,
-}: {
-  href: string;
-  external: boolean;
-  children: React.ReactNode;
-}) {
-  if (external) {
+  if (isExternal) {
     return (
       <a
-        href={href}
-        target={href.startsWith('mailto:') ? undefined : '_blank'}
-        rel={href.startsWith('mailto:') ? undefined : 'noreferrer'}
+        href={item.href}
+        target={item.href.startsWith('mailto:') ? undefined : '_blank'}
+        rel={item.href.startsWith('mailto:') ? undefined : 'noreferrer'}
         className="block focus:outline-none focus:ring-2 focus:ring-maroon/30 h-full"
       >
-        {children}
+        {inner}
       </a>
     );
   }
-  // In-page anchor or in-app link
-  if (href.startsWith('#')) {
+  if (item.href.startsWith('#')) {
     return (
       <a
-        href={href}
+        href={item.href}
         className="block focus:outline-none focus:ring-2 focus:ring-maroon/30 h-full"
       >
-        {children}
+        {inner}
       </a>
     );
   }
   return (
     <Link
-      href={href}
+      href={item.href}
       className="block focus:outline-none focus:ring-2 focus:ring-maroon/30 h-full"
     >
-      {children}
+      {inner}
     </Link>
   );
 }
 
 /* =============================================================
-   Flat library footer (lets power users hit the catalog directly)
+   Per-bucket footer links to the dedicated pages
    ============================================================= */
 
-function FlatLibraryFooter() {
+function BucketFooterLinks({ slug }: { slug: string }) {
+  const links: { href: string; label: string }[] = [
+    { href: `/prompts#${slug}`, label: `Browse prompts in ${humanize(slug)}` },
+    { href: `/agents#${slug}`, label: 'Browse tutorials' },
+    { href: `/tools#${slug}`, label: 'Browse tools' },
+    { href: `/resources#${slug}`, label: 'Go deeper' },
+  ];
   return (
-    <div className="mt-24 pt-10 border-t border-line">
-      <div className="text-center mb-6">
-        <div className="eyebrow text-[11px] mb-2">Power-user shortcuts</div>
-        <h3 className="font-headline text-[22px] font-semibold text-maroon">
-          Already know what you want? Browse the flat library.
-        </h3>
-      </div>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-3 max-w-5xl mx-auto">
-        <FlatLink href="/agents" label="All agent tutorials" />
-        <FlatLink href="/prompts" label="All prompts" />
-        <FlatLink href="/tools" label="All approved tools" />
-        <FlatLink href="/resources" label="Resources" />
-        <FlatLink href="/guide" label="Mays AI guide" />
-      </div>
+    <div className="mt-8 pt-5 border-t border-line flex flex-wrap gap-x-8 gap-y-2">
+      {links.map((l) => (
+        <Link
+          key={l.href}
+          href={l.href}
+          className="text-[13px] uppercase tracking-[0.1em] font-semibold text-maroon-muted hover:text-maroon"
+        >
+          {l.label} &rarr;
+        </Link>
+      ))}
     </div>
   );
 }
 
-function FlatLink({ href, label }: { href: string; label: string }) {
+function humanize(slug: string): string {
+  return slug
+    .split('-')
+    .map((s, i) => (i === 0 ? s[0].toUpperCase() + s.slice(1) : s))
+    .join(' ');
+}
+
+/* =============================================================
+   Trust banner — replaces per-card compliance badges
+   ============================================================= */
+
+function TrustBanner() {
   return (
-    <Link
-      href={href}
-      className="relative block bg-white border-2 border-maroon px-4 py-3 text-center font-headline text-[16px] font-semibold text-maroon transition-colors hover:bg-maroon hover:text-white"
-    >
-      {label} &rarr;
-    </Link>
+    <div className="text-center max-w-3xl mx-auto">
+      <p className="text-[15px] text-ink-secondary leading-relaxed">
+        Every app on this page uses TAMU-approved tools or Lab-built apps that
+        live behind the Mays sign-in. For the full compliance and tool registry,
+        see{' '}
+        <Link href="/tools" className="text-maroon underline hover:text-maroon-deep">
+          approved AI tools
+        </Link>
+        {' '}and{' '}
+        <Link href="/resources" className="text-maroon underline hover:text-maroon-deep">
+          resources
+        </Link>
+        .
+      </p>
+    </div>
   );
 }
 
 /* =============================================================
-   Inline arrow-up-right icon (matches ToolCard pattern)
+   Inline arrow-up-right icon
    ============================================================= */
 
 function ArrowUpRight({ className = '' }: { className?: string }) {
