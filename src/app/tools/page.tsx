@@ -25,7 +25,7 @@ const TOOLS: Tool[] = [
     blurb: "Texas A&M University System's internal AI chat. Multi-model. FERPA-friendly.",
     use: 'Default starting point for any AI work at Mays.',
     audience: 'Faculty, staff, students',
-    href: 'https://maysai.vercel.app/tools/tamu-ai-chat',
+    href: 'https://chat.tamu.ai/',
     buckets: ['research', 'teaching', 'writing', 'programs', 'faculty-support', 'advising', 'learning-ai'],
   },
   {
@@ -34,7 +34,7 @@ const TOOLS: Tool[] = [
     blurb: 'Source-grounded AI notebook for asking questions across uploaded documents, links, and notes.',
     use: 'Cited Q&A over your own corpus of PDFs and notes.',
     audience: 'Faculty, staff',
-    href: 'https://maysai.vercel.app/tools/notebooklm',
+    href: 'https://notebooklm.google.com/',
     buckets: ['research', 'advising', 'faculty-support'],
   },
   {
@@ -43,7 +43,7 @@ const TOOLS: Tool[] = [
     blurb: "Google's flagship model on your @tamu.edu account, with TAMU data protection.",
     use: 'Long-context drafts, image understanding, spreadsheets, Workspace integration.',
     audience: 'Faculty, staff, students',
-    href: 'https://maysai.vercel.app/tools/google-gemini',
+    href: 'https://gemini.google.com/',
     buckets: ['research', 'writing'],
   },
   {
@@ -52,7 +52,7 @@ const TOOLS: Tool[] = [
     blurb: 'AI inside Word, Excel, PowerPoint, Outlook, and Teams.',
     use: 'In-place help on the documents you are already writing.',
     audience: 'Faculty, staff',
-    href: 'https://maysai.vercel.app/tools/microsoft-copilot',
+    href: 'https://copilot.microsoft.com/',
     buckets: ['teaching', 'writing', 'faculty-support'],
   },
   {
@@ -61,7 +61,7 @@ const TOOLS: Tool[] = [
     blurb: 'Low-code workflow automation across M365: Outlook, Teams, SharePoint, Forms.',
     use: 'Forms, approvals, reminders, Teams alerts.',
     audience: 'Staff',
-    href: 'https://maysai.vercel.app/tools/power-automate',
+    href: 'https://make.powerautomate.com/',
     buckets: ['programs', 'faculty-support'],
   },
   {
@@ -70,7 +70,7 @@ const TOOLS: Tool[] = [
     blurb: 'No-code automation across business apps, forms, CRMs, and spreadsheets.',
     use: 'Cross-tool workflows that go beyond M365.',
     audience: 'Staff',
-    href: 'https://maysai.vercel.app/tools/zapier',
+    href: 'https://zapier.com/',
     buckets: ['programs'],
   },
   {
@@ -79,7 +79,7 @@ const TOOLS: Tool[] = [
     blurb: "OpenAI's agentic coding tool for editing, debugging, and shipping code.",
     use: 'Programming and engineering work.',
     audience: 'Technical staff, faculty, students',
-    href: 'https://maysai.vercel.app/tools/codex',
+    href: 'https://openai.com/codex/',
     buckets: ['research'],
   },
   {
@@ -88,7 +88,7 @@ const TOOLS: Tool[] = [
     blurb: 'AI-powered code editor with chat, code generation, and codebase-aware assistance.',
     use: 'Programming and engineering work.',
     audience: 'Technical staff, faculty, students',
-    href: 'https://maysai.vercel.app/tools/cursor',
+    href: 'https://cursor.com/',
     buckets: ['research'],
   },
 ];
