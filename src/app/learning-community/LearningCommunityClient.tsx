@@ -44,6 +44,8 @@ type ContributedPrompt = {
   href: string;
   contributorName: string;
   contributorRole: string;
+  /** True when the entry is a Lab-curated example, not a real submission. */
+  seeded?: boolean;
 };
 
 export default function LearningCommunityClient({
@@ -119,14 +121,15 @@ export default function LearningCommunityClient({
       {isSearching ? (
         <SearchGrid query={trimmedQuery} results={searchResults} />
       ) : (
-        <div className="mt-32 space-y-32">
-          {chipFilteredSections.map((section) => (
+        <div className="mt-28">
+          {chipFilteredSections.map((section, idx) => (
             <SectionBlock
               key={section.id}
               section={section}
               contributedPrompts={
                 section.id === 'prompts' ? contributedPrompts : []
               }
+              isFirst={idx === 0}
             />
           ))}
         </div>
@@ -381,36 +384,43 @@ function sectionLabel(id: LearningSectionId): string {
 function SectionBlock({
   section,
   contributedPrompts,
+  isFirst,
 }: {
   section: LearningSection;
   contributedPrompts: ContributedPrompt[];
+  isFirst: boolean;
 }) {
   // Learn AI renders as a vertical 5-step ladder, not a card grid.
   if (section.id === 'learn-ai') {
-    return <LearnLadder section={section} />;
+    return <LearnLadder section={section} isFirst={isFirst} />;
   }
 
   const layout = pickLayout(section.id, section.items.length);
 
   return (
-    <section id={section.id} className="scroll-mt-24">
-      <header className="mb-10 flex items-end justify-between gap-6 flex-wrap">
-        <div className="max-w-2xl">
-          <div className="eyebrow text-[12px] mb-2">{labelFor(section.id)}</div>
-          <h2 className="leading-tight mb-3">{section.title}</h2>
-          <p className="text-[16px] text-ink-secondary leading-relaxed">
-            {section.blurb}
-          </p>
-        </div>
+    <section id={section.id} className={`scroll-mt-24 ${isFirst ? 'mt-12' : 'mt-32'}`}>
+      {/* Diagonal divider between sections. Subtle visual energy without
+          decoration. Skipped on the first section. */}
+      {!isFirst ? <SectionDiagonal /> : null}
+
+      {/* Solid maroon section header band — replaces the quiet eyebrow +
+          maroon-on-white treatment with a Mays-style banner. */}
+      <header className="section-band mb-10">
+        <div className="section-band__eyebrow">{labelFor(section.id)}</div>
+        <h2 className="section-band__title">{section.title}</h2>
         {section.browseHref && section.browseLabel ? (
           <Link
             href={section.browseHref}
-            className="text-[14px] uppercase tracking-[0.1em] font-semibold text-maroon-muted hover:text-maroon whitespace-nowrap"
+            className="section-band__count hover:underline"
           >
             {section.browseLabel} &rarr;
           </Link>
         ) : null}
       </header>
+
+      <p className="text-[16px] text-ink-secondary leading-relaxed mb-10 max-w-3xl">
+        {section.blurb}
+      </p>
 
       {/* Recently contributed by faculty — only on Prompts section. */}
       {section.id === 'prompts' ? (
@@ -437,6 +447,30 @@ function SectionBlock({
         </div>
       )}
     </section>
+  );
+}
+
+/* Diagonal divider — a thin slanted maroon-muted line that separates one
+   section from the next. Pure SVG so it stays sharp at any width. */
+function SectionDiagonal() {
+  return (
+    <div aria-hidden="true" className="my-20" style={{ height: '36px' }}>
+      <svg
+        viewBox="0 0 1280 36"
+        preserveAspectRatio="none"
+        className="w-full h-full"
+      >
+        <line
+          x1="0"
+          y1="32"
+          x2="1280"
+          y2="4"
+          stroke="#732F2F"
+          strokeWidth="2"
+          strokeDasharray="2 6"
+        />
+      </svg>
+    </div>
   );
 }
 
@@ -490,16 +524,23 @@ function pickLayout(
    Learn AI ladder — vertical 5-step
    ============================================================= */
 
-function LearnLadder({ section }: { section: LearningSection }) {
+function LearnLadder({
+  section,
+  isFirst,
+}: {
+  section: LearningSection;
+  isFirst: boolean;
+}) {
   return (
-    <section id={section.id} className="scroll-mt-24">
-      <header className="mb-10 max-w-2xl">
-        <div className="eyebrow text-[12px] mb-2">{labelFor(section.id)}</div>
-        <h2 className="leading-tight mb-3">{section.title}</h2>
-        <p className="text-[16px] text-ink-secondary leading-relaxed">
-          {section.blurb}
-        </p>
+    <section id={section.id} className={`scroll-mt-24 ${isFirst ? 'mt-12' : 'mt-32'}`}>
+      {!isFirst ? <SectionDiagonal /> : null}
+      <header className="section-band mb-10">
+        <div className="section-band__eyebrow">{labelFor(section.id)}</div>
+        <h2 className="section-band__title">{section.title}</h2>
       </header>
+      <p className="text-[16px] text-ink-secondary leading-relaxed mb-10 max-w-3xl">
+        {section.blurb}
+      </p>
       {section.items.length === 0 ? (
         <p className="text-[15px] text-ink-secondary leading-relaxed">
           No Learn AI steps match the current filter. Reset the chip to see all
@@ -717,25 +758,58 @@ function RecentlyContributedRow({ items }: { items: ContributedPrompt[] }) {
         </div>
       ) : (
         <div className="flex gap-4 overflow-x-auto pb-2 -mx-2 px-2 snap-x">
-          {items.map((p) => (
-            <article
-              key={p.id}
-              className="snap-start min-w-[280px] max-w-[320px] bg-white border-2 border-maroon p-5"
-            >
-              <div className="eyebrow text-[10px] mb-2">
-                {p.contributorRole}
-              </div>
+          {items.map((p) => {
+            const isInternal =
+              p.href.startsWith('/') && !p.href.startsWith('//');
+            const titleLine = (
               <h4 className="font-headline text-[18px] font-semibold text-maroon mb-2 leading-tight">
                 {p.promptTitle}
               </h4>
-              <p className="text-[14px] text-ink-secondary leading-relaxed mb-3">
-                {p.description}
-              </p>
-              <div className="text-[12px] uppercase tracking-[0.1em] font-semibold text-maroon-muted">
-                Contributed by {p.contributorName}
-              </div>
-            </article>
-          ))}
+            );
+            const inner = (
+              <>
+                <div className="eyebrow text-[10px] mb-2 flex items-center justify-between gap-2">
+                  <span>
+                    {p.contributorName}, {p.contributorRole}
+                  </span>
+                  {p.seeded ? (
+                    <span className="text-[9px] tracking-[0.05em] uppercase px-1.5 py-0.5 font-semibold border border-maroon-muted text-maroon-muted">
+                      Lab pick
+                    </span>
+                  ) : null}
+                </div>
+                {titleLine}
+                <p className="text-[14px] text-ink-secondary leading-relaxed mb-3">
+                  {p.description}
+                </p>
+                {isInternal ? (
+                  <span className="text-[12px] uppercase tracking-[0.1em] font-semibold text-maroon">
+                    Try this prompt &rarr;
+                  </span>
+                ) : (
+                  <div className="text-[12px] uppercase tracking-[0.1em] font-semibold text-maroon-muted">
+                    Contributed by {p.contributorName}
+                  </div>
+                )}
+              </>
+            );
+            return isInternal ? (
+              <Link
+                key={p.id}
+                href={p.href}
+                className="snap-start min-w-[280px] max-w-[320px] bg-white border-2 border-maroon p-5 transition-colors hover:bg-maroon/5"
+              >
+                {inner}
+              </Link>
+            ) : (
+              <article
+                key={p.id}
+                className="snap-start min-w-[280px] max-w-[320px] bg-white border-2 border-maroon p-5"
+              >
+                {inner}
+              </article>
+            );
+          })}
         </div>
       )}
     </div>
@@ -748,44 +822,40 @@ function RecentlyContributedRow({ items }: { items: ContributedPrompt[] }) {
 
 function ThroughputStrip() {
   return (
-    <div className="grid md:grid-cols-2 gap-8">
-      <div className="dotted-frame bg-white py-10 px-8 md:px-10">
-        <div className="eyebrow-lg mb-3">Schedule a consultation</div>
-        <h3 className="font-headline text-[24px] md:text-[26px] font-semibold text-maroon mb-3 leading-tight">
-          Tell us what you are working on.
-        </h3>
-        <p className="text-[15px] text-ink-secondary leading-relaxed mb-2">
-          Three things we can help with:
-        </p>
-        <ul className="text-[15px] text-ink-secondary leading-relaxed mb-5 list-disc pl-5 space-y-1">
+    <div className="grid md:grid-cols-2 gap-0">
+      <Link href="/your-ai-edge/consultation" className="cta-bar">
+        <div className="cta-bar__eyebrow">Schedule a consultation</div>
+        <div className="cta-bar__title">Tell us what you are working on.</div>
+        <p className="cta-bar__body">Three things we can help with:</p>
+        <ul className="cta-bar__list">
           <li>Help with something specific</li>
           <li>Build me a custom app</li>
           <li>I have an idea or question</li>
         </ul>
-        <Link href="/your-ai-edge/consultation" className="btn-primary">
+        <span className="cta-bar__action">
           <span>Schedule with the Lab</span>
-          <span className="btn-arrow" aria-hidden="true">
+          <span className="cta-bar__arrow" aria-hidden="true">
             &rarr;
           </span>
-        </Link>
-      </div>
-      <div className="dotted-frame bg-white py-10 px-8 md:px-10">
-        <div className="eyebrow-lg mb-3">Join the Lab</div>
-        <h3 className="font-headline text-[24px] md:text-[26px] font-semibold text-maroon mb-3 leading-tight">
+        </span>
+      </Link>
+      <Link href="/your-ai-edge/join-lab" className="cta-bar">
+        <div className="cta-bar__eyebrow">Join the Lab</div>
+        <div className="cta-bar__title">
           Faculty and staff who want to help shape what comes next.
-        </h3>
-        <p className="text-[15px] text-ink-secondary leading-relaxed mb-5">
+        </div>
+        <p className="cta-bar__body">
           Beta testers, contributors, and co-builders welcome. Tell us how you
           want to help and we will match you to the next round of prompts,
           apps, and tutorials.
         </p>
-        <Link href="/your-ai-edge/join-lab" className="btn-primary">
+        <span className="cta-bar__action">
           <span>Join us</span>
-          <span className="btn-arrow" aria-hidden="true">
+          <span className="cta-bar__arrow" aria-hidden="true">
             &rarr;
           </span>
-        </Link>
-      </div>
+        </span>
+      </Link>
     </div>
   );
 }

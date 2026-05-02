@@ -571,3 +571,267 @@ iframe.hero-video {
   color: #3C0000;
   text-decoration-thickness: 2px;
 }
+
+/* =============================================================
+   Mays visual treatments — Your AI Edge hub
+   ============================================================= */
+
+/* Maroon hero band — solid maroon backdrop with a subtle radial pattern.
+   Sits behind the white dotted-frame hero card. No imagery, just color and
+   geometry. Honors the brand contract (no decorative photography). */
+.hero-maroon-band {
+  position: relative;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(115, 47, 47, 0.55), transparent 45%),
+    radial-gradient(circle at 82% 78%, rgba(60, 0, 0, 0.65), transparent 50%),
+    linear-gradient(135deg, #500000 0%, #3C0000 60%, #500000 100%);
+  color: #FFFFFF;
+  overflow: hidden;
+}
+
+.hero-maroon-band::before {
+  /* Faint dot grid layered on top — gives the band texture without imagery. */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.07) 1px, transparent 1.5px);
+  background-size: 18px 18px;
+  pointer-events: none;
+}
+
+/* Solid maroon section header band — a thin band at the top of each major
+   hub section (Apps, Prompts, Learn AI). Replaces the quiet maroon-on-white
+   eyebrow + heading pattern with an editorial banner treatment. */
+.section-band {
+  background: #500000;
+  color: #FFFFFF;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 0;
+}
+
+.section-band__eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: 'Work Sans', Arial, sans-serif;
+  color: #FFFFFF;
+  opacity: 0.75;
+}
+
+.section-band__title {
+  font-family: 'Oswald', Arial, sans-serif;
+  font-weight: 400;
+  color: #FFFFFF;
+  font-size: clamp(22px, 2.4vw, 28px);
+  line-height: 1.2;
+  margin: 0;
+  flex: 1;
+}
+
+.section-band__count {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  opacity: 0.85;
+  white-space: nowrap;
+}
+
+/* Full-width maroon CTA bar — replaces dotted-frame card for the
+   throughput strip. Solid maroon block, white text, sharp arrow.
+   Hover lightens slightly. Sharp 0px corners, no shadow. */
+.cta-bar {
+  display: flex;
+  flex-direction: column;
+  background: #500000;
+  color: #FFFFFF;
+  padding: 36px 36px 32px;
+  text-decoration: none;
+  border: 0;
+  transition: background-color 0.12s ease;
+  position: relative;
+  min-height: 100%;
+}
+
+.cta-bar:hover {
+  background: #3C0000;
+  text-decoration: none;
+  color: #FFFFFF;
+}
+
+.cta-bar__eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 12px;
+  font-weight: 700;
+  color: #FFFFFF;
+  opacity: 0.8;
+  margin-bottom: 12px;
+}
+
+.cta-bar__title {
+  font-family: 'Oswald', Arial, sans-serif;
+  font-weight: 400;
+  font-size: clamp(22px, 2.4vw, 28px);
+  line-height: 1.2;
+  color: #FFFFFF;
+  margin-bottom: 14px;
+}
+
+.cta-bar__body {
+  font-size: 15px;
+  line-height: 1.55;
+  color: #FFFFFF;
+  opacity: 0.92;
+  margin-bottom: 8px;
+}
+
+.cta-bar__list {
+  font-size: 15px;
+  line-height: 1.55;
+  color: #FFFFFF;
+  opacity: 0.92;
+  margin-bottom: 20px;
+  padding-left: 20px;
+  list-style: disc;
+}
+
+.cta-bar__list li::marker {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.cta-bar__action {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Work Sans', Arial, sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #FFFFFF;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.cta-bar__arrow {
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  background: #FFFFFF;
+  color: #500000;
+  font-weight: 800;
+}
+
+/* Asymmetric editorial banner — left 60% maroon block (eyebrow + headline +
+   blurb in white), right 40% white panel with the CTA. Dotted-frame on the
+   outer wrapper preserves the Mays signature. */
+.editorial-banner {
+  display: grid;
+  grid-template-columns: 1fr;
+  border: 0;
+  outline: 2px dotted #732F2F;
+  outline-offset: -16px;
+  background: #FFFFFF;
+}
+
+@media (min-width: 768px) {
+  .editorial-banner {
+    grid-template-columns: 3fr 2fr;
+  }
+}
+
+.editorial-banner__left {
+  background: #500000;
+  color: #FFFFFF;
+  padding: 56px 48px;
+  position: relative;
+}
+
+.editorial-banner__left::before {
+  /* Subtle dot grid on the maroon block — same texture treatment as the
+     hero band. */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.06) 1px, transparent 1.5px);
+  background-size: 16px 16px;
+  pointer-events: none;
+}
+
+.editorial-banner__left > * {
+  position: relative;
+  z-index: 1;
+}
+
+.editorial-banner__eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+  font-family: 'Work Sans', Arial, sans-serif;
+  margin-bottom: 14px;
+}
+
+.editorial-banner__title {
+  font-family: 'Oswald', Arial, sans-serif;
+  font-weight: 400;
+  font-size: clamp(28px, 3.4vw, 40px);
+  line-height: 1.15;
+  color: #FFFFFF;
+  margin-bottom: 18px;
+  text-transform: none;
+}
+
+.editorial-banner__blurb {
+  font-size: 17px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.92);
+  font-family: 'Work Sans', Arial, sans-serif;
+}
+
+.editorial-banner__right {
+  padding: 56px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: #FFFFFF;
+}
+
+@media (max-width: 767px) {
+  .editorial-banner__left {
+    padding: 40px 28px;
+  }
+  .editorial-banner__right {
+    padding: 32px 28px;
+  }
+}
+
+/* Diagonal section divider — clip-path polygon that gives the next section
+   a slanted top edge. Subtle, no ornament. */
+.section-diagonal-top {
+  clip-path: polygon(0 28px, 100% 0, 100% 100%, 0 100%);
+  margin-top: -28px;
+  padding-top: 64px;
+}
+
+.section-diagonal-bottom {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 28px), 0 100%);
+  padding-bottom: 64px;
+}
+
+/* Tinted band that sits behind a section to make the diagonal cut visible.
+   Use sparingly — only where the diagonal needs to read against the
+   surrounding background. */
+.section-tint {
+  background: #F4F0EE;
+}
