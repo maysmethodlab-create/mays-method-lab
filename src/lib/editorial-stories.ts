@@ -69,16 +69,6 @@ export const EDITORIAL_STORIES: EditorialStory[] = [
     cta: 'Tell Hari what you would ask',
     href: 'mailto:ssridhar@mays.tamu.edu?subject=Faculty%20Guidelines%20Chatbot%20%E2%80%94%20input',
   },
-  {
-    publishedAt: '2026-04-25',
-    role: 'faculty',
-    eyebrow: 'Faculty story this week',
-    headline: 'Thirty practice exam questions from one syllabus.',
-    blurb:
-      'A clinical professor pasted his syllabus into TAMU AI Chat and asked for thirty practice questions across three difficulty levels. He kept twenty, edited five, and threw out five. Forty minutes saved before noon.',
-    cta: 'Try the prompt',
-    href: '/prompts/exam-prep-questions',
-  },
 
   /* ---------- STAFF ---------- */
   {
@@ -87,19 +77,9 @@ export const EDITORIAL_STORIES: EditorialStory[] = [
     eyebrow: 'Coming soon: Academic Calendar Chatbot',
     headline: 'Ask the TAMU academic calendar. Get the exact date.',
     blurb:
-      'A new Lab app in preview. Type any question about registration windows, drop deadlines, finals, breaks, or graduation. The chatbot returns the specific date with a citation back to the registrar. Live this week as a preview, with the polished version following.',
+      'A new Lab app in preview. Type any question about registration windows, drop deadlines, finals, breaks, or graduation. The chatbot returns the specific date with a citation back to the registrar.',
     cta: 'Tell Hari what you would ask',
     href: 'mailto:ssridhar@mays.tamu.edu?subject=Academic%20Calendar%20Chatbot%20%E2%80%94%20input',
-  },
-  {
-    publishedAt: '2026-04-25',
-    role: 'staff',
-    eyebrow: 'Staff story this week',
-    headline: 'A confused student. A degree-plan policy doc. Cited answers.',
-    blurb:
-      'An advisor uploaded the degree-plan policy doc to NotebookLM and used it to answer a confused student in real time. Every answer carried a citation back to the source paragraph. No guessing, no policy hunt.',
-    cta: 'Open NotebookLM',
-    href: '/tools#notebooklm',
   },
 ];
 

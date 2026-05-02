@@ -20,47 +20,32 @@ export default function EditorialStoryCard({
   story: EditorialStory;
 }) {
   return (
-    <div className="grid lg:grid-cols-3 gap-6 lg:gap-10">
-      <div className="lg:col-span-2">
-        {/* Asymmetric editorial banner — left 60% maroon block (eyebrow,
-            headline, blurb in white), right 40% white block with the CTA.
-            Outer dotted-frame keeps the Mays signature. */}
-        <article className="editorial-banner">
-          <div className="editorial-banner__left">
-            <div className="editorial-banner__eyebrow">{story.eyebrow}</div>
-            <h2 className="editorial-banner__title">{story.headline}</h2>
-            <p className="editorial-banner__blurb">{story.blurb}</p>
-          </div>
-          <div className="editorial-banner__right">
-            {story.cta && story.href ? (
-              <CtaLink href={story.href} label={story.cta} />
-            ) : null}
-          </div>
-        </article>
+    <div>
+      {/* Asymmetric editorial banner — left 60% maroon block (eyebrow,
+          headline, blurb in white), right 40% white block with the CTA.
+          Outer dotted-frame keeps the Mays signature. */}
+      <article className="editorial-banner">
+        <div className="editorial-banner__left">
+          <div className="editorial-banner__eyebrow">{story.eyebrow}</div>
+          <h2 className="editorial-banner__title">{story.headline}</h2>
+          <p className="editorial-banner__blurb">{story.blurb}</p>
+        </div>
+        <div className="editorial-banner__right">
+          {story.cta && story.href ? (
+            <CtaLink href={story.href} label={story.cta} />
+          ) : null}
+        </div>
+      </article>
 
-        {/* Inline copy-ready prompt block. Sits flush against the banner so
-            the story and the paste-ready prompt read as one unit. */}
-        {story.prompt ? (
-          <InlinePromptBlock
-            text={story.prompt.text}
-            caption={story.prompt.caption}
-          />
-        ) : null}
-      </div>
-      <aside className="lg:col-span-1 flex flex-col justify-center">
-        <div className="eyebrow text-[11px] mb-2">Refreshed weekly</div>
-        <p className="text-[15px] text-ink-secondary leading-relaxed">
-          The Lab picks one workflow each week worth your attention. If you
-          turned a repeated chore into something faster with AI, send it
-          over. We will write it up and credit you.
-        </p>
-        <a
-          href="mailto:ssridhar@mays.tamu.edu?subject=Nominate%20an%20AI%20story"
-          className="mt-4 text-[14px] uppercase tracking-[0.1em] font-semibold text-maroon-muted hover:text-maroon"
-        >
-          Nominate a story &rarr;
-        </a>
-      </aside>
+      {/* Inline copy-ready prompt block. Only renders when the story
+          carries a paste-ready prompt. The featured-app announcements
+          do not. */}
+      {story.prompt ? (
+        <InlinePromptBlock
+          text={story.prompt.text}
+          caption={story.prompt.caption}
+        />
+      ) : null}
     </div>
   );
 }
