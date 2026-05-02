@@ -357,6 +357,13 @@ function stripEmDashes(text: string): string {
  */
 function cleanStitchingArtifacts(text: string): string {
   return text
+    // Bold header followed by stray comma: ":**," -> ":**"
+    .replace(/:\*\*,\s*/g, ':** ')
+    // Any "**, " (closing bold immediately followed by comma) -> "** "
+    .replace(/\*\*,\s+/g, '** ')
+    // Orphan verifier-injected stub mid-paragraph (not at sentence boundary)
+    .replace(/\.\s*"?The guidelines do not specify the section here\."?\s+/g, '. ')
+    .replace(/\)\.\s*"?The guidelines do not specify the section here\."?\s+/g, '). ')
     // ", The guidelines do not address this point directly., " -> clean sentence
     .replace(
       /,\s*The guidelines do not address this point directly\.\,?\s*/g,
