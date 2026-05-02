@@ -31,8 +31,10 @@ export type AuditEntry = {
   /** Optional opaque user identifier; will be hashed before writing. */
   userKey?: string;
   /** Pass 3 telemetry (Faculty Guidelines bot): true when the
-   *  deterministic quote-fidelity check fired. */
+   *  deterministic quote-fidelity or page-number check fired. */
   pass3Triggered?: boolean;
+  /** Which check fired in Pass 3: fabricated quote, missing page, or both. */
+  pass3Reason?: 'fabricated' | 'missing-pages' | 'both' | null;
   /** True when Pass 3 still left fabricated quotes and we fell back to
    *  the hard refusal string. */
   pass3Fallback?: boolean;
@@ -90,6 +92,7 @@ export function writeAuditEntry(entry: AuditEntry): void {
     // Additive optional Pass 3 telemetry. Fields are appended only when
     // present so the historical schema is preserved for downstream tools.
     if (entry.pass3Triggered) row.pass3Triggered = true;
+    if (entry.pass3Reason) row.pass3Reason = entry.pass3Reason;
     if (entry.pass3Fallback) row.pass3Fallback = true;
     if (entry.fabricatedQuotes && entry.fabricatedQuotes.length > 0) {
       row.fabricatedQuotes = entry.fabricatedQuotes;

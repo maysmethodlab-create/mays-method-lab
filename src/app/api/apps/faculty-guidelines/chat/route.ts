@@ -100,13 +100,24 @@ Does the response contain "likely", "probably", "should", "it depends", "in your
 CHECK 4 — Source citation footer.
 Does the response end with "Source: Mays Faculty Guidelines, October 17, 2025 (Approved version)."? If not, ADD it.
 
-If all four checks pass, return the response unchanged. Otherwise return the rewritten response. Output ONLY the final response text. No commentary.`;
+CHECK 5 — Page number on every citation.
+Every reference to a section, appendix, or numbered subsection (e.g., "§ 4.2", "Appendix J", "Section B.3.1") MUST be followed by ", p. X" or ", page X" within the same sentence. If a citation is missing the page number, REWRITE the response to either (a) add the page number from the source, or (b) remove the citation and replace with "the guidelines do not specify the section here".
+
+If all five checks pass, return the response unchanged. Otherwise return the rewritten response. Output ONLY the final response text. No commentary.`;
 
 const PASS3_QUOTE_FIX_SYSTEM = `The previous response contained quoted passages that do not appear in the source document. The fabricated quotes are: {{FABRICATED_QUOTES}}
 
 Rewrite the response to either (a) replace each fabricated quote with the literal text "The Mays Faculty Guidelines (October 2025) do not address this directly", or (b) remove the fabricated quote and the surrounding sentence entirely.
 
 Keep the rest of the response (genuine quotes, citations, the personal-applicability template if used, the source citation footer) intact.
+
+Output ONLY the corrected response text.`;
+
+const PASS3_PAGE_FIX_SYSTEM = `The previous response contains references to sections or appendices that are missing required page numbers. The deficient references are: {{MISSING_PAGES}}
+
+Rewrite the response so every reference to a section, appendix, or numbered subsection (e.g., "§ 4.2", "Appendix J", "Section B.3.1") is followed by ", p. X" or ", page X" within the same sentence. If you cannot find an accurate page number from the source, remove the citation entirely and replace with "the guidelines do not specify the section here".
+
+Keep the rest of the response (genuine quotes, the personal-applicability template if used, the source citation footer) intact.
 
 Output ONLY the corrected response text.`;
 
@@ -130,6 +141,26 @@ function findFabricatedQuotes(responseText: string, sourceText: string): string[
     }
   }
   return fabricated;
+}
+
+/**
+ * Pass 3 helper. Find references to "§", "Section", or "Appendix" that
+ * lack a page number ("p. N" or "page N") within 60 characters after the
+ * reference. Returns the offending substrings for logging and re-prompting.
+ */
+function findCitationsMissingPage(responseText: string): string[] {
+  const out: string[] = [];
+  const re = /(§\s*[A-Z]?\d[\w.\-]*|Section\s+[A-Z]?\d[\w.\-]*|Appendix\s+[A-Z][\w.\-]*)([^\n.]{0,60})/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(responseText)) !== null) {
+    const ref = m[1];
+    const tail = m[2] || '';
+    const window = ref + tail;
+    if (!/\bp\.\s*\d+|\bpage\s+\d+/i.test(window)) {
+      out.push(ref);
+    }
+  }
+  return out;
 }
 
 function isKillSwitchOn(): boolean {
@@ -230,7 +261,7 @@ export async function POST(req: Request) {
       messages: [
         {
           role: 'user',
-          content: `USER QUESTION:\n${lastUserQuestion}\n\nASSISTANT DRAFT RESPONSE:\n${draft}\n\nApply CHECK 1 through CHECK 4 and return ONLY the final response text.`,
+          content: `USER QUESTION:\n${lastUserQuestion}\n\nASSISTANT DRAFT RESPONSE:\n${draft}\n\nApply CHECK 1 through CHECK 5 and return ONLY the final response text.`,
         },
       ],
     });
@@ -247,40 +278,82 @@ export async function POST(req: Request) {
     final = draft;
   }
 
-  // ---------------- Pass 3: deterministic quote-fidelity check ----------------
-  // Catch fabricated quotes that the LLM verifier missed. We grep every
-  // quoted span (>= 15 chars) against the source text. If anything fails,
-  // re-prompt with a targeted fix; if fabricated quotes remain after that,
-  // fall back to a hard refusal so we never ship a manufactured passage.
+  // ---------------- Pass 3: deterministic quote-fidelity + page-number checks ----------------
+  // Catch fabricated quotes and missing-page citations that the LLM
+  // verifier missed. Quote fabrication is the worse failure mode and is
+  // fixed first; missing page numbers are then patched in a separate
+  // targeted pass. If fabricated quotes remain after the rewrite, fall
+  // back to a hard refusal.
   let pass3Triggered = false;
+  let pass3Reason: 'fabricated' | 'missing-pages' | 'both' | null = null;
   let pass3Fallback = false;
   let fabricatedQuotes = findFabricatedQuotes(final, guidelinesText);
+  let missingPageRefs = findCitationsMissingPage(final);
 
-  if (fabricatedQuotes.length > 0) {
+  if (fabricatedQuotes.length > 0 || missingPageRefs.length > 0) {
     pass3Triggered = true;
-    try {
-      const fixReply = await client.messages.create({
-        model: DEFAULT_MODEL,
-        max_tokens: 900,
-        system: PASS3_QUOTE_FIX_SYSTEM.replace(
-          '{{FABRICATED_QUOTES}}',
-          fabricatedQuotes.map((q) => `"${q}"`).join('; '),
-        ),
-        messages: [
-          {
-            role: 'user',
-            content: `USER QUESTION:\n${lastUserQuestion}\n\nPREVIOUS RESPONSE:\n${final}\n\nReturn ONLY the corrected response text.`,
-          },
-        ],
-      });
-      const fixed = fixReply.content
-        .filter((b): b is { type: 'text'; text: string } => b.type === 'text')
-        .map((b) => b.text)
-        .join('')
-        .trim();
-      if (fixed) final = fixed;
-    } catch {
-      // ignore; the hard-refusal fallback below catches what's left
+    pass3Reason =
+      fabricatedQuotes.length > 0 && missingPageRefs.length > 0
+        ? 'both'
+        : fabricatedQuotes.length > 0
+          ? 'fabricated'
+          : 'missing-pages';
+
+    if (fabricatedQuotes.length > 0) {
+      try {
+        const fixReply = await client.messages.create({
+          model: DEFAULT_MODEL,
+          max_tokens: 900,
+          system: PASS3_QUOTE_FIX_SYSTEM.replace(
+            '{{FABRICATED_QUOTES}}',
+            fabricatedQuotes.map((q) => `"${q}"`).join('; '),
+          ),
+          messages: [
+            {
+              role: 'user',
+              content: `USER QUESTION:\n${lastUserQuestion}\n\nPREVIOUS RESPONSE:\n${final}\n\nReturn ONLY the corrected response text.`,
+            },
+          ],
+        });
+        const fixed = fixReply.content
+          .filter((b): b is { type: 'text'; text: string } => b.type === 'text')
+          .map((b) => b.text)
+          .join('')
+          .trim();
+        if (fixed) final = fixed;
+      } catch {
+        // fall through to the page-number pass and hard-refusal check
+      }
+    }
+
+    // Re-evaluate. The quote rewrite may have already resolved the
+    // page-number gap; if not, run a second targeted pass.
+    missingPageRefs = findCitationsMissingPage(final);
+    if (missingPageRefs.length > 0) {
+      try {
+        const pageReply = await client.messages.create({
+          model: DEFAULT_MODEL,
+          max_tokens: 900,
+          system: PASS3_PAGE_FIX_SYSTEM.replace(
+            '{{MISSING_PAGES}}',
+            missingPageRefs.map((r) => `"${r}"`).join('; '),
+          ),
+          messages: [
+            {
+              role: 'user',
+              content: `USER QUESTION:\n${lastUserQuestion}\n\nPREVIOUS RESPONSE:\n${final}\n\nReturn ONLY the corrected response text.`,
+            },
+          ],
+        });
+        const fixed = pageReply.content
+          .filter((b): b is { type: 'text'; text: string } => b.type === 'text')
+          .map((b) => b.text)
+          .join('')
+          .trim();
+        if (fixed) final = fixed;
+      } catch {
+        // ignore; we still ship the best response we have
+      }
     }
 
     const stillFabricated = findFabricatedQuotes(final, guidelinesText);
@@ -299,6 +372,7 @@ export async function POST(req: Request) {
     sourceVersion: SOURCE_VERSION,
     userKey,
     pass3Triggered,
+    pass3Reason,
     pass3Fallback,
     fabricatedQuotes,
   });
