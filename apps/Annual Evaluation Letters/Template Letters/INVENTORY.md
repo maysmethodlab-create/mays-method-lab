@@ -25,10 +25,10 @@ for traceability.
 |---|---|---|---:|---:|---:|
 | 1 | Accounting | Sean McGuire | 5 | 3 | 8 |
 | 2 | Finance | Jamie Brown | 2 | 2 | 4 |
-| 3 | Information & Operations | Rich Metters | 7 | 5 | 12 |
+| 3 | Information & Operations | Rich Metters | 7 | 9 | 16 |
 | 4 | Management | Wendy Boswell | 3 | 2 | 5 |
 | 5 | Marketing | Keith Wilcox | 0 | 0 | 0 |
-|   | **Total** |   | **17** | **12** | **29** |
+|   | **Total** |   | **17** | **16** | **33** |
 
 **Track legend:**
 - **TT** = Tenure-track (Assistant / Associate / Full Professor)
@@ -67,14 +67,18 @@ for traceability.
 |---|---|---|:-:|:-:|:-:|:-:|
 | Agrawal, Anupam | Associate Professor | TT | txt (extracted) | pdf | pdf | — |
 | Arreola-Risa, Antonio | Associate Professor | TT | txt (extracted) | pdf | pdf | — |
+| Becker, Aaron | Clinical Professor | APT | txt (extracted) | pdf × 2 | pdf | scholarly-activity pdf, PAR pdf |
 | Berberian, Rose | Lecturer | APT | txt (extracted) | — | — | — |
 | Boone, Ted | Principal Lecturer | APT | txt (extracted) | — | — | — |
 | Curtsinger, Wanda | Senior Lecturer | APT | docx + txt (extracted) | — | pdf | — |
+| Gomillion, David | Clinical (rank from F180) | APT | — | — | pdf | PAAR pdf |
 | Lee, DJ | Associate Professor | TT | txt (extracted) | — | — | — |
 | Phinney, Theresa | Principal Lecturer | APT | txt × 2 parts (extracted) | docx (resume) | pdf | — |
+| Rangan, Sudarsan | Clinical Professor | APT | txt (extracted) | pdf | pdf | — |
 | Sen, Ravi | Associate Professor | TT | txt (extracted) | — | — | — |
 | Stauffer, Jon | Associate Professor | TT | txt (extracted) | — | — | — |
 | Stech, Todd | Lecturer | APT | txt (extracted) | — | — | — |
+| Whitten, Dwayne | Clinical Professor | APT | txt (extracted) | — | pdf | other-info pdf |
 | Zhang, Bin | Associate Professor | TT | txt (extracted) | — | — | — |
 | Zhao, Xuying | Associate Professor | TT | txt (extracted) | — | — | — |
 
@@ -100,6 +104,10 @@ No letters yet.
   - Hurta, Amy (Accounting / Lecturer)
   - Curtsinger, Wanda (I&O / Senior Lecturer)
   - Phinney, Theresa (I&O / Principal Lecturer)
+  - Becker, Aaron (I&O / Clinical Professor)
+  - Whitten, Dwayne (I&O / Clinical Professor)
+  - Rangan, Sudarsan (I&O / Clinical Professor)
+- **APT supporting-docs only (no letter yet):** Gomillion, David (I&O / Clinical) — F180 + PAAR only
 - **APT letter-only (no supporting docs):** Allen, Ranzilla, Berberian, Boone,
   Stech, McFarland, Panina, White, Amos
 - **APT ranks represented:** Lecturer, Senior Lecturer, Principal Lecturer,
@@ -114,6 +122,8 @@ No letters yet.
 Files in `_bundles/`:
 - `Associate Annual Review Letters 2025.docx` + `.txt` — 7 associate-prof letters from Rich Metters (already split into individual folders)
 - `lecturer annual review letters 2025.docx` + `.txt` — 6 lecturer letters from Rich Metters (already split)
+- `Full Clinical annual review letters 2025.docx` + `.txt` — 3 clinical-faculty letters from Rich Metters (Whitten, Becker, Rangan — all already split into individual folders)
+- `senior clinical written comments.docx` + `.txt` — peer-comments compilation for the senior clinical faculty (Becker, Rangan, Whitten)
 - `Annual review comments junior clinicals and lecturers.docx` — review comments compilation
 - `Annual review comments of associate profs.docx` — review comments compilation
 
