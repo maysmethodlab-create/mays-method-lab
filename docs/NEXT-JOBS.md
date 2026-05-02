@@ -4,6 +4,45 @@ Use this as the resume point on a new computer. Updated 2026-05-01.
 
 ## Top of the queue (in priority order)
 
+0. **🚨 Render deploy status — figure out what's actually happening.**
+   The repo is on GitHub at https://github.com/maysmethodlab-create/mays-method-lab.
+   Render service is set up via the `render.yaml` blueprint. Three fix
+   commits already landed for build issues (path-alias resolution):
+   - `a59abde` — added `baseUrl` to tsconfig
+   - `2764e1d` — switched `src/app/about/*` to relative imports
+   - `1502b4e` — bound `@/` alias explicitly in `next.config.js` webpack hook
+
+   Local production build (`npm run build` after `rm -rf .next`) compiles
+   ALL 17 routes cleanly with `1502b4e`. So the source is good.
+
+   Last thing the user saw on Render: build log truncated at "Creating
+   an optimized production build…" with no further output, no compile
+   error, no success badge. Status badge color was unclear. Three
+   likely scenarios:
+
+   (a) **Out-of-memory kill on Render's free tier (512 MB).** Most likely.
+       Next.js production builds spike to 700 MB-1 GB. Fix: upgrade the
+       service to Starter ($7/mo, 2 GB RAM) in the Render dashboard.
+       Or shrink the build via `next build --experimental-build-mode compile`
+       (no minification — smaller memory footprint).
+
+   (b) **Build still running when the user checked.** Production builds
+       with no cache + a ~100 KB faculty-roster JSON in the bundle take
+       ~90 seconds on Render free tier. Just wait, refresh the deploy
+       page in 2 min.
+
+   (c) **A different webpack error after "Creating an optimized
+       production build…" that wasn't visible in the truncated log.**
+       Get the FULL log tail (last 50 lines, or scroll to the very
+       bottom and copy) before doing anything else.
+
+   First action when you pick this up: open the Render dashboard, look
+   at the badge color of the most recent deploy.
+   - 🟡 In progress → wait
+   - 🔴 Failed + truncated log → upgrade plan to Starter, OR ask the
+     dashboard for the full log
+   - 🟢 Live → done; visit the URL printed at the top
+
 1. **🐛 Faculty dropdown not showing in Step 2.**
    User reported in the last session: when going through the
    evaluation-letter workflow, the faculty directory dropdown was empty
