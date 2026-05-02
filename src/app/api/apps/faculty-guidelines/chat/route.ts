@@ -127,8 +127,19 @@ Does the response end with "Source: Mays Faculty Guidelines, October 17, 2025 (A
 CHECK 5 — Page number on every citation.
 Every reference to a section, appendix, or numbered subsection (e.g., "§ 4.2", "Appendix J", "Section B.3.1") MUST be followed by ", p. X" or ", page X" within the same sentence. If a citation is missing the page number, REWRITE the response to either (a) add the page number from the source, or (b) remove the citation and replace with "the guidelines do not specify the section here".
 
-CHECK 6 — Citation specificity.
-Does every section citation use the MOST specific subsection (e.g., § X.Y.Z) where one is available, paired with a single page number? If a citation is to a page range (e.g., "p. 53-62") or to a parent section when a subsection exists, REWRITE the citation to the most specific available form.
+CHECK 6 — Citation specificity (REWRITE, do not just flag).
+
+For every section citation in the response:
+1. If the citation is to a parent section like "Section 6" or "Section 7" but the actual quoted content lives in a more specific subsection (e.g., § 6.1, § 7.2.3), REWRITE the citation to use the most specific subsection number from the source. Search the source carefully for the subsection where each quoted passage actually appears.
+2. If the citation uses a page range like "p. 53-62", REWRITE to a single page where the quoted passage starts.
+3. If a citation is correctly specific (e.g., "§ 6.3, p. 55"), leave it alone.
+
+Be aggressive. The bot must NEVER cite a parent section like "Section 6" when subsections exist. The bot must NEVER cite a page range. If you see either pattern, fix it.
+
+Examples:
+- BAD: "(Section 6, p. 53)" — REWRITE to the actual subsection (e.g., "(§ 6.1, p. 54)")
+- BAD: "(p. 53-62)" — REWRITE to the actual single page
+- GOOD: "(§ 6.3, p. 55)" — leave as-is
 
 If all six checks pass, return the response unchanged. Otherwise return the rewritten response. Output ONLY the final response text. No commentary.`;
 
