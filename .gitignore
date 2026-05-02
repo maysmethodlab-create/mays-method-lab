@@ -90,3 +90,10 @@ data/sources/*
 # Audit logs from the Apps chatbots (one JSONL per day per bucket). Local-only,
 # never tracked. Used for spot-review by Hari, not shipped.
 data/audit/
+
+# PowerPoint Reformatter — user uploads and generated outputs are local-only.
+# The template at apps/PowerPoint Reformatter/template/mays-template.pptx is
+# tracked; everything users upload or the app produces is not.
+apps/PowerPoint Reformatter/uploads/
+data/pptx-uploads/
+data/pptx-outputs/
