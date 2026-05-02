@@ -190,7 +190,7 @@ ${args.peerComments}` : ''}`;
     ? '(NO salutation — go straight from SUBJECT line to the OPENING paragraph; do NOT write "Dear X,")'
     : `"Dear ${args.recipientFirstName},"`;
 
-  const targetLength = `Target length: ${args.styleOverrides.targetWords.min}-${args.styleOverrides.targetWords.max} words TOTAL across the entire body (header through closing line, including the rating-sentence paragraph). This is a hard ceiling. Count as you go: short letters in this writer's voice run 450-770 words and read like a 1-page memo, not a 2-page essay. If you find yourself listing every course section, every committee, every workshop, you are too long; collapse them into a single descriptive sentence.`;
+  const targetLength = `Target length: ${args.styleOverrides.targetWords.min}-${args.styleOverrides.targetWords.max} words TOTAL across the entire body (header through closing line, including the rating-sentence paragraph). The MAX (${args.styleOverrides.targetWords.max} words) is a HARD CEILING — going over is a FAIL for this letter. Count as you go. If you find yourself listing every course section, every committee, every workshop, you are too long; collapse them into a single descriptive sentence. Do NOT enumerate every assessment activity, every committee, every credentialing detail. The brief lists everything; your job is to compress it into a 1-page memo, not to copy it.`;
 
   const openingInstr = args.styleOverrides.openingBoilerplate
     ? `Open with this exact paragraph (verbatim, no rewording):\n   "${args.styleOverrides.openingBoilerplate.replace(/\{YEAR\}/g, String(args.evaluationYear))}"`
@@ -208,9 +208,18 @@ text. If you forget the asterisks, the section header will render as
 plain body text and the letter will look broken.`
     : `NO SECTION HEADINGS:
 Do NOT use any bold section headings in the body. NO **Teaching**, NO
-**Service**, NO **AACSB**, NO **My Observations**, NO **Your Plan**.
+**Service**, NO **AACSB**, NO **My Observations**, NO **Your Plan**, NO
+**AACSB Accreditation**, NO **Department Head Assessment**.
 Write the body as flowing paragraphs separated by blank lines. The
-writer's voice is conversational and headings would feel wrong.`;
+writer's voice is conversational and headings would feel wrong.
+
+EXEMPLAR-COPYING WARNING: the exemplar letters below may contain
+plain-text labels like "Teaching", "Service", "AACSB accreditation"
+sitting alone on a line above a paragraph. These are NOT bold section
+headings; the original writer typed them as plain text in a memo. You
+MUST NOT reproduce them and you MUST NOT bold them. Drop the labels
+entirely and let the paragraphs flow. The reader knows which paragraph
+covers teaching from the content of the paragraph itself.`;
 
   // -------- APT body structure --------
   // Resolve AACSB placement: per-role-category overrides win over the
@@ -222,7 +231,7 @@ writer's voice is conversational and headings would feel wrong.`;
 
   const aacsbInstr = (() => {
     if (aacsbPlacement === 'omit') {
-      return `AACSB: do NOT include any AACSB paragraph or list of AACSB activities. The writer does not include AACSB material in short APT letters. If the recipient holds a CPA / professional license that is worth mentioning, fold it into the Teaching narrative in one short sentence and stop there.`;
+      return `AACSB: do NOT include any AACSB paragraph, AACSB heading, or list of AACSB activities. The writer does not include AACSB material in their short APT letters. Even if the exemplar letters below contain AACSB sections, you MUST drop them — the omit rule wins over exemplar style. If the recipient holds a CPA / professional license that is worth mentioning, fold it into the Teaching narrative in one short sentence and stop there.`;
     }
     if (aacsbPlacement === 'woven') {
       return `AACSB: weave one short sentence about maintaining the "currency and relevance" of instruction into the Teaching paragraph. Do NOT add a separate AACSB heading or a bulleted list of AACSB activities.`;
@@ -275,6 +284,8 @@ ${closingBlock}
 ${targetLength}
 
 CRITICAL: This is APT. Do NOT include any research evaluation. Do NOT reference the absence of research negatively. Per Mays Guidelines Section 6.2, lack of research activity is NOT a negative factor.
+
+DO NOT COPY EXEMPLAR / SOURCE-DOCUMENT BOILERPLATE: the exemplar letters and source documents may end with signature-line boilerplate such as "I have reviewed this performance evaluation. My signature means..." or "Please return the signed copy to Donna Shumaker." or signature blocks with date lines. These belong on the .docx after the writer prints and signs; they MUST NOT appear in the body you produce. The closing lines listed in the CLOSING block above are the LAST sentences of your output.
 
 ${args.exemplars ? `\nREFERENCE EXEMPLAR LETTERS — these are PRIOR letters from the SAME writer for similar APT faculty. Match their structure, voice, length, and paragraphing rhythm. Do NOT copy facts from exemplars; only mimic their style.\n\n${args.exemplars}\n` : ''}`;
 

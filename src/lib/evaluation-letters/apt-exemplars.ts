@@ -36,11 +36,12 @@ export const APT_EXEMPLARS: Record<string, string[]> = {
     'Information & Operations (Metters)/Boone, Ted [APT]/Boone_Annual_Review_2025.txt',
   ],
   'metters/apt-clinical': [
-    'Information & Operations (Metters)/Becker, Aaron [APT]/Becker_Annual_Review_2025.txt',
     'Information & Operations (Metters)/Whitten, Dwayne [APT]/Whitten_Annual_Review_2025.txt',
+    'Information & Operations (Metters)/Rangan, Sudarsan [APT]/Rangan_Annual_Review_2025.txt',
   ],
   'metters/apt-practice': [
-    'Information & Operations (Metters)/Becker, Aaron [APT]/Becker_Annual_Review_2025.txt',
+    'Information & Operations (Metters)/Whitten, Dwayne [APT]/Whitten_Annual_Review_2025.txt',
+    'Information & Operations (Metters)/Rangan, Sudarsan [APT]/Rangan_Annual_Review_2025.txt',
   ],
   'boswell/apt-clinical': [
     'Management (Boswell)/Panina, Daria [APT]/Panina_Annual_Review_2025.txt',
