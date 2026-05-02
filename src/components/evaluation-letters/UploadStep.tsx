@@ -266,20 +266,7 @@ export default function UploadStep({
         ) : null}
       </section>
 
-      <section className="card space-y-3">
-        <div className="eyebrow text-[11px]">Your Observations and Notes</div>
-        <p className="text-sm text-ink-secondary leading-relaxed">
-          Rough notes, bullet points, anything you want reflected in the letter. The AI weaves
-          these into the &quot;My Observations&quot; and &quot;Your Plan&quot; sections — without
-          them the letter reads like a document summary.
-        </p>
-        <textarea
-          className="input min-h-[180px] font-body leading-relaxed"
-          placeholder={`e.g.\n• Amazing in the classroom this year, students loved her\n• Struggled with committee work, but research was top-notch\n• Goals: improve PhD placements, launch certificate program, write 2 papers`}
-          value={notes}
-          onChange={(e) => onNotesChange(e.target.value)}
-        />
-      </section>
+      <ObservationsSection notes={notes} onNotesChange={onNotesChange} />
 
       {!canContinue && files.length > 0 ? (
         <div className="text-xs text-status-warning border border-status-warning/40 bg-status-warning/5 px-3 py-2">
@@ -326,6 +313,111 @@ function InlineField({
         onChange={(e) => onChange(e.target.value)}
       />
     </label>
+  );
+}
+
+type Observations = {
+  standout: string;
+  growth: string;
+  sensitive: string;
+};
+
+function parseNotes(raw: string): Observations {
+  const trimmed = raw.trim();
+  if (!trimmed) return { standout: '', growth: '', sensitive: '' };
+
+  // Look for the three headings. If the format doesn't match, dump the whole
+  // string into "STANDOUT" as a fallback (preserves prior free-text content).
+  const headingPattern = /^(STANDOUT|GROWTH AREA|SENSITIVE):\s*$/im;
+  if (!headingPattern.test(raw)) {
+    return { standout: trimmed, growth: '', sensitive: '' };
+  }
+
+  const standoutMatch = raw.match(/STANDOUT:\s*\n?([\s\S]*?)(?=\n\s*(?:GROWTH AREA|SENSITIVE):|$)/i);
+  const growthMatch = raw.match(/GROWTH AREA:\s*\n?([\s\S]*?)(?=\n\s*(?:STANDOUT|SENSITIVE):|$)/i);
+  const sensitiveMatch = raw.match(/SENSITIVE:\s*\n?([\s\S]*?)(?=\n\s*(?:STANDOUT|GROWTH AREA):|$)/i);
+
+  return {
+    standout: (standoutMatch?.[1] || '').trim(),
+    growth: (growthMatch?.[1] || '').trim(),
+    sensitive: (sensitiveMatch?.[1] || '').trim(),
+  };
+}
+
+function serializeNotes(obs: Observations): string {
+  const { standout, growth, sensitive } = obs;
+  // Always emit all three sections so the downstream prompt has predictable
+  // structure. Empty sections are fine.
+  return [
+    `STANDOUT:\n${standout}`,
+    `GROWTH AREA:\n${growth}`,
+    `SENSITIVE:\n${sensitive}`,
+  ].join('\n\n');
+}
+
+function ObservationsSection({
+  notes,
+  onNotesChange,
+}: {
+  notes: string;
+  onNotesChange: (next: string) => void;
+}) {
+  const [obs, setObs] = useState<Observations>(() => parseNotes(notes));
+
+  function update(field: keyof Observations, value: string) {
+    const next = { ...obs, [field]: value };
+    setObs(next);
+    // Only emit a non-empty serialized blob if at least one field has content.
+    const anyContent = next.standout.trim() || next.growth.trim() || next.sensitive.trim();
+    onNotesChange(anyContent ? serializeNotes(next) : '');
+  }
+
+  return (
+    <section className="card space-y-4">
+      <div className="eyebrow text-[11px]">Your Observations and Notes</div>
+      <p className="text-sm text-ink-secondary leading-relaxed">
+        These shape the &quot;My Observations&quot; and &quot;Your Plan&quot; sections of the
+        letter. Be honest and specific.
+      </p>
+
+      <label className="block space-y-1.5">
+        <div className="label">
+          What stands out about this faculty member&apos;s year? The single best thing.
+        </div>
+        <textarea
+          className="input min-h-[80px] font-body leading-relaxed"
+          placeholder="e.g., Outstanding teaching evaluations across all sections, especially the new course on..."
+          value={obs.standout}
+          onChange={(e) => update('standout', e.target.value)}
+        />
+      </label>
+
+      <label className="block space-y-1.5">
+        <div className="label">
+          What&apos;s one thing you&apos;d like them to do differently — or one growth area you
+          want them to focus on?
+        </div>
+        <textarea
+          className="input min-h-[80px] font-body leading-relaxed"
+          placeholder="e.g., More national-level service work, or shift conference attendance toward higher-tier venues..."
+          value={obs.growth}
+          onChange={(e) => update('growth', e.target.value)}
+        />
+      </label>
+
+      <label className="block space-y-1.5">
+        <div className="label">
+          Anything sensitive to thread carefully — a difficult conversation, an issue to
+          acknowledge, or context not in the documents?
+        </div>
+        <textarea
+          className="input min-h-[80px] font-body leading-relaxed"
+          placeholder="e.g., Family circumstance affected productivity in spring 2024, or interpersonal friction in committee work..."
+          value={obs.sensitive}
+          onChange={(e) => update('sensitive', e.target.value)}
+        />
+      </label>
+    </section>
   );
 }
 
