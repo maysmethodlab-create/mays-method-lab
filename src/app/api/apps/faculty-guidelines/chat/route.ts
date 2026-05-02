@@ -100,7 +100,37 @@ Does the response contain "likely", "probably", "should", "it depends", "in your
 CHECK 4 — Source citation footer.
 Does the response end with "Source: Mays Faculty Guidelines, October 17, 2025 (Approved version)."? If not, ADD it.
 
-If all four checks pass, return the response unchanged. Otherwise return the rewritten response. Output ONLY the final response text — no commentary.`;
+If all four checks pass, return the response unchanged. Otherwise return the rewritten response. Output ONLY the final response text. No commentary.`;
+
+const PASS3_QUOTE_FIX_SYSTEM = `The previous response contained quoted passages that do not appear in the source document. The fabricated quotes are: {{FABRICATED_QUOTES}}
+
+Rewrite the response to either (a) replace each fabricated quote with the literal text "The Mays Faculty Guidelines (October 2025) do not address this directly", or (b) remove the fabricated quote and the surrounding sentence entirely.
+
+Keep the rest of the response (genuine quotes, citations, the personal-applicability template if used, the source citation footer) intact.
+
+Output ONLY the corrected response text.`;
+
+const HARD_REFUSAL =
+  'The Mays Faculty Guidelines (October 2025) do not address this directly. For your specific situation, contact your department head or email Hari Sridhar at ssridhar@mays.tamu.edu. Source: Mays Faculty Guidelines, October 17, 2025 (Approved version).';
+
+/**
+ * Pass 3 helper. Find quoted spans (>= 15 chars) in the response that do
+ * NOT appear verbatim in the guidelines source. Whitespace and case are
+ * normalized so multi-line quoted excerpts still match.
+ */
+function findFabricatedQuotes(responseText: string, sourceText: string): string[] {
+  const quoteRegex = /"([^"]{15,})"/g;
+  const fabricated: string[] = [];
+  const normalizedSource = sourceText.replace(/\s+/g, ' ').toLowerCase();
+  let m: RegExpExecArray | null;
+  while ((m = quoteRegex.exec(responseText)) !== null) {
+    const candidate = m[1].replace(/\s+/g, ' ').toLowerCase();
+    if (!normalizedSource.includes(candidate)) {
+      fabricated.push(m[1]);
+    }
+  }
+  return fabricated;
+}
 
 function isKillSwitchOn(): boolean {
   return (process.env.FACULTY_GUIDELINES_BOT_ENABLED || '').toLowerCase() === 'false';
@@ -217,6 +247,49 @@ export async function POST(req: Request) {
     final = draft;
   }
 
+  // ---------------- Pass 3: deterministic quote-fidelity check ----------------
+  // Catch fabricated quotes that the LLM verifier missed. We grep every
+  // quoted span (>= 15 chars) against the source text. If anything fails,
+  // re-prompt with a targeted fix; if fabricated quotes remain after that,
+  // fall back to a hard refusal so we never ship a manufactured passage.
+  let pass3Triggered = false;
+  let pass3Fallback = false;
+  let fabricatedQuotes = findFabricatedQuotes(final, guidelinesText);
+
+  if (fabricatedQuotes.length > 0) {
+    pass3Triggered = true;
+    try {
+      const fixReply = await client.messages.create({
+        model: DEFAULT_MODEL,
+        max_tokens: 900,
+        system: PASS3_QUOTE_FIX_SYSTEM.replace(
+          '{{FABRICATED_QUOTES}}',
+          fabricatedQuotes.map((q) => `"${q}"`).join('; '),
+        ),
+        messages: [
+          {
+            role: 'user',
+            content: `USER QUESTION:\n${lastUserQuestion}\n\nPREVIOUS RESPONSE:\n${final}\n\nReturn ONLY the corrected response text.`,
+          },
+        ],
+      });
+      const fixed = fixReply.content
+        .filter((b): b is { type: 'text'; text: string } => b.type === 'text')
+        .map((b) => b.text)
+        .join('')
+        .trim();
+      if (fixed) final = fixed;
+    } catch {
+      // ignore; the hard-refusal fallback below catches what's left
+    }
+
+    const stillFabricated = findFabricatedQuotes(final, guidelinesText);
+    if (stillFabricated.length > 0) {
+      pass3Fallback = true;
+      final = HARD_REFUSAL;
+    }
+  }
+
   // ---------------- Audit log (best-effort) ----------------
   writeAuditEntry({
     bucket: 'faculty-guidelines',
@@ -225,6 +298,9 @@ export async function POST(req: Request) {
     final,
     sourceVersion: SOURCE_VERSION,
     userKey,
+    pass3Triggered,
+    pass3Fallback,
+    fabricatedQuotes,
   });
 
   return NextResponse.json({ message: final });

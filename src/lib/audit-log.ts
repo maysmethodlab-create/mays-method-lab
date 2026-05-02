@@ -30,6 +30,14 @@ export type AuditEntry = {
   sourceVersion: string;
   /** Optional opaque user identifier; will be hashed before writing. */
   userKey?: string;
+  /** Pass 3 telemetry (Faculty Guidelines bot): true when the
+   *  deterministic quote-fidelity check fired. */
+  pass3Triggered?: boolean;
+  /** True when Pass 3 still left fabricated quotes and we fell back to
+   *  the hard refusal string. */
+  pass3Fallback?: boolean;
+  /** The fabricated quote spans that triggered Pass 3, for offline review. */
+  fabricatedQuotes?: string[];
 };
 
 function ensureDir(dir: string) {
@@ -70,7 +78,7 @@ export function writeAuditEntry(entry: AuditEntry): void {
     const dir = path.join(root, 'data', 'audit', entry.bucket);
     ensureDir(dir);
     const file = path.join(dir, `${todayUtc()}.jsonl`);
-    const row = {
+    const row: Record<string, unknown> = {
       ts: new Date().toISOString(),
       userHash: hashUser(entry.userKey),
       question: entry.question,
@@ -79,6 +87,13 @@ export function writeAuditEntry(entry: AuditEntry): void {
       citations: extractCitations(entry.final),
       sourceVersion: entry.sourceVersion,
     };
+    // Additive optional Pass 3 telemetry. Fields are appended only when
+    // present so the historical schema is preserved for downstream tools.
+    if (entry.pass3Triggered) row.pass3Triggered = true;
+    if (entry.pass3Fallback) row.pass3Fallback = true;
+    if (entry.fabricatedQuotes && entry.fabricatedQuotes.length > 0) {
+      row.fabricatedQuotes = entry.fabricatedQuotes;
+    }
     fs.appendFileSync(file, JSON.stringify(row) + '\n', 'utf8');
   } catch {
     // Auditing must never block a reply. Swallow the error.
