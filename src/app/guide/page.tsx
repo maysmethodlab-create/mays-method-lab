@@ -49,8 +49,8 @@ export default function GuidePage() {
           href="/agents"
         />
         <ShortcutTile
-          title="Pick your role on the Learning Community page"
-          blurb="Faculty or staff. Job-mapped buckets. Start with what you actually do."
+          title="Pick your role on Your AI Edge"
+          blurb="Faculty or staff. Prompts, apps, tutorials, and resources curated for the work you actually do."
           href="/learning-community"
         />
       </div>
@@ -60,7 +60,7 @@ export default function GuidePage() {
           href="/learning-community"
           className="text-[14px] uppercase tracking-[0.1em] font-semibold text-maroon-muted hover:text-maroon"
         >
-          &larr; Back to the AI Learning Community
+          &larr; Back to Your AI Edge
         </Link>
       </div>
     </section>
