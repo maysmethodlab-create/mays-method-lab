@@ -4,9 +4,9 @@ import LearningCommunityClient from './LearningCommunityClient';
 import type { LearningRole } from '@/lib/learning-community';
 
 export const metadata = {
-  title: 'AI Learning Community | Mays Method Lab',
+  title: 'Your AI Edge | Mays Method Lab',
   description:
-    'Practical AI for the Mays community. Apps mapped to the work you actually do.',
+    'Less drag, more work that matters. Prompts, apps, tutorials, and resources for the Mays community.',
 };
 
 const ROLE_COOKIE = 'mml.role.preference';
@@ -22,13 +22,13 @@ export default function LearningCommunityPage() {
       {/* Hero. One confident sentence. No clutter. */}
       <ScrollReveal>
         <div className="max-w-4xl">
-          <div className="eyebrow-lg mb-4">AI Learning Community</div>
+          <div className="eyebrow-lg mb-4">Your AI Edge</div>
           <h1 className="mb-6 leading-[1.1]" style={{ fontSize: 'clamp(40px, 6vw, 72px)' }}>
-            Practical AI for the Mays community.
+            Less drag. More work that matters.
           </h1>
           <p className="text-[18px] text-ink-secondary leading-relaxed max-w-2xl">
-            A small set of apps, picked for the work faculty and staff actually do.
-            Open one and start.
+            Practical AI for the work you actually do at Mays. Pick a prompt,
+            open an app, watch a tutorial, go deeper. One page, four ways in.
           </p>
         </div>
       </ScrollReveal>
