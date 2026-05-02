@@ -274,16 +274,21 @@ export async function generateLetterDocx(opts: LetterDocOptions): Promise<Buffer
     // The Mays/TAMU letterhead source is 600×146 (aspect 4.11). Render at
     // a smaller, symmetric size — 320×78 (~3.3" wide) — so it sits cleanly
     // at the top of a 1"-margin US Letter page without dominating the
-    // first paragraphs.
+    // first paragraphs. Per-department letterheads (mktg.png, info.jpg) may
+    // have different native aspect ratios — the docx ImageRun keeps the
+    // declared transformation regardless, so all letterheads render at a
+    // consistent visual width.
     const LETTERHEAD_WIDTH = 320;
     const LETTERHEAD_HEIGHT = 78; // 320 / 4.11 ≈ 78
+    const ext = (opts.letterheadImage ?? '').toLowerCase().split('.').pop();
+    const imageType: 'jpg' | 'png' = ext === 'png' ? 'png' : 'jpg';
     headerParagraphs.push(
       new Paragraph({
         alignment: AlignmentType.CENTER,
         spacing: { after: 120 },
         children: [
           new ImageRun({
-            type: 'jpg',
+            type: imageType,
             data: headerImage,
             transformation: { width: LETTERHEAD_WIDTH, height: LETTERHEAD_HEIGHT },
           }),

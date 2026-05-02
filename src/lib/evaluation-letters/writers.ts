@@ -72,7 +72,8 @@ export const WRITERS: Writer[] = [
     title: "Interim Department Head, Arch H. Aplin III '80 Department of Marketing",
     department: "Arch H. Aplin III '80 Department of Marketing",
     chair: 'Ford Endowed Chair in Consumerism / E-Business / E-Commerce',
-    letterheadImage: DEFAULT_LETTERHEAD,
+    // Department-specific letterhead extracted from MKTG Letterhead.docx.
+    letterheadImage: 'mktg.png',
   },
   {
     id: 'metters',
@@ -81,7 +82,8 @@ export const WRITERS: Writer[] = [
     title: 'Department Head, Department of Information and Operations Management',
     department: 'Department of Information and Operations Management',
     chair: 'Paul W. and Rosalie Robertson Chair in Business',
-    letterheadImage: DEFAULT_LETTERHEAD,
+    // Mays Business School banner extracted from Metters' lecturer-bundle letter.
+    letterheadImage: 'info.jpg',
     styleOverrides: {
       fromBlockMaxLines: 3,
       useSectionHeadings: true,
@@ -98,7 +100,8 @@ export const WRITERS: Writer[] = [
     department: 'James Benjamin Department of Accounting',
     chair: "J. Rogers Rainey, Jr. and Kathleen L. Rainey '44 Chair of Accounting",
     honors: ['Presidential Impact Fellow'],
-    letterheadImage: DEFAULT_LETTERHEAD,
+    // High-resolution TAMU banner extracted from McGuire's Hurta letter.
+    letterheadImage: 'acct.jpg',
     styleOverrides: {
       fromBlockMaxLines: 2,
       useSectionHeadings: false,
@@ -121,6 +124,9 @@ export const WRITERS: Writer[] = [
     title: "Department Head, Adam C. Sinn '00 Department of Finance",
     department: "Adam C. Sinn '00 Department of Finance",
     chair: 'Jeanne & John R. Blocker Chair in Business Administration',
+    // No usable Finance-specific letterhead source available today: the
+    // Finance folder has no past .docx letters with an embedded image, so
+    // Brown stays on the shared Mays default until one is supplied.
     letterheadImage: DEFAULT_LETTERHEAD,
   },
   {
@@ -130,7 +136,8 @@ export const WRITERS: Writer[] = [
     title: 'Interim Department Head, Department of Management',
     department: 'Department of Management',
     chair: 'Jerry and Kay Cox Endowed Chair in Business',
-    letterheadImage: DEFAULT_LETTERHEAD,
+    // High-resolution TAMU banner extracted from Boswell's Boivie letter.
+    letterheadImage: 'mgmt.jpg',
   },
 ];
 
