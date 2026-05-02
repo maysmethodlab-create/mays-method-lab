@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import StepHeader from './StepHeader';
 import CandidateSetupForm from './CandidateSetupForm';
 import UploadStep from './UploadStep';
@@ -84,6 +84,36 @@ function buildSampleVotes(): MRCVote[] {
 
 const initialVotes: MRCVote[] = buildSampleVotes();
 
+// localStorage key for the auto-saved workflow state.
+const STORAGE_KEY = 'mml.endowedLetters.draftState.v1';
+// Roughly 4MB cap on serialized JSON before per-file text truncation kicks in.
+const SAVE_SIZE_CAP_BYTES = 4 * 1024 * 1024;
+const PER_FILE_TEXT_CAP_BYTES = 200 * 1024;
+
+type SavedState = {
+  step: 1 | 2 | 3 | 4 | 5;
+  setup: SetupData;
+  files: UploadedFile[];
+  votes: MRCVote[];
+  draft: LetterDraft | null;
+  parts: GeneratedParts | null;
+};
+
+function safeStringify(state: SavedState): string {
+  const full = JSON.stringify(state);
+  if (full.length <= SAVE_SIZE_CAP_BYTES) return full;
+  const truncated: SavedState = {
+    ...state,
+    files: state.files.map((f) => ({
+      ...f,
+      text: f.text && f.text.length > PER_FILE_TEXT_CAP_BYTES
+        ? f.text.slice(0, PER_FILE_TEXT_CAP_BYTES)
+        : f.text,
+    })),
+  };
+  return JSON.stringify(truncated);
+}
+
 export default function EndowedLetterWorkflow() {
   const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
   const [setup, setSetup] = useState<SetupData>(initialSetup);
@@ -92,9 +122,58 @@ export default function EndowedLetterWorkflow() {
   const [draft, setDraft] = useState<LetterDraft | null>(null);
   const [parts, setParts] = useState<GeneratedParts | null>(null);
 
+  const [hydrated, setHydrated] = useState(false);
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   // True until the user picks a different candidate or dismisses the
   // banner. Determines whether the demo banner is rendered.
   const onSampleCandidate = setup.candidateId === SAMPLE_CANDIDATE_ID;
+
+  // Hydrate from localStorage on first client render.
+  useEffect(() => {
+    try {
+      const raw = typeof window !== 'undefined' ? window.localStorage.getItem(STORAGE_KEY) : null;
+      if (raw) {
+        const parsed = JSON.parse(raw) as Partial<SavedState>;
+        if (parsed && typeof parsed === 'object') {
+          if (
+            parsed.step === 1 ||
+            parsed.step === 2 ||
+            parsed.step === 3 ||
+            parsed.step === 4 ||
+            parsed.step === 5
+          ) {
+            setStep(parsed.step);
+          }
+          if (parsed.setup) setSetup({ ...initialSetup, ...parsed.setup });
+          if (Array.isArray(parsed.files)) setFiles(parsed.files);
+          if (Array.isArray(parsed.votes)) setVotes(parsed.votes);
+          if (parsed.draft !== undefined) setDraft(parsed.draft ?? null);
+          if (parsed.parts !== undefined) setParts(parsed.parts ?? null);
+        }
+      }
+    } catch {
+      // Start fresh on any parse / storage error.
+    }
+    setHydrated(true);
+  }, []);
+
+  // Debounced auto-save.
+  useEffect(() => {
+    if (!hydrated) return;
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => {
+      const snapshot: SavedState = { step, setup, files, votes, draft, parts };
+      try {
+        window.localStorage.setItem(STORAGE_KEY, safeStringify(snapshot));
+      } catch {
+        // Ignore quota / disabled-storage errors.
+      }
+    }, 400);
+    return () => {
+      if (saveTimer.current) clearTimeout(saveTimer.current);
+    };
+  }, [hydrated, step, setup, files, votes, draft, parts]);
 
   function reset() {
     setSetup(initialSetup);
@@ -103,10 +182,33 @@ export default function EndowedLetterWorkflow() {
     setDraft(null);
     setParts(null);
     setStep(1);
+    try {
+      window.localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // Ignore.
+    }
+  }
+
+  function handleStartOverClick() {
+    if (typeof window === 'undefined') return;
+    const ok = window.confirm('Start over? This will clear all entered data.');
+    if (ok) reset();
   }
 
   return (
     <div>
+      {hydrated ? (
+        <div className="flex justify-end mb-4">
+          <button
+            type="button"
+            onClick={handleStartOverClick}
+            className="text-[13px] text-maroon hover:underline focus:outline-none focus:ring-2 focus:ring-maroon/30 px-1"
+          >
+            Start over
+          </button>
+        </div>
+      ) : null}
+
       {onSampleCandidate ? (
         <DemoBanner candidateName={setup.candidateName || 'Len Berry'} />
       ) : null}
