@@ -97,3 +97,6 @@ data/audit/
 apps/PowerPoint Reformatter/uploads/
 data/pptx-uploads/
 data/pptx-outputs/
+
+# PowerPoint Reformatter — local-only user-test decks (e.g. Sara Chen messy deck)
+data/test-decks/
