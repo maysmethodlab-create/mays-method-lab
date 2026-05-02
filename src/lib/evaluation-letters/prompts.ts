@@ -95,6 +95,10 @@ export type WritingPromptArgs = {
   recipientDepartment: string;
   evaluationYear: number;
   roleCategory: string;
+  /** Role-category ID (e.g., 'apt-clinical', 'apt-lecturer'). Used to
+   *  resolve per-subtype AACSB placement when the writer has set
+   *  `aacsbPlacementByRoleCategory`. */
+  roleCategoryId: string;
   letterSkill: string;
   patternsAnalysis: string;
   /** Full bundle of style skills (human-writing, hari-admin, etc.) loaded from disk */
@@ -209,11 +213,18 @@ Write the body as flowing paragraphs separated by blank lines. The
 writer's voice is conversational and headings would feel wrong.`;
 
   // -------- APT body structure --------
+  // Resolve AACSB placement: per-role-category overrides win over the
+  // writer's default (Sean = woven for Clinical, discrete for Lecturer
+  // and Practice; default for everyone else falls through).
+  const aacsbPlacement =
+    args.styleOverrides.aacsbPlacementByRoleCategory[args.roleCategoryId] ??
+    args.styleOverrides.aacsbPlacement;
+
   const aacsbInstr = (() => {
-    if (args.styleOverrides.aacsbPlacement === 'omit') {
+    if (aacsbPlacement === 'omit') {
       return `AACSB: do NOT include any AACSB paragraph or list of AACSB activities. The writer does not include AACSB material in short APT letters. If the recipient holds a CPA / professional license that is worth mentioning, fold it into the Teaching narrative in one short sentence and stop there.`;
     }
-    if (args.styleOverrides.aacsbPlacement === 'woven') {
+    if (aacsbPlacement === 'woven') {
       return `AACSB: weave one short sentence about maintaining the "currency and relevance" of instruction into the Teaching paragraph. Do NOT add a separate AACSB heading or a bulleted list of AACSB activities.`;
     }
     return `AACSB: include a short discrete section. Use the heading "AACSB accreditation" (NOT "AACSB Maintenance of Instructional Practice Status" or any other invented title) — match the exemplar letters' heading text exactly. Keep the AACSB section to one short paragraph, OR a short paragraph plus a brief bulleted list of AACSB activities, NOT both a long paragraph AND a list. Lift the phrasing from the exemplars rather than re-explaining AACSB at length. Mention CPA / professional license if relevant.`;
@@ -436,17 +447,23 @@ export function buildRatingSentences(args: AppendSummaryArgs): {
 
 /**
  * Final assembly of the letter once the writer has assigned ratings.
- * Two paths:
- *  - Letter body contains [*_RATING_SENTENCE] placeholders (Sean's
- *    writer-conditional structure): substitute the placeholders in place
- *    and return the substituted body. The body already includes a Summary
- *    block; no additional append is needed.
- *  - Letter body does not contain placeholders (default writers): append
- *    the standard Summary section to the end of the body.
+ * Three paths:
+ *  - Letter body contains [*_RATING_SENTENCE] placeholders: substitute
+ *    them in place and return. The body already ends with the writer's
+ *    own close (e.g., Wendy's "Please sign and date this letter and
+ *    return it..."); no Summary block is appended.
+ *  - Writer's style overrides have `appendStandardSummary === false`
+ *    (Sean, Rich, Wendy): the body already weaves rating sentences
+ *    in-line and ends with the writer's natural sign-off. Return as-is.
+ *  - Default writers (Hari pattern): append the standard `**Summary**`
+ *    block with the rating-tally paragraph and return-signed-copy line.
  */
 export function assembleFinalLetter(args: {
   letterText: string;
   ratings: AppendSummaryArgs;
+  /** Optional writer style overrides. When present, drives whether the
+   *  standard Summary block is appended to bodies without placeholders. */
+  styleOverrides?: Pick<WriterStyleOverrides, 'appendStandardSummary'>;
   writerSignatureClose?: string;
 }): string {
   const sentences = buildRatingSentences(args.ratings);
@@ -466,6 +483,12 @@ export function assembleFinalLetter(args: {
       out = `${out.trimEnd()}\n\n${args.writerSignatureClose.trim()}\n`;
     }
     return out;
+  }
+
+  // Writer opted out of the standard Summary block: their body already
+  // ends with their own sign-off and weaves rating sentences in-line.
+  if (args.styleOverrides && args.styleOverrides.appendStandardSummary === false) {
+    return `${args.letterText.trimEnd()}\n`;
   }
 
   // Default path: append the standard Summary block.

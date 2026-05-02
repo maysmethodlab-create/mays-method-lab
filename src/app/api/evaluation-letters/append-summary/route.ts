@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { assembleFinalLetter, buildSummarySection } from '@/lib/evaluation-letters/prompts';
 import { getRoleCategory, RATING_LEVELS } from '@/lib/evaluation-letters/role-categories';
+import { resolveStyleOverrides } from '@/lib/evaluation-letters/writers';
 import { requireAuth } from '@/lib/evaluation-letters/api-helpers';
 
 export const runtime = 'nodejs';
@@ -80,9 +81,14 @@ export async function POST(req: Request) {
   // If the client passed the current letter body, return the fully
   // assembled final letter. Otherwise return just the Summary block.
   if (body.letterText) {
+    // Resolve style overrides so writers like Sean / Rich / Wendy can
+    // suppress the standard Summary block (their bodies already weave
+    // rating sentences in-line and end with their own sign-off).
+    const styleOverrides = body.writerId ? resolveStyleOverrides(body.writerId) : undefined;
     const letter = assembleFinalLetter({
       letterText: body.letterText,
       ratings: ratingsArgs,
+      styleOverrides,
     });
     const summary = buildSummarySection(ratingsArgs);
     return NextResponse.json({ letter, summary });

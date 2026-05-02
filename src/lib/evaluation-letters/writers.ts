@@ -20,6 +20,23 @@ export type WriterStyleOverrides = {
    *  letters, where AACSB material is replaced with a one-line note). */
   aacsbPlacement?: 'discrete' | 'woven' | 'omit';
 
+  /** Optional per-role-category override for `aacsbPlacement`. Sean's
+   *  Clinical letters weave AACSB into a single sentence rather than
+   *  using a discrete paragraph, while his Lecturer and Practice letters
+   *  use the discrete pattern. Keys are role-category IDs (e.g.,
+   *  'apt-clinical', 'apt-lecturer', 'apt-practice'). When the recipient's
+   *  role matches a key, that placement wins over `aacsbPlacement`. */
+  aacsbPlacementByRoleCategory?: Record<string, 'discrete' | 'woven' | 'omit'>;
+
+  /** Whether to append the standard `**Summary**` block (rating-tally
+   *  paragraph + "Please return a signed copy..." line) at the very end
+   *  of the body during final assembly. Default = true. Writers like Sean,
+   *  Rich, and Wendy already end with their own custom `closingLines` and
+   *  weave rating sentences in-line (or via placeholders), so the
+   *  standard Summary block would duplicate their natural sign-off. Set
+   *  to false to skip the append. */
+  appendStandardSummary?: boolean;
+
   /** Closing line(s) appended verbatim before the writer's name. */
   closingLines?: string[];
 
@@ -96,6 +113,10 @@ export const WRITERS: Writer[] = [
       // letters lean on Department-Head Assessment language rather than a
       // separate AACSB paragraph for either group.
       aacsbPlacement: 'omit',
+      // Rich's body weaves rating language into the closing paragraph
+      // and ends with "If you wish to discuss your review, schedule a
+      // time." The standard `**Summary**` block would duplicate that.
+      appendStandardSummary: false,
       openingBoilerplate:
         'Both Texas A&M University and Mays Business School require that the performance of all faculty be reviewed on an annual basis. As noted in the Mays Faculty Promotion and Tenure Guidelines, the purposes of the annual performance review include creating a sound and logical basis for merit compensation recommendations, providing evaluative feedback regarding how well the individual is currently performing, providing developmental feedback regarding areas where the faculty member’s contribution may be enhanced and/or improved in the future, and providing feedback regarding progress toward promotion and as relevant. The senior clinical faculty reviewed your annual report, which contains extensive information on your teaching, and current resume. The following is an abbreviated summary of your accomplishments in the past year, followed by their assessment. This assessment will be the basis for any department resource allocation decisions.',
       closingLines: [
@@ -118,7 +139,21 @@ export const WRITERS: Writer[] = [
       useSectionHeadings: false,
       targetWords: { min: 550, max: 800 },
       salutationStyle: 'none',
+      // Sean's default APT placement is discrete (Lecturer + Practice
+      // both use a standalone AACSB paragraph). Clinical diverges: he
+      // weaves AACSB into a single sentence inside the opening paragraph
+      // and never gives it a dedicated paragraph.
       aacsbPlacement: 'discrete',
+      aacsbPlacementByRoleCategory: {
+        'apt-clinical': 'woven',
+        'apt-lecturer': 'discrete',
+        'apt-practice': 'discrete',
+      },
+      // Sean closes with a natural sign-off ("Thank you for everything
+      // that you do for our students and department!") and weaves rating
+      // sentences into the body; the standard `**Summary**` block would
+      // duplicate the sign-off and add a phantom rating-tally paragraph.
+      appendStandardSummary: false,
       fromTitleOverride: 'Professor and Department Head',
       closingLines: [
         'Please let me know if you have any questions about my assessment. To that end, please contact Diana Kruse to schedule a time to meet with me if you would like to discuss my assessment.',
@@ -164,6 +199,12 @@ export const WRITERS: Writer[] = [
       salutationStyle: 'none',
       // Wendy does NOT include AACSB material at all in her APT letters.
       aacsbPlacement: 'omit',
+      // Wendy's body uses placeholder substitution for rating sentences
+      // and ends with her own two-line close ("If you would like to
+      // meet..." + "Please sign and date this letter..."). The standard
+      // `**Summary**` block would duplicate that close and undo the
+      // placeholder substitution payoff.
+      appendStandardSummary: false,
       // Wendy's opening boilerplate runs longer than Sean's. It includes
       // the three review purposes and the four performance levels as
       // bulleted lists, ending with the classifying-sentence transition.
@@ -211,9 +252,11 @@ const DEFAULT_STYLE_OVERRIDES: Required<WriterStyleOverrides> = {
   targetWords: { min: 700, max: 1100 },
   salutationStyle: 'first',
   aacsbPlacement: 'discrete',
+  aacsbPlacementByRoleCategory: {},
   closingLines: [],
   openingBoilerplate: '',
   fromTitleOverride: '',
+  appendStandardSummary: true,
 };
 
 export function resolveStyleOverrides(writerId: string): Required<WriterStyleOverrides> {

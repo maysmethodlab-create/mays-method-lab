@@ -83,6 +83,7 @@ export async function POST(req: Request) {
     recipientDepartment: body.setup.recipientDepartment,
     evaluationYear: body.setup.evaluationYear,
     roleCategory: role.label,
+    roleCategoryId: body.setup.roleCategoryId,
     letterSkill: skill.primary,
     patternsAnalysis: skill.patternsAnalysis,
     styleBundle,
