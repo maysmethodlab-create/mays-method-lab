@@ -10,6 +10,7 @@ export const metadata: Metadata = {
     'AI-powered tools for academic leaders. Mays Business School, Texas A&M University.',
   icons: {
     icon: '/favicon.svg',
+    apple: '/apple-touch-icon.png',
   },
 };
 
