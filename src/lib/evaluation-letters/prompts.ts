@@ -186,7 +186,7 @@ ${args.peerComments}` : ''}`;
     ? '(NO salutation — go straight from SUBJECT line to the OPENING paragraph; do NOT write "Dear X,")'
     : `"Dear ${args.recipientFirstName},"`;
 
-  const targetLength = `Target length: ${args.styleOverrides.targetWords.min}-${args.styleOverrides.targetWords.max} words. Be concise. Cut filler.`;
+  const targetLength = `Target length: ${args.styleOverrides.targetWords.min}-${args.styleOverrides.targetWords.max} words TOTAL across the entire body (header through closing line, including the rating-sentence paragraph). This is a hard ceiling. Count as you go: short letters in this writer's voice run 450-770 words and read like a 1-page memo, not a 2-page essay. If you find yourself listing every course section, every committee, every workshop, you are too long; collapse them into a single descriptive sentence.`;
 
   const openingInstr = args.styleOverrides.openingBoilerplate
     ? `Open with this exact paragraph (verbatim, no rewording):\n   "${args.styleOverrides.openingBoilerplate.replace(/\{YEAR\}/g, String(args.evaluationYear))}"`
@@ -216,7 +216,7 @@ writer's voice is conversational and headings would feel wrong.`;
     if (args.styleOverrides.aacsbPlacement === 'woven') {
       return `AACSB: weave one short sentence about maintaining the "currency and relevance" of instruction into the Teaching paragraph. Do NOT add a separate AACSB heading or a bulleted list of AACSB activities.`;
     }
-    return `AACSB: include a discrete paragraph (or short section) quoting AACSB language about maintaining "currency and relevance" of instruction. Mention CPA / professional license if relevant. Match the exemplar letters' phrasing and length closely.`;
+    return `AACSB: include a short discrete section. Use the heading "AACSB accreditation" (NOT "AACSB Maintenance of Instructional Practice Status" or any other invented title) — match the exemplar letters' heading text exactly. Keep the AACSB section to one short paragraph, OR a short paragraph plus a brief bulleted list of AACSB activities, NOT both a long paragraph AND a list. Lift the phrasing from the exemplars rather than re-explaining AACSB at length. Mention CPA / professional license if relevant.`;
   })();
 
   const aptBodyStructure = `
