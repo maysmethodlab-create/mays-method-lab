@@ -172,6 +172,23 @@ function findCitationsMissingPage(responseText: string): string[] {
   return out;
 }
 
+/**
+ * Final post-processing pass. Strip em dashes and en dashes from the
+ * user-visible response. Hari's durable rule: no em dashes in user-facing
+ * prose. " — " becomes a sentence break; bare em / en dashes become a
+ * separator. Double-period and whitespace cleanup keeps the output tidy.
+ */
+function stripEmDashes(text: string): string {
+  return text
+    .replace(/\s*—\s*/g, '. ')
+    .replace(/\s*–\s*/g, '. ')
+    .replace(/\s*--\s*/g, '. ')
+    .replace(/\.\s*\./g, '.')
+    .replace(/[ \t]+/g, ' ')
+    .replace(/\n /g, '\n')
+    .trim();
+}
+
 function isKillSwitchOn(): boolean {
   return (process.env.FACULTY_GUIDELINES_BOT_ENABLED || '').toLowerCase() === 'false';
 }
@@ -371,6 +388,12 @@ export async function POST(req: Request) {
       final = HARD_REFUSAL;
     }
   }
+
+  // ---------------- Final post-processing: strip em dashes ----------------
+  // Hari's durable rule: no em dashes in user-visible text. Apply this to
+  // the response right before returning to the client AND before writing
+  // it to the audit log so the stored "final" matches what shipped.
+  final = stripEmDashes(final);
 
   // ---------------- Audit log (best-effort) ----------------
   writeAuditEntry({
