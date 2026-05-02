@@ -32,11 +32,8 @@ export default function Header() {
 
         <nav className="flex items-center gap-0">
           <NavLink href="/">Home</NavLink>
-          <NavLink href="/learning-community">Learning Community</NavLink>
-          <NavLink href="/prompts">Prompts</NavLink>
-          <NavLink href="/agents">Tutorials</NavLink>
-          <NavLink href="/resources">Resources</NavLink>
-          <NavLink href="/admin">Admin</NavLink>
+          <NavLink href="/learning-community">Your AI Edge</NavLink>
+          <NavLink href="/admin">Apps for Administrators</NavLink>
           <NavLink href="/about">About</NavLink>
         </nav>
       </div>
