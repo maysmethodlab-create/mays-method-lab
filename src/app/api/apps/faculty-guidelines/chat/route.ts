@@ -165,6 +165,24 @@ Keep the rest of the response (genuine quotes, the personal-applicability templa
 
 Output ONLY the corrected response text.`;
 
+const TEMPLATE_RECOVERY_SYSTEM = `The user asked a personal-applicability question. The response should follow the 4-part template:
+
+1. ACKNOWLEDGE: "That's a question the guidelines speak to. Here's what they say."
+2. QUOTE: A verbatim passage from the source with section/page citation. If no relevant passage exists, use: "The Mays Faculty Guidelines (October 2025) do not address this point directly."
+3. EXPLICIT BOUNDARY: "I can describe the criteria. The determination for your specific case rests with [the appropriate decision-maker]. I do not and cannot make that determination."
+4. ESCALATION: "Two paths to discuss your case: (1) Email Hari Sridhar at ssridhar@mays.tamu.edu with your CV and a specific question. (2) Reach out to your department head."
+
+End with: "Source: Mays Faculty Guidelines, October 17, 2025 (Approved version)."
+
+You will receive:
+- The user's question
+- The current response (which may be missing template structure)
+- The full source text
+
+Re-write the response to use all 4 template parts. Pull the QUOTE part from the existing response if it has a valid quote; otherwise find a relevant verbatim passage from the source; otherwise use the "do not address" string.
+
+Output ONLY the corrected response.`;
+
 const HARD_REFUSAL =
   'The Mays Faculty Guidelines (October 2025) do not address this directly. For your specific situation, contact your department head or email Hari Sridhar at ssridhar@mays.tamu.edu. Source: Mays Faculty Guidelines, October 17, 2025 (Approved version).';
 
@@ -229,6 +247,37 @@ function findCitationsMissingPage(responseText: string): string[] {
     }
   }
   return out;
+}
+
+/**
+ * Heuristic. Detect personal-applicability questions so we know whether
+ * the response should be wearing the 4-part template scaffold. Triggers
+ * on first-person + applicability framing, or on hypothetical-faculty
+ * framing that's structurally trying to ask "would I qualify".
+ */
+function detectPersonalApplicability(question: string): boolean {
+  const lowerQ = question.toLowerCase();
+  const hasFirstPersonPronoun = /\b(i|me|my|myself|mine)\b/.test(lowerQ);
+  const hasApplicabilityFraming =
+    /\b(will i|do i|can i|am i|should i|if i have|based on my|for me)\b/.test(lowerQ);
+  const hasHypothetical = /hypothetic.*faculty.*member|imagine.*someone/.test(lowerQ);
+  return (hasFirstPersonPronoun && hasApplicabilityFraming) || hasHypothetical;
+}
+
+/**
+ * Heuristic. Look for the recognizable phrases that the 4-part template
+ * emits in the Acknowledge / Boundary / Escalation slots so we can tell
+ * whether Pass 3 collapsed the scaffold and we need to re-wrap.
+ */
+function hasTemplateStructure(response: string): boolean {
+  const hasAcknowledge =
+    response.includes("That's a question the guidelines speak to") ||
+    response.includes('guidelines speak to');
+  const hasBoundary =
+    response.includes('I can describe the criteria') || response.includes('rests with');
+  const hasEscalation =
+    response.includes('ssridhar@mays.tamu.edu') || response.includes('Hari Sridhar');
+  return hasAcknowledge && hasBoundary && hasEscalation;
 }
 
 /**
@@ -467,6 +516,43 @@ export async function POST(req: Request) {
     if (stillFabricated.length > 0) {
       pass3Fallback = true;
       final = HARD_REFUSAL;
+    }
+  }
+
+  // ---------------- Personal-applicability template recovery ----------------
+  // If the user asked a personal-applicability question (first-person +
+  // applicability framing, or a "hypothetical faculty member" gaming
+  // frame) but the response no longer wears the 4-part template, ask the
+  // model to re-wrap the current content in the scaffold. This catches
+  // cases where Pass 3 retries collapsed a templated response down to a
+  // single-line refusal (run 3, Q10).
+  if (
+    !pass3Fallback &&
+    detectPersonalApplicability(lastUserQuestion) &&
+    !hasTemplateStructure(final)
+  ) {
+    try {
+      const recoveryReply = await client.messages.create({
+        model: DEFAULT_MODEL,
+        max_tokens: 900,
+        system: TEMPLATE_RECOVERY_SYSTEM,
+        messages: [
+          {
+            role: 'user',
+            content: `USER QUESTION:\n${lastUserQuestion}\n\nCURRENT RESPONSE:\n${final}\n\nFULL SOURCE TEXT:\n${guidelinesText}\n\nReturn ONLY the corrected response text.`,
+          },
+        ],
+      });
+      const recovered = recoveryReply.content
+        .filter((b): b is { type: 'text'; text: string } => b.type === 'text')
+        .map((b) => b.text)
+        .join('')
+        .trim();
+      if (recovered) final = recovered;
+    } catch {
+      // If recovery fails, ship the response we have. The personal-
+      // applicability scaffold is a quality nice-to-have, not a safety
+      // gate, so a failure here should not take the bot down.
     }
   }
 
