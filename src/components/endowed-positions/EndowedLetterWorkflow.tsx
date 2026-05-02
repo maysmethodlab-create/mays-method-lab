@@ -2,14 +2,16 @@
 
 import { useEffect, useRef, useState } from 'react';
 import StepHeader from './StepHeader';
-import CandidateSetupForm from './CandidateSetupForm';
+import CandidateSelectStep from './CandidateSelectStep';
 import UploadStep from './UploadStep';
+import ConfirmDetailsStep from './ConfirmDetailsStep';
 import MRCVoteStep from './MRCVoteStep';
 import GenerateStep from './GenerateStep';
 import DownloadStep from './DownloadStep';
 import DemoBanner from './DemoBanner';
 import { getCandidate } from '@/lib/endowed-positions/candidates';
 import type {
+  Candidate,
   GeneratedParts,
   LetterDraft,
   MRCVote,
@@ -28,6 +30,33 @@ const todayIso = today.toISOString().slice(0, 10);
  */
 const SAMPLE_CANDIDATE_ID = 'len-berry';
 const SAMPLE_POSITION_NAME = 'M.B. Zale Chair in Retailing and Marketing Leadership';
+
+/**
+ * Build a SetupData from a candidate plus optional overrides for the
+ * recommended position name (which is the one field that can't be
+ * auto-defaulted from the candidate metadata alone).
+ */
+function setupFromCandidate(
+  c: Candidate,
+  overrides: { recommendedPositionName?: string } = {},
+): SetupData {
+  return {
+    candidateId: c.id,
+    candidateName: c.name,
+    candidateDepartment: c.department,
+    candidateDeptCode: c.deptCode,
+    candidateCurrentTitle: c.currentTitle,
+    candidateCurrentEndowedPosition: c.currentEndowedPosition,
+    candidateDepartmentHead: c.departmentHead,
+    recommendedPositionName:
+      overrides.recommendedPositionName ?? (c.defaultPositionName || ''),
+    recommendedEndowedPosition: c.recommendedEndowedPosition,
+    nominationType: c.nominationType,
+    termYears: 5,
+    memoDate: todayIso,
+    fiscalYear: today.getFullYear() + 1,
+  };
+}
 
 function buildInitialSetup(): SetupData {
   const c = getCandidate(SAMPLE_CANDIDATE_ID);
@@ -48,53 +77,46 @@ function buildInitialSetup(): SetupData {
       fiscalYear: today.getFullYear() + 1,
     };
   }
-  return {
-    candidateId: c.id,
-    candidateName: c.name,
-    candidateDepartment: c.department,
-    candidateDeptCode: c.deptCode,
-    candidateCurrentTitle: c.currentTitle,
-    candidateCurrentEndowedPosition: c.currentEndowedPosition,
-    candidateDepartmentHead: c.departmentHead,
-    recommendedPositionName: SAMPLE_POSITION_NAME,
-    recommendedEndowedPosition: c.recommendedEndowedPosition,
-    nominationType: c.nominationType,
-    termYears: 5,
-    memoDate: todayIso,
-    fiscalYear: today.getFullYear() + 1,
-  };
+  return setupFromCandidate(c, { recommendedPositionName: SAMPLE_POSITION_NAME });
 }
 
 const initialSetup: SetupData = buildInitialSetup();
 
 /**
- * Illustrative MRC tally for the sample case (5-0 in favor of Chair).
- * The actual FY27 MRC has not yet met — these values are placeholders
- * to make the workflow feel populated on first landing.
+ * Illustrative MRC tally for the sample case (5-0 in favor — every voter
+ * concurs with the dept head's recommendation). The actual FY27 MRC has
+ * not yet met; these values are placeholders to make the workflow feel
+ * populated on first landing.
  */
 function buildSampleVotes(): MRCVote[] {
   return [
-    { memberId: 'ahmed', choice: 'chair' },
-    { memberId: 'johnson', choice: 'chair' },
-    { memberId: 'oliva-info', choice: 'chair' },
-    { memberId: 'jones', choice: 'chair' },
-    { memberId: 'boswell', choice: 'chair' },
+    { memberId: 'ahmed', choice: 'yes' },
+    { memberId: 'johnson', choice: 'yes' },
+    { memberId: 'oliva-info', choice: 'yes' },
+    { memberId: 'jones', choice: 'yes' },
+    { memberId: 'boswell', choice: 'yes' },
   ];
 }
 
 const initialVotes: MRCVote[] = buildSampleVotes();
+const initialVoteComments = '';
 
-// localStorage key for the auto-saved workflow state.
-const STORAGE_KEY = 'mml.endowedLetters.draftState.v1';
+// localStorage key for the auto-saved workflow state. Bumped to v2 because
+// the vote model changed shape (was 3-way Chair/Professorship/None, now
+// Yes/No/Abstain) and the workflow now has 6 steps with shared comments.
+const STORAGE_KEY = 'mml.endowedLetters.draftState.v2';
 // Roughly 4MB cap on serialized JSON before per-file text truncation kicks in.
 const SAVE_SIZE_CAP_BYTES = 4 * 1024 * 1024;
 const PER_FILE_TEXT_CAP_BYTES = 200 * 1024;
 
+type WorkflowStep = 1 | 2 | 3 | 4 | 5 | 6;
+
 type SavedState = {
-  step: 1 | 2 | 3 | 4 | 5;
+  step: WorkflowStep;
   setup: SetupData;
   files: UploadedFile[];
   votes: MRCVote[];
+  voteComments: string;
   draft: LetterDraft | null;
   parts: GeneratedParts | null;
 };
@@ -115,10 +137,11 @@ function safeStringify(state: SavedState): string {
 }
 
 export default function EndowedLetterWorkflow() {
-  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
+  const [step, setStep] = useState<WorkflowStep>(1);
   const [setup, setSetup] = useState<SetupData>(initialSetup);
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [votes, setVotes] = useState<MRCVote[]>(initialVotes);
+  const [voteComments, setVoteComments] = useState<string>(initialVoteComments);
   const [draft, setDraft] = useState<LetterDraft | null>(null);
   const [parts, setParts] = useState<GeneratedParts | null>(null);
 
@@ -141,13 +164,15 @@ export default function EndowedLetterWorkflow() {
             parsed.step === 2 ||
             parsed.step === 3 ||
             parsed.step === 4 ||
-            parsed.step === 5
+            parsed.step === 5 ||
+            parsed.step === 6
           ) {
             setStep(parsed.step);
           }
           if (parsed.setup) setSetup({ ...initialSetup, ...parsed.setup });
           if (Array.isArray(parsed.files)) setFiles(parsed.files);
           if (Array.isArray(parsed.votes)) setVotes(parsed.votes);
+          if (typeof parsed.voteComments === 'string') setVoteComments(parsed.voteComments);
           if (parsed.draft !== undefined) setDraft(parsed.draft ?? null);
           if (parsed.parts !== undefined) setParts(parsed.parts ?? null);
         }
@@ -163,7 +188,15 @@ export default function EndowedLetterWorkflow() {
     if (!hydrated) return;
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
-      const snapshot: SavedState = { step, setup, files, votes, draft, parts };
+      const snapshot: SavedState = {
+        step,
+        setup,
+        files,
+        votes,
+        voteComments,
+        draft,
+        parts,
+      };
       try {
         window.localStorage.setItem(STORAGE_KEY, safeStringify(snapshot));
       } catch {
@@ -173,12 +206,13 @@ export default function EndowedLetterWorkflow() {
     return () => {
       if (saveTimer.current) clearTimeout(saveTimer.current);
     };
-  }, [hydrated, step, setup, files, votes, draft, parts]);
+  }, [hydrated, step, setup, files, votes, voteComments, draft, parts]);
 
   function reset() {
     setSetup(initialSetup);
     setFiles([]);
     setVotes(initialVotes);
+    setVoteComments(initialVoteComments);
     setDraft(null);
     setParts(null);
     setStep(1);
@@ -193,6 +227,28 @@ export default function EndowedLetterWorkflow() {
     if (typeof window === 'undefined') return;
     const ok = window.confirm('Start over? This will clear all entered data.');
     if (ok) reset();
+  }
+
+  /**
+   * Step 1 callback: candidate picked from the tab + dropdown. Reset the
+   * downstream state that depends on the candidate (votes, comments,
+   * uploaded files, draft, parts) so a fresh case starts clean — except
+   * for the sample candidate, which keeps its pre-populated votes.
+   */
+  function handlePickCandidate(c: Candidate) {
+    const isSample = c.id === SAMPLE_CANDIDATE_ID;
+    setSetup(
+      setupFromCandidate(c, {
+        recommendedPositionName: isSample
+          ? SAMPLE_POSITION_NAME
+          : c.defaultPositionName || '',
+      }),
+    );
+    setVotes(isSample ? buildSampleVotes() : []);
+    setVoteComments('');
+    setFiles([]);
+    setDraft(null);
+    setParts(null);
   }
 
   return (
@@ -217,12 +273,12 @@ export default function EndowedLetterWorkflow() {
         <>
           <StepHeader
             step={1}
-            title="Choose the candidate."
-            subtitle="Pick from the FY27 list and confirm the endowed-position name, term, and nomination type."
+            title="Pick the candidate."
+            subtitle="Switch between Renewal and New Appointment, then choose the candidate from the dropdown. Everything else auto-populates from the candidate metadata."
           />
-          <CandidateSetupForm
+          <CandidateSelectStep
             value={setup}
-            onChange={setSetup}
+            onPickCandidate={handlePickCandidate}
             onContinue={() => setStep(2)}
           />
         </>
@@ -248,12 +304,12 @@ export default function EndowedLetterWorkflow() {
         <>
           <StepHeader
             step={3}
-            title="Record MRC votes."
-            subtitle="Five voting members of the Mays Research Council. Each chooses Chair / Professorship / No endowed position. Anonymous comments optional."
+            title="Confirm details."
+            subtitle="Review and edit the auto-populated metadata. The recommended position name is the only field you typically have to type yourself."
           />
-          <MRCVoteStep
-            votes={votes}
-            onChange={setVotes}
+          <ConfirmDetailsStep
+            value={setup}
+            onChange={setSetup}
             onBack={() => setStep(2)}
             onContinue={() => setStep(4)}
           />
@@ -264,6 +320,24 @@ export default function EndowedLetterWorkflow() {
         <>
           <StepHeader
             step={4}
+            title="Record MRC votes."
+            subtitle="Each voting member casts a Yes / No / Abstain ballot on whether the Council concurs with the department head's recommendation. Anonymous comments are shared at the bottom."
+          />
+          <MRCVoteStep
+            votes={votes}
+            onChange={setVotes}
+            comments={voteComments}
+            onCommentsChange={setVoteComments}
+            onBack={() => setStep(3)}
+            onContinue={() => setStep(5)}
+          />
+        </>
+      ) : null}
+
+      {step === 5 ? (
+        <>
+          <StepHeader
+            step={5}
             title="Generate, review, edit."
             subtitle="The AI writes only the four variable-content fields (subject, opening, summary reasons, achievement paragraph). The institutional boilerplate is stitched in verbatim."
           />
@@ -271,29 +345,31 @@ export default function EndowedLetterWorkflow() {
             setup={setup}
             files={files}
             votes={votes}
+            voteComments={voteComments}
             draft={draft}
             parts={parts}
             onDraftChange={setDraft}
             onPartsChange={setParts}
-            onBack={() => setStep(3)}
-            onContinue={() => setStep(5)}
+            onBack={() => setStep(4)}
+            onContinue={() => setStep(6)}
           />
         </>
       ) : null}
 
-      {step === 5 && draft && parts ? (
+      {step === 6 && draft && parts ? (
         <>
           <StepHeader
-            step={5}
+            step={6}
             title="Download."
             subtitle="Letter as .docx. Mays/TAMU letterhead, both tables, signature block."
           />
           <DownloadStep
             setup={setup}
             votes={votes}
+            voteComments={voteComments}
             draft={draft}
             parts={parts}
-            onBack={() => setStep(4)}
+            onBack={() => setStep(5)}
             onStartOver={reset}
           />
         </>

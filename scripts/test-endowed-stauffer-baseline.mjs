@@ -2,8 +2,9 @@
 //
 // Picks Jon Stauffer (New Endowed Professorship, Information & Operations
 // Management), uploads his CV and dept-head letter, supplies a fake 4-1
-// vote in favor of Professorship, runs draft → verify → download, and
-// saves all artifacts under apps/Endowed Positions Letter Writer/test-output/stauffer-baseline.
+// Yes/No vote on the dept head's recommendation, runs draft → verify →
+// download, and saves all artifacts under apps/Endowed Positions Letter
+// Writer/test-output/stauffer-baseline.
 //
 // Prereqs: dev server running on http://localhost:3000 with ANTHROPIC_API_KEY set.
 //   Override BASE_URL or ADMIN_PASSWORD via env vars if needed.
@@ -106,12 +107,15 @@ const SETUP = {
 };
 
 const VOTES = [
-  { memberId: 'ahmed', choice: 'professorship' },
-  { memberId: 'johnson', choice: 'professorship' },
-  { memberId: 'oliva-info', choice: 'professorship' },
-  { memberId: 'jones', choice: 'professorship' },
-  { memberId: 'boswell', choice: 'no-position', comment: 'Strong record but I would prefer to revisit at the next cycle.' },
+  { memberId: 'ahmed', choice: 'yes' },
+  { memberId: 'johnson', choice: 'yes' },
+  { memberId: 'oliva-info', choice: 'yes' },
+  { memberId: 'jones', choice: 'yes' },
+  { memberId: 'boswell', choice: 'no' },
 ];
+
+const VOTE_COMMENTS =
+  'Strong record overall; one Council member preferred to revisit at the next cycle.';
 
 (async () => {
   console.log(`Output dir: ${APP_OUT}`);
@@ -130,7 +134,7 @@ const VOTES = [
   console.log('3. Drafting…');
   const draftRes = await jpost(
     '/api/endowed-positions/draft',
-    { setup: SETUP, votes: VOTES, sourceDocuments },
+    { setup: SETUP, votes: VOTES, voteComments: VOTE_COMMENTS, sourceDocuments },
     true,
   );
   const reader = draftRes.body.getReader();
@@ -170,7 +174,12 @@ const VOTES = [
   const dl = await fetch(`${BASE}/api/endowed-positions/download`, {
     method: 'POST',
     headers: { cookie, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ setup: SETUP, votes: VOTES, parts }),
+    body: JSON.stringify({
+      setup: SETUP,
+      votes: VOTES,
+      voteComments: VOTE_COMMENTS,
+      parts,
+    }),
   });
   if (!dl.ok) throw new Error('download: ' + (await dl.text()));
   const ab = await dl.arrayBuffer();

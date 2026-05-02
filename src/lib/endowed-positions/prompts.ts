@@ -69,6 +69,12 @@ Reference: the FY25 Boivie reappointment memorandum, copied below verbatim. This
 ${boivie}
 ============ END BOIVIE EXAMPLE ============
 
+VOTE MODEL: Each MRC voting member casts a single ballot — Yes, No, or Abstain — on whether the Council concurs with the department head's recommendation.
+- "Yes" = the member concurs with the department head's recommendation.
+- "No" = the member rejects the department head's recommendation.
+- "Abstain" = the member is recused.
+The Council is described as voting "unanimously" only if every voter voted Yes. Otherwise, report the explicit Yes-No-Abstain count.
+
 OUTPUT FORMAT — return ONLY a fenced JSON code block, like:
 
 \`\`\`json
@@ -91,7 +97,7 @@ FIELD-BY-FIELD GUIDANCE:
    Use action = "${action}", term length spelled out (e.g. "five (5) year term").
 
 3. summaryReasonsClause — a phrase fragment (NOT a full sentence). It will be inserted after the word "citing" in this template:
-   "The Mays Research Council [unanimously supported / by a vote of X to Y supported] the {action} of Dr. {Name} to the {Position} for a {N} ({N}) year term, citing {YOUR CLAUSE}."
+   "The Mays Research Council [unanimously supported / by a vote of Y-N-A supported] the {action} of Dr. {Name} to the {Position} for a {N} ({N}) year term, citing {YOUR CLAUSE}."
    The clause should list 2-3 SPECIFIC reasons drawn from the dept head's letter — not generic praise. Example from Boivie: "his exceptional research productivity, leadership in the field of corporate governance, and sustained scholarly impact as one of the most published scholars in top-tier journals". Do NOT include a trailing period; the assembler adds one.
 
 4. achievementParagraph — 150-250 words. Single paragraph. Pattern from Boivie:
@@ -120,10 +126,10 @@ CONSTRAINTS:
 - Term: ${args.setup.termYears} years
 - Action requested: ${action_label}
 
-MRC VOTE TALLY
-- Chair: ${tally.chair}
-- Professorship: ${tally.professorship}
-- No endowed position: ${tally.noPosition}
+MRC VOTE TALLY (Yes/No/Abstain on the department head's recommendation)
+- Yes (concur with dept head): ${tally.yes}
+- No (reject dept head): ${tally.no}
+- Abstain (recused): ${tally.abstain}
 - Description: ${tallyDescription}
 
 SOURCE DOCUMENTS (dept-head letter and CV — concatenated):

@@ -8,6 +8,7 @@ export const runtime = 'nodejs';
 type Body = {
   setup: SetupData;
   votes: MRCVote[];
+  voteComments?: string;
   parts: GeneratedParts;
 };
 
@@ -28,6 +29,7 @@ export async function POST(req: Request) {
     const buf = await generateEndowedLetterDocx({
       setup: body.setup,
       votes: body.votes || [],
+      voteComments: body.voteComments,
       parts: body.parts,
       letterheadImage: 'mays-default.jpg',
     });

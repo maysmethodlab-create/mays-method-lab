@@ -97,10 +97,10 @@ function makeOutcomeTable(setup: SetupData, votes: MRCVote[]): Table {
     'Dept.',
     'Current Endowed Appointment',
     'Recommended Endowed Appointment',
-    'Department Head or Supervisor',
-    'Chair',
-    'Professorship',
-    'No endowed position',
+    'Department Head Recommendation',
+    'Yes',
+    'No',
+    'Abstain',
   ];
   const rowData = [
     setup.candidateName,
@@ -108,9 +108,9 @@ function makeOutcomeTable(setup: SetupData, votes: MRCVote[]): Table {
     setup.candidateCurrentEndowedPosition,
     setup.recommendedEndowedPosition,
     setup.candidateDepartmentHead,
-    String(tally.chair),
-    String(tally.professorship),
-    String(tally.noPosition),
+    String(tally.yes),
+    String(tally.no),
+    String(tally.abstain),
   ];
 
   return new Table({
@@ -133,17 +133,17 @@ function makeOutcomeTable(setup: SetupData, votes: MRCVote[]): Table {
           }),
         ),
       }),
-      // MRC Votes sub-label row (visually mirrors Boivie's stacked header)
+      // MRC Vote sub-label row (visually mirrors the Boivie stacked header)
       new TableRow({
         children: [
           cell(''),
           cell(''),
           cell(''),
           cell(''),
-          cell('MRC Votes', { bold: true, align: AlignmentType.CENTER }),
-          cell('MRC Votes', { bold: true, align: AlignmentType.CENTER }),
-          cell('MRC Votes', { bold: true, align: AlignmentType.CENTER }),
           cell(''),
+          cell('MRC Vote', { bold: true, align: AlignmentType.CENTER }),
+          cell('MRC Vote', { bold: true, align: AlignmentType.CENTER }),
+          cell('MRC Vote', { bold: true, align: AlignmentType.CENTER }),
         ],
       }),
       new TableRow({
@@ -267,15 +267,16 @@ export type EndowedDocOptions = {
   setup: SetupData;
   votes: MRCVote[];
   parts: GeneratedParts;
+  /** Shared anonymous comments collected from the MRC. */
+  voteComments?: string;
   /** Letterhead image filename (defaults to mays-default.jpg). */
   letterheadImage?: string;
 };
 
 export async function generateEndowedLetterDocx(opts: EndowedDocOptions): Promise<Buffer> {
-  const { setup, votes, parts } = opts;
+  const { setup, votes, parts, voteComments } = opts;
   const tally = tallyVotes(votes);
-  const total = tally.chair + tally.professorship + tally.noPosition;
-  const max = Math.max(tally.chair, tally.professorship, tally.noPosition);
+  const total = tally.total;
 
   const action = (() => {
     switch (setup.nominationType) {
@@ -293,8 +294,8 @@ export async function generateEndowedLetterDocx(opts: EndowedDocOptions): Promis
   const lastName = setup.candidateName.trim().split(/\s+/).slice(-1)[0] || setup.candidateName;
   const summaryPrefix = (() => {
     if (total === 0) return 'The Mays Research Council';
-    if (max === total) return 'The Mays Research Council unanimously supported';
-    return `The Mays Research Council, by a vote of ${tally.chair}-${tally.professorship}-${tally.noPosition} (Chair-Professorship-No position), supported`;
+    if (tally.yes === total) return 'The Mays Research Council unanimously supported';
+    return `The Mays Research Council, by a vote of ${tally.yes}-${tally.no}-${tally.abstain} (Yes-No-Abstain), supported`;
   })();
   const summarySentence = `${summaryPrefix} the ${action} of Dr. ${lastName} to the ${setup.recommendedPositionName} for a ${termAsWords(setup.termYears)} year term, citing ${parts.summaryReasonsClause.replace(/\.\s*$/, '')}.`;
 
@@ -396,15 +397,11 @@ export async function generateEndowedLetterDocx(opts: EndowedDocOptions): Promis
 
   body_.push(body(SECRET_BALLOT_PARAGRAPH));
 
-  // Anonymous comments — render only if present
-  const comments = votes
-    .map((v, i) => (v.comment && v.comment.trim() ? `Comment ${i + 1}: ${v.comment.trim()}` : ''))
-    .filter(Boolean);
-  if (comments.length > 0) {
+  // Shared anonymous comments — render only if present.
+  const trimmedComments = (voteComments || '').trim();
+  if (trimmedComments) {
     body_.push(body('Anonymous comments submitted by Council members:', { bold: true }));
-    for (const c of comments) {
-      body_.push(body(c));
-    }
+    body_.push(body(trimmedComments));
   }
 
   body_.push(heading("Candidate's Achievement and Qualifications"));

@@ -17,14 +17,21 @@ export default function EndowedPositionsPage() {
 
       <div className="mt-8 mb-10">
         <div className="dotted-frame bg-bg-subtle py-10 px-8 md:px-12">
-          <div className="eyebrow-lg mb-3">Endowed Positions Letter Writer</div>
+          <div className="flex items-center gap-3 flex-wrap mb-3">
+            <div className="eyebrow-lg">Endowed Positions Letter Writer</div>
+            <span className="inline-block px-2 py-1 text-[10px] uppercase tracking-[0.18em] font-semibold text-maroon border border-maroon/30 bg-maroon/5">
+              Stage 2: ADR
+            </span>
+          </div>
           <h1 className="mb-4">Recommend an endowed appointment to the Dean.</h1>
           <p className="text-[16px] text-ink-secondary max-w-3xl leading-relaxed">
-            Stage 2 of the Mays endowed-positions process. The Associate Dean for Research and
-            Scholarship, as Chair of the Mays Research Council, writes a memorandum to the Dean
-            recommending the appointment, reappointment, or fellowship of a candidate. Five
-            steps: setup, upload, MRC votes, generate, download. Boilerplate is verbatim from
-            the FY25 Boivie example.
+            For the Associate Dean for Research and Scholarship (Rogelio Oliva) to draft the
+            recommendation memorandum from the Mays Research Council to the Dean. This is
+            Stage 2 of the endowed-position process: the MRC has met and voted, and you draft
+            the recommendation memorandum to the Dean. Stage 1 (department head nomination
+            letter) and Stage 3 (Dean appointment letter) will become separate apps later.
+            Six steps: pick the candidate, upload, confirm details, MRC votes, generate,
+            download. Boilerplate is verbatim from the FY25 Boivie example.
           </p>
         </div>
       </div>

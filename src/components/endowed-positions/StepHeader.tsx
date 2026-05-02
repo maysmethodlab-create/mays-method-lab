@@ -1,11 +1,18 @@
 type Props = {
-  step: 1 | 2 | 3 | 4 | 5;
+  step: 1 | 2 | 3 | 4 | 5 | 6;
   title: string;
   subtitle?: string;
 };
 
-const TOTAL = 5;
-const STEP_NAMES = ['Setup', 'Upload', 'MRC Votes', 'Generate', 'Download'];
+const TOTAL = 6;
+const STEP_NAMES = [
+  'Candidate',
+  'Upload',
+  'Confirm',
+  'Votes',
+  'Generate',
+  'Download',
+];
 
 export default function StepHeader({ step, title, subtitle }: Props) {
   return (

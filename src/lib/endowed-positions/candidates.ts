@@ -1,4 +1,4 @@
-import type { Candidate, NominationType } from './types';
+import type { Candidate, NominationCategory, NominationType } from './types';
 
 /**
  * FY27 endowed-position candidates seeded from the user's `FY27 Endowed
@@ -181,4 +181,39 @@ export function getCandidate(id: string): Candidate | undefined {
 
 export function nominationTypeLabel(t: NominationType): string {
   return NOMINATION_TYPE_LABELS[t];
+}
+
+/**
+ * Map a nomination type to the high-level category used by the Step 1
+ * tab selector. Renewals = reappointments. Everything else (new chairs,
+ * new professorships, fellowships) counts as a new appointment.
+ */
+export function nominationTypeCategory(t: NominationType): NominationCategory {
+  if (t === 'reappoint-chair' || t === 'reappoint-professorship') return 'renewal';
+  return 'new-appointment';
+}
+
+/** Convenience: same mapping but takes a Candidate. */
+export function candidateCategory(c: Candidate): NominationCategory {
+  return nominationTypeCategory(c.nominationType);
+}
+
+/**
+ * Short hint used in the Step 1 dropdown label, e.g.
+ *   "Steve Boivie — Chair renewal"
+ *   "Yifan Song — New Professorship".
+ */
+export function candidateDropdownHint(c: Candidate): string {
+  switch (c.nominationType) {
+    case 'reappoint-chair':
+      return 'Chair renewal';
+    case 'reappoint-professorship':
+      return 'Professorship renewal';
+    case 'new-chair':
+      return 'New Chair';
+    case 'new-professorship':
+      return 'New Professorship';
+    case 'fellowship':
+      return 'Fellowship';
+  }
 }

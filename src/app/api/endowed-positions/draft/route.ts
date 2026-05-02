@@ -15,6 +15,7 @@ export const maxDuration = 240;
 type Body = {
   setup: SetupData;
   votes: MRCVote[];
+  voteComments?: string;
   sourceDocuments: string;
 };
 
@@ -69,6 +70,7 @@ export async function POST(req: Request) {
       setup: body.setup,
       votes: body.votes || [],
       parts,
+      voteComments: body.voteComments,
     });
     const sentinel = `<<<MODEL_JSON>>>${JSON.stringify(parts)}<<<END_MODEL_JSON>>>`;
     const text = `${sentinel}${placeholderNotice('Draft')}\n${assembled}`;
@@ -117,6 +119,7 @@ export async function POST(req: Request) {
       setup: body.setup,
       votes: body.votes || [],
       parts,
+      voteComments: body.voteComments,
     });
 
     // Stream the assembled letter so the UI sees a streaming experience

@@ -81,25 +81,28 @@ export function getMember(id: string): MRCMember | undefined {
   return FY27_MRC.find((m) => m.id === id);
 }
 
-/** Compute the {chair, professorship, no-position} tally from a vote list. */
+/** Compute the {yes, no, abstain} tally from a vote list. */
 export function tallyVotes(votes: MRCVote[]): VoteTally {
   return votes.reduce<VoteTally>(
     (acc, v) => {
-      if (v.choice === 'chair') acc.chair += 1;
-      else if (v.choice === 'professorship') acc.professorship += 1;
-      else if (v.choice === 'no-position') acc.noPosition += 1;
+      if (v.choice === 'yes') {
+        acc.yes += 1;
+        acc.total += 1;
+      } else if (v.choice === 'no') {
+        acc.no += 1;
+        acc.total += 1;
+      } else if (v.choice === 'abstain') {
+        acc.abstain += 1;
+        acc.total += 1;
+      }
       return acc;
     },
-    { chair: 0, professorship: 0, noPosition: 0 },
+    { yes: 0, no: 0, abstain: 0, total: 0 },
   );
 }
 
 export function describeTally(t: VoteTally): string {
-  const total = t.chair + t.professorship + t.noPosition;
-  if (total === 0) return 'no votes recorded';
-  if (t.chair === total) return 'unanimously';
-  if (t.professorship === total) return 'unanimously';
-  if (t.noPosition === total) return 'unanimously';
-  // Mixed → "by a vote of X to Y" or X-Y-Z
-  return `by a vote of ${t.chair}-${t.professorship}-${t.noPosition} (Chair-Professorship-No position)`;
+  if (t.total === 0) return 'no votes recorded';
+  if (t.yes === t.total) return 'unanimously';
+  return `by a vote of ${t.yes}-${t.no}-${t.abstain} (Yes-No-Abstain)`;
 }

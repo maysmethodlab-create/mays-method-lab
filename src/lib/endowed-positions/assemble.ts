@@ -42,6 +42,11 @@ export type AssembleArgs = {
   setup: SetupData;
   votes: MRCVote[];
   parts: GeneratedParts;
+  /**
+   * Shared anonymous comments collected from the MRC. A single string
+   * (the new vote model uses one shared box, not per-voter comments).
+   */
+  voteComments?: string;
 };
 
 /**
@@ -51,9 +56,9 @@ export type AssembleArgs = {
  * preview and used as the verification input.
  */
 export function assembleLetter(args: AssembleArgs): string {
-  const { setup, votes, parts } = args;
+  const { setup, votes, parts, voteComments } = args;
   const tally = tallyVotes(votes);
-  const total = tally.chair + tally.professorship + tally.noPosition;
+  const total = tally.total;
 
   const dateLine = formatMemoDate(setup.memoDate);
   const fy = setup.fiscalYear || new Date().getFullYear();
@@ -64,9 +69,9 @@ export function assembleLetter(args: AssembleArgs): string {
     setup.candidateCurrentEndowedPosition,
     setup.recommendedEndowedPosition,
     setup.candidateDepartmentHead,
-    String(tally.chair),
-    String(tally.professorship),
-    String(tally.noPosition),
+    String(tally.yes),
+    String(tally.no),
+    String(tally.abstain),
   ];
 
   const mrcRows = FY27_MRC.map((m) => [
@@ -102,10 +107,10 @@ export function assembleLetter(args: AssembleArgs): string {
       'Dept.',
       'Current Endowed Appointment',
       'Recommended Endowed Appointment',
-      'Department Head or Supervisor',
-      'MRC Votes — Chair',
-      'MRC Votes — Professorship',
-      'MRC Votes — No endowed position',
+      'Department Head Recommendation',
+      'MRC Vote: Yes',
+      'MRC Vote: No',
+      'MRC Vote: Abstain',
     ],
     [outcomeRow],
   );
@@ -138,24 +143,19 @@ export function assembleLetter(args: AssembleArgs): string {
   }
   const signatureBlock = sigLines.join('\n');
 
-  // Anonymous comments — render only if present, immediately after the
-  // secret-ballot paragraph (matches the Boivie spirit).
-  const comments = votes
-    .map((v, i) => (v.comment && v.comment.trim() ? `Comment ${i + 1}: ${v.comment.trim()}` : ''))
-    .filter(Boolean)
-    .join('\n');
-  const commentsBlock = comments
-    ? `\n\nAnonymous comments submitted by Council members:\n${comments}\n`
+  // Shared anonymous comments — render only if present, immediately after
+  // the secret-ballot paragraph.
+  const trimmedComments = (voteComments || '').trim();
+  const commentsBlock = trimmedComments
+    ? `\n\nAnonymous comments submitted by Council members:\n${trimmedComments}\n`
     : '';
 
-  // Tally hint inserted into the Summary sentence — the model writes
-  // "unanimously supported" when tally is unanimous; otherwise we record
-  // the explicit count.
+  // Tally hint inserted into the Summary sentence — "unanimously supported"
+  // if every voter voted yes; otherwise we record the explicit Y-N-A count.
   const summaryPrefix = (() => {
     if (total === 0) return 'The Mays Research Council';
-    const max = Math.max(tally.chair, tally.professorship, tally.noPosition);
-    if (max === total) return 'The Mays Research Council unanimously supported';
-    return `The Mays Research Council, by a vote of ${tally.chair}-${tally.professorship}-${tally.noPosition} (Chair-Professorship-No position), supported`;
+    if (tally.yes === total) return 'The Mays Research Council unanimously supported';
+    return `The Mays Research Council, by a vote of ${tally.yes}-${tally.no}-${tally.abstain} (Yes-No-Abstain), supported`;
   })();
 
   // The summary sentence pattern from Boivie:

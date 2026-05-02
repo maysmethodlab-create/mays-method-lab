@@ -22,7 +22,14 @@ export type DeptCode =
   | 'MKTG'
   | "Dean's Office";
 
-export type VoteChoice = 'chair' | 'professorship' | 'no-position';
+export type VoteChoice = 'yes' | 'no' | 'abstain';
+
+/**
+ * High-level grouping derived from `nominationType`. Renewals are existing
+ * endowed-position holders coming back through the cycle; new appointments
+ * cover first-time endowed positions and fellowship nominations.
+ */
+export type NominationCategory = 'renewal' | 'new-appointment';
 
 export type Candidate = {
   id: string;
@@ -92,15 +99,18 @@ export type UploadedFile = {
 export type MRCVote = {
   /** MRC member id (matches mrc.ts). */
   memberId: string;
+  /**
+   * Whether the member concurs with the department head's recommendation
+   * (yes), rejects it (no), or recuses themselves (abstain).
+   */
   choice?: VoteChoice;
-  /** Optional anonymous comment. */
-  comment?: string;
 };
 
 export type VoteTally = {
-  chair: number;
-  professorship: number;
-  noPosition: number;
+  yes: number;
+  no: number;
+  abstain: number;
+  total: number;
 };
 
 export type LetterDraft = {

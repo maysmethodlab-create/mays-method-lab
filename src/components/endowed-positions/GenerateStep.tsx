@@ -15,6 +15,7 @@ type Props = {
   setup: SetupData;
   files: UploadedFile[];
   votes: MRCVote[];
+  voteComments: string;
   draft: LetterDraft | null;
   parts: GeneratedParts | null;
   onDraftChange: (d: LetterDraft | null) => void;
@@ -30,6 +31,7 @@ export default function GenerateStep({
   setup,
   files,
   votes,
+  voteComments,
   draft,
   parts,
   onDraftChange,
@@ -65,7 +67,7 @@ export default function GenerateStep({
       const res = await fetch('/api/endowed-positions/draft', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ setup, votes, sourceDocuments }),
+        body: JSON.stringify({ setup, votes, voteComments, sourceDocuments }),
       });
       if (!res.ok || !res.body) {
         const t = await res.text();

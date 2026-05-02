@@ -11,6 +11,7 @@ import type {
 type Props = {
   setup: SetupData;
   votes: MRCVote[];
+  voteComments: string;
   draft: LetterDraft;
   parts: GeneratedParts;
   onBack: () => void;
@@ -20,6 +21,7 @@ type Props = {
 export default function DownloadStep({
   setup,
   votes,
+  voteComments,
   draft,
   parts,
   onBack,
@@ -35,7 +37,7 @@ export default function DownloadStep({
       const res = await fetch('/api/endowed-positions/download', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ setup, votes, parts }),
+        body: JSON.stringify({ setup, votes, voteComments, parts }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
