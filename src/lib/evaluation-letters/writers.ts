@@ -1,3 +1,36 @@
+export type WriterStyleOverrides = {
+  /** How many lines of the FROM block to render. Default = all
+   *  available lines from fromBlockLines(). Sean = 2 (suppresses chair
+   *  and honors), Rich = 3 (chair, no honors). */
+  fromBlockMaxLines?: number;
+
+  /** Whether the body uses bold section headings. Default = true
+   *  (Hari pattern). Sean = false. */
+  useSectionHeadings?: boolean;
+
+  /** Target letter length range in words. Default = { min: 700, max: 1100 }. */
+  targetWords?: { min: number; max: number };
+
+  /** Salutation style. 'none' = no "Dear X," — letter goes straight from
+   *  SUBJECT line to body. Default = 'first'. Sean = 'none'. */
+  salutationStyle?: 'none' | 'first' | 'formal';
+
+  /** Where the AACSB paragraph goes in APT letters. Default = 'discrete'. */
+  aacsbPlacement?: 'discrete' | 'woven';
+
+  /** Closing line(s) appended verbatim before the writer's name. */
+  closingLines?: string[];
+
+  /** Opening boilerplate verbatim. Used in place of the generic
+   *  "Thank you for submitting your materials..." line. Sean has a
+   *  specific opening pattern that always appears in his letters. */
+  openingBoilerplate?: string;
+
+  /** Override the FROM-line title shown on the memorandum. Sean uses
+   *  "Professor and Department Head" rather than the longer official title. */
+  fromTitleOverride?: string;
+};
+
 export type Writer = {
   id: string;
   /** Full legal name with degree suffix if used */
@@ -17,6 +50,11 @@ export type Writer = {
    * Mays/TAMU header until a per-department letterhead image is dropped in.
    */
   letterheadImage: string;
+  /**
+   * Per-writer style overrides for the writing prompt. Defaults are applied
+   * in resolveStyleOverrides() below.
+   */
+  styleOverrides?: WriterStyleOverrides;
 };
 
 export const DEFAULT_LETTERHEAD = 'mays-default.jpg';
@@ -44,6 +82,13 @@ export const WRITERS: Writer[] = [
     department: 'Department of Information and Operations Management',
     chair: 'Paul W. and Rosalie Robertson Chair in Business',
     letterheadImage: DEFAULT_LETTERHEAD,
+    styleOverrides: {
+      fromBlockMaxLines: 3,
+      useSectionHeadings: true,
+      targetWords: { min: 500, max: 850 },
+      salutationStyle: 'none',
+      aacsbPlacement: 'discrete',
+    },
   },
   {
     id: 'mcguire',
@@ -54,6 +99,20 @@ export const WRITERS: Writer[] = [
     chair: "J. Rogers Rainey, Jr. and Kathleen L. Rainey '44 Chair of Accounting",
     honors: ['Presidential Impact Fellow'],
     letterheadImage: DEFAULT_LETTERHEAD,
+    styleOverrides: {
+      fromBlockMaxLines: 2,
+      useSectionHeadings: false,
+      targetWords: { min: 550, max: 800 },
+      salutationStyle: 'none',
+      aacsbPlacement: 'discrete',
+      fromTitleOverride: 'Professor and Department Head',
+      closingLines: [
+        'Please let me know if you have any questions about my assessment. To that end, please contact Diana Kruse to schedule a time to meet with me if you would like to discuss my assessment.',
+        'Thank you for everything that you do for our students and department!',
+      ],
+      openingBoilerplate:
+        'Thank you for submitting your annual Professional Activity and Accomplishment Report this spring. The purpose of this memo is to provide you with my assessment of your performance from January 1, {YEAR} to December 31, {YEAR}. My assessment is based upon the Mays Guidelines and will be the basis for any department resource allocation decisions and for the reappointment decision. Following the Mays Guidelines, the performance categories are excellent, effective, needs improvement, and unsatisfactory.',
+    },
   },
   {
     id: 'brown',
@@ -81,11 +140,35 @@ export function getWriter(id: string): Writer | undefined {
 
 /**
  * Multi-line FROM block for the memo header. Title on line 2, optional
- * endowed chair on line 3, optional honors on line 4+.
+ * endowed chair on line 3, optional honors on line 4+. If the writer has
+ * a `fromTitleOverride`, that string replaces the long official title on
+ * line 2 (e.g., Sean uses "Professor and Department Head" rather than the
+ * full department-head title with the department name appended).
  */
 export function fromBlockLines(writer: Writer): string[] {
-  const lines = [writer.name, writer.title];
+  const title = writer.styleOverrides?.fromTitleOverride ?? writer.title;
+  const lines = [writer.name, title];
   if (writer.chair) lines.push(writer.chair);
   if (writer.honors) lines.push(...writer.honors);
   return lines;
+}
+
+/**
+ * Default style overrides used when a writer has none configured (or has
+ * partial overrides). Mirrors the legacy Hari pattern.
+ */
+const DEFAULT_STYLE_OVERRIDES: Required<WriterStyleOverrides> = {
+  fromBlockMaxLines: 99,
+  useSectionHeadings: true,
+  targetWords: { min: 700, max: 1100 },
+  salutationStyle: 'first',
+  aacsbPlacement: 'discrete',
+  closingLines: [],
+  openingBoilerplate: '',
+  fromTitleOverride: '',
+};
+
+export function resolveStyleOverrides(writerId: string): Required<WriterStyleOverrides> {
+  const writer = getWriter(writerId);
+  return { ...DEFAULT_STYLE_OVERRIDES, ...(writer?.styleOverrides ?? {}) };
 }
