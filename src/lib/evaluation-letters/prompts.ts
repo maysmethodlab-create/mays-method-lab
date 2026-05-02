@@ -190,7 +190,14 @@ ${args.peerComments}` : ''}`;
     ? '(NO salutation — go straight from SUBJECT line to the OPENING paragraph; do NOT write "Dear X,")'
     : `"Dear ${args.recipientFirstName},"`;
 
-  const targetLength = `Target length: ${args.styleOverrides.targetWords.min}-${args.styleOverrides.targetWords.max} words TOTAL across the entire body (header through closing line, including the rating-sentence paragraph). The MAX (${args.styleOverrides.targetWords.max} words) is a HARD CEILING — going over is a FAIL for this letter. Count as you go. If you find yourself listing every course section, every committee, every workshop, you are too long; collapse them into a single descriptive sentence. Do NOT enumerate every assessment activity, every committee, every credentialing detail. The brief lists everything; your job is to compress it into a 1-page memo, not to copy it.`;
+  // Per-role-category overrides win over the writer's default targetWords
+  // (e.g., Jamie Brown's APT letters run 450-1100 words but his TT letters
+  // run 850-1300 words).
+  const targetWords =
+    args.styleOverrides.targetWordsByRoleCategory[args.roleCategoryId] ??
+    args.styleOverrides.targetWords;
+
+  const targetLength = `Target length: ${targetWords.min}-${targetWords.max} words TOTAL across the entire body (header through closing line, including the rating-sentence paragraph). The MAX (${targetWords.max} words) is a HARD CEILING — going over is a FAIL for this letter. Count as you go. If you find yourself listing every course section, every committee, every workshop, you are too long; collapse them into a single descriptive sentence. Do NOT enumerate every assessment activity, every committee, every credentialing detail. The brief lists everything; your job is to compress it into a 1-page memo, not to copy it.`;
 
   const openingInstr = args.styleOverrides.openingBoilerplate
     ? `Open with this exact paragraph (verbatim, no rewording):\n   "${args.styleOverrides.openingBoilerplate.replace(/\{YEAR\}/g, String(args.evaluationYear))}"`

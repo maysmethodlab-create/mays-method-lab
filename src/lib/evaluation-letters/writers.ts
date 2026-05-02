@@ -11,6 +11,14 @@ export type WriterStyleOverrides = {
   /** Target letter length range in words. Default = { min: 700, max: 1100 }. */
   targetWords?: { min: number; max: number };
 
+  /** Optional per-role-category override for `targetWords`. Used when a
+   *  writer's APT letters and TT letters have very different lengths
+   *  (e.g., Jamie Brown's TT letters run 850-1300 words but his APT
+   *  letters run 450-1100 words). Keys are role-category IDs (e.g.,
+   *  'apt-clinical', 'apt-lecturer', 'apt-practice', 'tt-assistant-professor').
+   *  When the recipient's role matches a key, that range wins over `targetWords`. */
+  targetWordsByRoleCategory?: Record<string, { min: number; max: number }>;
+
   /** Salutation style. 'none' = no "Dear X," — letter goes straight from
    *  SUBJECT line to body. Default = 'first'. Sean = 'none'. */
   salutationStyle?: 'none' | 'first' | 'formal';
@@ -174,6 +182,55 @@ export const WRITERS: Writer[] = [
     // Finance folder has no past .docx letters with an embedded image, so
     // Brown stays on the shared Mays default until one is supplied.
     letterheadImage: DEFAULT_LETTERHEAD,
+    styleOverrides: {
+      // Jamie's FROM block on every memo is 2 lines: name + short title.
+      // The chair line (Blocker) sits in the letterhead caption above
+      // MEMORANDUM, not in the FROM block.
+      fromBlockMaxLines: 2,
+      // Jamie uses bold section headings throughout (Research, Teaching,
+      // Service, Tenured Faculty Assessment, Department Head Assessment
+      // for TT; Teaching, Service, Research and Scholarly Leadership,
+      // Promotion/Tenure/Reappointment for APT). Both subtypes carry
+      // headings.
+      useSectionHeadings: true,
+      // Default range covers TT (his pure voice). APT range overrides
+      // below because Jamie's APT letters were co-drafted with Nicky
+      // Amos and run shorter.
+      targetWords: { min: 850, max: 1300 },
+      targetWordsByRoleCategory: {
+        // Jamie + Nicky Amos co-drafted the APT letters. Sample range
+        // 423-1263 words (Adams-short to Amos-long); use 450-1100 as a
+        // wider tolerance band reflecting the joint voice.
+        'apt-lecturer': { min: 450, max: 1100 },
+        'apt-clinical': { min: 450, max: 1100 },
+        'apt-practice': { min: 450, max: 1100 },
+      },
+      // Memo skips "Dear X," and goes straight from SUBJECT to body.
+      salutationStyle: 'none',
+      // Jamie's APT letters do NOT carry a separate AACSB section. The
+      // Research-and-Scholarly-Leadership section absorbs any
+      // currency-and-relevance language indirectly. Default omit; per
+      // subtype the same.
+      aacsbPlacement: 'omit',
+      // Jamie's body weaves rating sentences into the Tenured Faculty
+      // Assessment (TT) or the per-section "Overall Evaluation" lines
+      // (APT) and ends with a personal sign-off. The standard
+      // **Summary** block would duplicate the close.
+      appendStandardSummary: false,
+      fromTitleOverride: "Head, Adam C. Sinn '00 Department of Finance",
+      // Jamie's TT opening — long, four-bullet purposes plus four-bullet
+      // performance levels plus the transition paragraph that previews
+      // the section structure (summary + tenured-faculty assessment +
+      // independent assessment).
+      openingBoilerplate:
+        "Both Texas A&M University and Mays Business School require that the performance of all faculty be reviewed on an annual basis. As noted in the Mays Faculty Promotion and Tenure Guidelines, the purposes of the annual performance review include:\n- Creating a sound and logical basis for merit compensation recommendations\n- Providing evaluative feedback regarding how well the individual is currently performing\n- Providing developmental feedback regarding areas where the faculty member's contribution may be enhanced and/or improved in the future\n- Providing feedback regarding progress toward promotion and/or tenure as relevant\n\nFurther, the Mays Faculty Promotion and Tenure Guidelines define four levels of performance for the key dimensions across which performance is reviewed. These levels of performance are:\n- Excellent performance: a high level of performance that meets and exceeds norms and expectations and that is reflected by substantive indicators of excellence;\n- Effective performance: performance that meets norms and expectations and that is reflected by substantive indicators of effective performance;\n- Needs improvement performance: performance that falls below norms and expectations of effective performance as reflected by substantive indicators of needs improvement performance;\n- Unsatisfactory performance: performance that falls below norms and expectations of excellent, effective, and needs improvement performance as reflected by substantive indicators of unsatisfactory performance.\n\nThis letter serves as your performance review for the {YEAR} calendar year. The following reflects information provided in your Faculty 180 submission. In addition, the tenured Finance faculty had the opportunity to review your annual report (containing detailed information about your research, teaching, and service) and current resume and provided me with their assessment and feedback. In the sections below, I first briefly summarize the main contributions you have made in each area, present the assessment of the tenured faculty, and provide my own independent assessment.",
+      // Jamie's closing is the same single sentence in both TT and APT
+      // letters, with a small variant in wording. Use the more common
+      // "Thank you very much" form; APT generation will tolerate either.
+      closingLines: [
+        "Thank you very much for your contributions to the Adam C. Sinn '00 Department of Finance and Mays Business School. It is a pleasure to work with you!",
+      ],
+    },
   },
   {
     id: 'boswell',
@@ -250,6 +307,7 @@ const DEFAULT_STYLE_OVERRIDES: Required<WriterStyleOverrides> = {
   fromBlockMaxLines: 99,
   useSectionHeadings: true,
   targetWords: { min: 700, max: 1100 },
+  targetWordsByRoleCategory: {},
   salutationStyle: 'first',
   aacsbPlacement: 'discrete',
   aacsbPlacementByRoleCategory: {},

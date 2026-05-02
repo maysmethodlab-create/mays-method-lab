@@ -55,6 +55,37 @@ export const APT_EXEMPLARS: Record<string, string[]> = {
     'Management (Boswell)/Panina, Daria [APT]/Panina_Annual_Review_2025.txt',
     'Management (Boswell)/McFarland, Ken [APT]/McFarland_Annual_Review_2025.txt',
   ],
+  // Jamie Brown (Finance). TT letters are pure Jamie; APT letters were
+  // co-drafted with Nicky Amos and run shorter / use different section
+  // ordering. Cziraki and Bowles are the canonical TT reference letters
+  // (both 9/9-quality, full structure including Tenured Faculty
+  // Assessment + Department Head Assessment + Ratings block). Cetina and
+  // Banks are the canonical APT reference letters (both reflect the
+  // Jamie+Nicky joint pattern).
+  'brown/tt-assistant-professor': [
+    'Finance (Brown)/Cziraki, Peter [TT]/Cziraki Annual Evaluation 2024.txt',
+    'Finance (Brown)/Bowles, Boone [TT]/Bowles Annual Evaluation 2024.txt',
+  ],
+  'brown/tt-associate-professor': [
+    'Finance (Brown)/Cziraki, Peter [TT]/Cziraki Annual Evaluation 2024.txt',
+    'Finance (Brown)/Bowles, Boone [TT]/Bowles Annual Evaluation 2024.txt',
+  ],
+  'brown/tt-professor': [
+    'Finance (Brown)/Cziraki, Peter [TT]/Cziraki Annual Evaluation 2024.txt',
+    'Finance (Brown)/Bowles, Boone [TT]/Bowles Annual Evaluation 2024.txt',
+  ],
+  'brown/apt-clinical': [
+    'Finance (Brown)/Cetina, Jill [APT]/Jill Cetina Annual Evaluation AY24.txt',
+    'Finance (Brown)/Banks, Bucky [APT]/Bucky Banks Annual Evaluation AY24.txt',
+  ],
+  'brown/apt-practice': [
+    'Finance (Brown)/Banks, Bucky [APT]/Bucky Banks Annual Evaluation AY24.txt',
+    'Finance (Brown)/Cetina, Jill [APT]/Jill Cetina Annual Evaluation AY24.txt',
+  ],
+  'brown/apt-lecturer': [
+    'Finance (Brown)/Cetina, Jill [APT]/Jill Cetina Annual Evaluation AY24.txt',
+    'Finance (Brown)/Banks, Bucky [APT]/Bucky Banks Annual Evaluation AY24.txt',
+  ],
 };
 
 /**
