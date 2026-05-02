@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { buildSummarySection } from '@/lib/evaluation-letters/prompts';
+import { assembleFinalLetter, buildSummarySection } from '@/lib/evaluation-letters/prompts';
 import { getRoleCategory, RATING_LEVELS } from '@/lib/evaluation-letters/role-categories';
 import { requireAuth } from '@/lib/evaluation-letters/api-helpers';
 
@@ -8,6 +8,11 @@ export const runtime = 'nodejs';
 type Body = {
   recipientName: string;
   roleCategoryId: string;
+  /** Optional letter body. If present, returned as the final assembled letter
+   *  (body + appended Summary block). Kept on the surface for forward-compat
+   *  with future writer-specific structures. */
+  letterText?: string;
+  writerId?: string;
   teachingRating: string;
   researchRating?: string;
   serviceRating?: string;
@@ -33,10 +38,7 @@ export async function POST(req: Request) {
   }
   if (!body.recipientName || !body.roleCategoryId || !body.overallRating) {
     return NextResponse.json(
-      {
-        error:
-          'recipientName, roleCategoryId, and overallRating are required.',
-      },
+      { error: 'recipientName, roleCategoryId, and overallRating are required.' },
       { status: 400 },
     );
   }
@@ -65,14 +67,27 @@ export async function POST(req: Request) {
     );
   }
 
-  const summary = buildSummarySection({
+  const ratingsArgs = {
+    writerId: body.writerId,
     recipientFirstName: firstNameOf(body.recipientName),
     hasResearchEvaluation: hasResearch,
     teachingRating: body.teachingRating,
     researchRating: body.researchRating,
     serviceRating: body.serviceRating,
     overallRating: body.overallRating,
-  });
+  };
 
+  // If the client passed the current letter body, return the fully
+  // assembled final letter. Otherwise return just the Summary block.
+  if (body.letterText) {
+    const letter = assembleFinalLetter({
+      letterText: body.letterText,
+      ratings: ratingsArgs,
+    });
+    const summary = buildSummarySection(ratingsArgs);
+    return NextResponse.json({ letter, summary });
+  }
+
+  const summary = buildSummarySection(ratingsArgs);
   return NextResponse.json({ summary });
 }

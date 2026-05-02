@@ -87,7 +87,7 @@ export default function SetupForm({ value, onChange, onContinue }: Props) {
       <div className="flex justify-end">
         <button type="submit" disabled={!valid} className="btn-primary">
           Continue to Upload
-          <span aria-hidden>→</span>
+          <span className="btn-arrow" aria-hidden="true">&rarr;</span>
         </button>
       </div>
     </form>

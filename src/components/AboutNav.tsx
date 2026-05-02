@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation';
 const TABS = [
   { href: '/about', label: 'About' },
   { href: '/about/student-fellows', label: 'AI Student Fellows' },
-  { href: '/about/learning-community', label: 'AI Learning Community' },
 ];
 
 export default function AboutNav() {

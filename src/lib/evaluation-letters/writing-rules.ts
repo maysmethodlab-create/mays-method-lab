@@ -5,8 +5,12 @@
  */
 
 export const BANNED_WORDS = {
+  // NOTE: "robust", "notable", "vital", "crucial" appear in Sean McGuire's
+  // actual letters and his peer-comments file. The Stuber ground-truth
+  // comparison surfaced that we were scrubbing them out of his own voice.
+  // They are no longer banned. Patterns like "stands as a testament" or
+  // "emerges as a beacon" remain banned via BANNED_PHRASES instead.
   adjectives: [
-    'robust',
     'comprehensive',
     'nuanced',
     'multifaceted',
@@ -15,12 +19,9 @@ export const BANNED_WORDS = {
     'cutting-edge',
     'seamless',
     'pivotal',
-    'crucial',
-    'vital',
     'vibrant',
     'compelling',
     'profound',
-    'notable',
     'commendable',
     'meticulous',
     'versatile',
@@ -136,15 +137,17 @@ ABSOLUTE BANS (the model has been observed using these — do not):
 - "enhance"   → use "strengthen" or "build"
 - "trajectory" (career sense) → use "path" or "direction"
 - "comprehensive" → use "thorough" or "full"
-- "notable" / "notably" → drop the word entirely
 - "navigate" (metaphorical) → use "manage" or "work through"
 - "foster" → use "support" or "build"
-- "robust", "nuanced", "multifaceted", "innovative", "seamless"
+- "nuanced", "multifaceted", "innovative", "seamless"
 - "showcase", "garner", "spearhead", "bolster", "catalyze", "underscore"
 - "delve", "harness", "embark", "transcend"
 - "landscape" / "realm" / "ecosystem" / "tapestry" / "paradigm" / "synergy"
 - "cornerstone", "bedrock", "testament", "beacon", "hallmark"
 - Any em-dash (—) or en-dash (–). Use a comma, semicolon, or two sentences.
+
+NOTE: "robust", "notable", "vital", "crucial" are FINE. Department heads
+use them; do not avoid them.
 
 SENTENCE-OPENER VARIETY (this is the model's most-violated rule):
 - INSIDE A SINGLE PARAGRAPH, never start more than 2 sentences with

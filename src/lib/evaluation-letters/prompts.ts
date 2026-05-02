@@ -82,6 +82,7 @@ Produce the research brief now.`;
  * ========================================================================== */
 
 export type WritingPromptArgs = {
+  writerId: string;
   writerName: string;
   writerTitle: string;
   writerFirstName: string;
@@ -103,6 +104,33 @@ export type WritingPromptArgs = {
   researchBrief: string;
   writerNotes: string;
 };
+
+/**
+ * General voice guidance applied to every letter. Department heads will
+ * tune the output by editing in the UI; we don't try to model their
+ * personal voices in the prompt itself.
+ *
+ * (Earlier we had a per-writer profile system here that hard-coded
+ *  Sean McGuire's Research/Teaching/Service structure. Removed because
+ *  one consistent voice + writer-edit-on-top is cleaner than trying to
+ *  model each writer in code.)
+ */
+const GENERAL_VOICE_NOTES = `
+Aim for a warm, evidence-based voice that a department head at Mays would
+recognize as their own with light editing:
+
+  - Sentences run with a natural rhythm. Vary length. Lead with the noun
+    and the verb that actually carries the action.
+  - Use concrete numbers and named co-authors / mentees / committee chairs
+    relentlessly. "Alongside her co-author Doe, the paper appeared in
+    *The Accounting Review* in March 2024" — not "The paper was
+    published in 2024".
+  - Cite the Mays Guidelines when discussing ratings or expectations.
+  - For APT faculty include the AACSB paragraph about maintaining
+    currency / relevance of instruction. Do NOT include a research
+    evaluation.
+  - Total length is typically 700-1100 words. Be tight. The editor will
+    expand if they want more.`;
 
 export function writingPrompt(args: WritingPromptArgs) {
   // Long static parts go in the cached system block. Anthropic prompt caching
@@ -154,7 +182,7 @@ ${args.hasResearchEvaluation ? '' : 'NOTE: This is an APT / lecturer category. D
 
 Use the LETTER SKILL REFERENCE (in the cached system block above) to match the expected structure, tone, and section ordering for this faculty category.
 
-REQUIRED STRUCTURE:
+REQUIRED HEADER (always — applies to every writer):
 
 1. DATE LINE: current month and year, e.g., "May 2026"
 
@@ -171,37 +199,28 @@ REQUIRED STRUCTURE:
 5. OPENING PARAGRAPH: thank them, reference their Professional Activity Report (faculty) or self-evaluation (staff/APT), note this letter follows the annual performance review meeting.
 
 SUBHEADING FORMATTING — CRITICAL:
-Every section heading below (Summary of Major Accomplishments, My Observations
-and Our Discussion, Your Plan for the Upcoming Year) MUST be wrapped in
-double-asterisk markdown so it renders as bold in the .docx. Like this:
-
-    **Summary of Major Accomplishments**
-
-NOT like this:
-
-    Summary of Major Accomplishments
-
-If you forget the asterisks, the section header will render as plain body
-text and the letter will look broken.
+Every section heading MUST be wrapped in double-asterisk markdown so it
+renders as bold in the .docx. Like this: **Heading Name**. NOT plain
+text. If you forget the asterisks, the section header will render as
+plain body text and the letter will look broken.
 
 PAPER-QUOTING DISCIPLINE:
 - Name a journal article when its identity matters. Quote the exact title in
   quotation marks ONLY when the title is striking, the contribution is
-  uniquely identified by it, or the writer would naturally quote it (e.g.,
-  for a P&T-style "anchor paper" treatment).
+  uniquely identified by it, or the writer would naturally quote it.
 - For routine publications, name the journal and the topic / contribution
-  without the exact title. "Your paper with Bo Li in *Production and
-  Operations Management* on conditional value-at-risk" is better than
-  "Your paper, 'Minimizing Conditional Value-at-Risk under a Modified
-  Base-Stock Policy,' in *Production and Operations Management*".
+  without the exact title.
 - Co-authors should be named because the relationship matters, not because
   every author needs to be listed.
 
-6. **Summary of Major Accomplishments** (this is the heading — output it
-   exactly as **Summary of Major Accomplishments** wrapped in double
+GENERAL VOICE NOTES:
+${GENERAL_VOICE_NOTES}
+
+BODY STRUCTURE:
+
+6. **Summary of Major Accomplishments** (heading must be wrapped in **
    asterisks): 4-6 paragraphs of flowing narrative prose. NO bullet points
-   in this section. Each paragraph focuses on a coherent area. Weave
-   specific accomplishments into a story about why they matter. Every
+   in this section. Each paragraph focuses on a coherent area. Every
    praise statement must be tied to a specific accomplishment with names
    and numbers.
 
@@ -211,36 +230,30 @@ PAPER-QUOTING DISCIPLINE:
 
    (a) **Quantity over the 3-year scholarship window (${scholarshipWindow}).** Open with a sense of how much research has appeared in the last three fiscal years. State the count of peer-reviewed journal articles in that window. Name the top journals where the work appeared (italicize every journal title — use *single-asterisk* markdown, e.g. *Journal of Marketing*, *Management Science*, *Review of Financial Studies*). For Finance use *Journal of Finance*, *Journal of Financial Economics*, *Review of Financial Studies* as the top three; for Marketing use *Journal of Marketing*, *Journal of Consumer Research*, *Journal of Marketing Research*, *Marketing Science*, *Management Science*; for Information & Operations Management use *Management Science*, *Production and Operations Management*, *MIS Quarterly*, *Information Systems Research*. SPECIAL CASE: if the recipient is an Assistant Professor whose PhD was awarded fewer than three years ago, do NOT impose the three-year window. Instead, state the years they have been on the tenure clock and discuss their record over that shorter window.
 
-   (b) **Pipeline.** Papers under review (with journal name and round if known), revise-and-resubmits (state the round and the journal), papers being prepared for submission. Use the submission-history document if available — describe the journey of important papers through journals (e.g., "submitted to QJE in July 2023, rejected; resubmitted to AER in February 2025"). This is critical for senior faculty.
+   (b) **Pipeline.** Papers under review (with journal name and round if known), revise-and-resubmits (state the round and the journal), papers being prepared for submission. Use the submission-history document if available — describe the journey of important papers through journals.
 
-   (c) **Lower-prestige scholarship in a SHORT separate paragraph (or combined with pipeline if brief).** Conference proceedings, book chapters, editorials, working papers without target journals — these are real activity but are not counted at the same level as top-journal articles. State them factually but briefly. Use language like "Beyond the journal record, …" or "In addition to the peer-reviewed publications, …".
+   (c) **Lower-prestige scholarship in a SHORT separate paragraph.** Conference proceedings, book chapters, editorials. State them factually but briefly.
 
-   (d) **Quality and themes.** Now move from quantity to quality. What are the main themes? Is the work substantively interesting? Does it tackle novel questions? Use Hari's framing: "What about the quality of the work?" or "The themes that emerge across these papers …". Mention PhD-student co-authors by name (great mentoring signal), cross-faculty collaborations, methodologically novel work.` : ''}
+   (d) **Quality and themes.** Move from quantity to quality. What are the main themes? Mention PhD-student co-authors by name, cross-faculty collaborations, methodologically novel work.` : ''}
 
-   For Teaching and Service paragraphs (after the research paragraphs above for research faculty, or as the primary content for APT faculty), do NOT just list courses and committees. READ the recipient's self-evaluation narrative carefully and EXPAND on the points they themselves emphasize. Pull in specific student-comment themes, course-development efforts, mentoring stories, and service-leadership episodes. Quote or paraphrase the recipient's own framing of their year where it adds color. The goal is a letter the recipient reads and thinks "they actually read what I wrote."
+   For Teaching and Service paragraphs, do NOT just list courses and committees. READ the recipient's self-evaluation narrative carefully and EXPAND on the points they themselves emphasize. Pull in specific student-comment themes, course-development efforts, mentoring stories, and service-leadership episodes.
 
-7. **My Observations and Our Discussion** (output the heading wrapped in
-   double asterisks as shown): 2-3 paragraphs.
+7. **My Observations and Our Discussion** (heading wrapped in **): 2-3 paragraphs.
    - Paragraph 1: personal observations about their performance, drawn HEAVILY from the writer's notes below.
    - Paragraph 2: growth area, framed constructively as a natural next step.
    - Paragraph 3 (optional): additional nuance or context.
 
-8. **Your Plan for the Upcoming Year** (output the heading wrapped in
-   double asterisks as shown):
+8. **Your Plan for the Upcoming Year** (heading wrapped in **):
    - Opening sentence connecting their goals to the institutional moment.
    - 3-5 bullet points of specific goals from the self-evaluation and writer's notes.
    - Closing sentence affirming confidence.
 
 DO NOT include a "Summary" section or any rating language at the end. The
-formal Summary paragraph (with the per-area ratings and the signature
-block) will be APPENDED separately after the writer reviews this body and
-assigns ratings. Stop after the closing sentence of section 8.
+formal Summary paragraph will be APPENDED after the writer assigns ratings.
+Stop after the closing sentence of section 8.
 
 TONE: write a balanced, evidence-based body. Be warm where the evidence
 supports it and direct where the recipient needs to hear something hard.
-Do NOT presuppose any particular rating outcome — let the facts and
-observations stand on their own. The growth-area paragraph should be
-framed constructively as a natural next step.
 
 ${args.hasResearchEvaluation ? '' : 'CRITICAL: This is an APT / lecturer category. Do NOT include any research evaluation. Do NOT reference the absence of research negatively. Per Mays Guidelines Section 6.2, lack of research activity must NOT be viewed as a negative factor.'}
 
@@ -262,6 +275,7 @@ ${args.writerNotes || '(none provided)'}`;
  * ========================================================================== */
 
 export type AppendSummaryArgs = {
+  writerId?: string;
   recipientFirstName: string;
   hasResearchEvaluation: boolean;
   teachingRating: string;
@@ -270,17 +284,13 @@ export type AppendSummaryArgs = {
   overallRating: string;
 };
 
-/**
- * Build the formal Summary section that gets appended to the letter body
- * once the writer has assigned ratings. This is deterministic — no LLM call
- * required — because the language is canonical per Mays Guidelines.
- */
+/** The standard Summary section appended to the body for writers without
+ *  a custom in-body Summary structure. */
 export function buildSummarySection(args: AppendSummaryArgs): string {
   const ratingLine = args.hasResearchEvaluation
     ? `Teaching: ${args.teachingRating}; Research and Publication: ${args.researchRating || 'N/A'}; Service: ${args.serviceRating || 'N/A'}`
     : `Teaching: ${args.teachingRating}; Service: ${args.serviceRating || 'N/A'}`;
 
-  // Lead sentence varies by overall rating — short and authentic.
   const lead: Record<string, string> = {
     Excellent: `${args.recipientFirstName}, this was an excellent year, and your contributions have been outstanding across the dimensions described above.`,
     Effective: `${args.recipientFirstName}, you had a productive year, and your contributions across the dimensions described above met the expectations of your role.`,
@@ -295,6 +305,69 @@ export function buildSummarySection(args: AppendSummaryArgs): string {
 ${leadSentence} My evaluation of your performance is as follows: ${ratingLine}. Overall, my evaluation is that you have demonstrated ${args.overallRating} performance.
 
 Please return a signed copy of this annual performance review for our personnel files. Thank you.`;
+}
+
+/**
+ * Per-area rating sentences that get substituted into [*_RATING_SENTENCE]
+ * placeholders in writer-conditional letter bodies (Sean's R/T/S structure).
+ */
+export function buildRatingSentences(args: AppendSummaryArgs): {
+  research: string;
+  teaching: string;
+  service: string;
+  overall: string;
+} {
+  return {
+    research: args.hasResearchEvaluation && args.researchRating
+      ? `Based on the Mays Guidelines, I assess your research performance as ${args.researchRating}.`
+      : '',
+    teaching: args.teachingRating
+      ? `Based on the Mays Guidelines and your teaching evaluations, I assess your teaching as ${args.teachingRating}.`
+      : '',
+    service: args.serviceRating
+      ? `Based on the Mays Guidelines, I assess your service as ${args.serviceRating}.`
+      : '',
+    overall: `Overall, my evaluation is that you have demonstrated ${args.overallRating} performance.`,
+  };
+}
+
+/**
+ * Final assembly of the letter once the writer has assigned ratings.
+ * Two paths:
+ *  - Letter body contains [*_RATING_SENTENCE] placeholders (Sean's
+ *    writer-conditional structure): substitute the placeholders in place
+ *    and return the substituted body. The body already includes a Summary
+ *    block; no additional append is needed.
+ *  - Letter body does not contain placeholders (default writers): append
+ *    the standard Summary section to the end of the body.
+ */
+export function assembleFinalLetter(args: {
+  letterText: string;
+  ratings: AppendSummaryArgs;
+  writerSignatureClose?: string;
+}): string {
+  const sentences = buildRatingSentences(args.ratings);
+  const hasPlaceholders = /\[(?:RESEARCH|TEACHING|SERVICE|OVERALL)_RATING_SENTENCE\]/.test(
+    args.letterText,
+  );
+
+  if (hasPlaceholders) {
+    let out = args.letterText
+      .replace(/\[RESEARCH_RATING_SENTENCE\]/g, sentences.research)
+      .replace(/\[TEACHING_RATING_SENTENCE\]/g, sentences.teaching)
+      .replace(/\[SERVICE_RATING_SENTENCE\]/g, sentences.service)
+      .replace(/\[OVERALL_RATING_SENTENCE\]/g, sentences.overall);
+    // Clean up empty lines a placeholder substitution may have left behind.
+    out = out.replace(/\n{3,}/g, '\n\n');
+    if (args.writerSignatureClose) {
+      out = `${out.trimEnd()}\n\n${args.writerSignatureClose.trim()}\n`;
+    }
+    return out;
+  }
+
+  // Default path: append the standard Summary block.
+  const summary = buildSummarySection(args.ratings);
+  return `${args.letterText.trimEnd()}\n\n${summary}\n`;
 }
 
 /* ==========================================================================
@@ -393,7 +466,6 @@ OUTPUT FORMAT — return a markdown report followed by a CORRECTED LETTER inside
 Flag every instance of:
 - Em-dashes (—) or en-dashes (–) — must be zero.
 - Banned words: ${[
-    'robust',
     'comprehensive',
     'nuanced',
     'multifaceted',
@@ -402,12 +474,9 @@ Flag every instance of:
     'cutting-edge',
     'seamless',
     'pivotal',
-    'crucial',
-    'vital',
     'vibrant',
     'compelling',
     'profound',
-    'notable',
     'commendable',
     'meticulous',
     'versatile',
@@ -445,10 +514,11 @@ Flag every instance of:
     'hallmark',
     'fundamentally',
     'remarkably',
-    'notably',
     'importantly',
-    'crucially',
   ].join(', ')}.
+
+  NOTE: "robust", "notable", "vital", "crucial", "notably", "crucially" are
+  NOT banned — these are real department-head vocabulary.
 - Three or more consecutive sentences starting with "Your" or "You".
 - "From X to Y, from A to B" parallel constructions.
 - Generic praise without specific backing.

@@ -23,6 +23,7 @@ export default function Header() {
 
         <nav className="flex items-center gap-1">
           <NavLink href="/">Home</NavLink>
+          <NavLink href="/learning-community">AI Learning Community</NavLink>
           <NavLink href="/admin">Admin Tools</NavLink>
           <NavLink href="/about">About</NavLink>
         </nav>

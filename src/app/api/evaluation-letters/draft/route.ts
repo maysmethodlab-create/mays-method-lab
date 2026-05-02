@@ -65,6 +65,7 @@ export async function POST(req: Request) {
   const writerFromLines = fromBlockLines(writer);
 
   const args = {
+    writerId: writer.id,
     writerName: writer.name,
     writerTitle: writer.title,
     writerFirstName: writer.firstName,

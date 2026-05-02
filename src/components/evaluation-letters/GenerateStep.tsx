@@ -197,6 +197,8 @@ export default function GenerateStep({
         body: JSON.stringify({
           recipientName: setup.recipientName,
           roleCategoryId: setup.roleCategoryId,
+          writerId: setup.writerId,
+          letterText: draft.text,
           teachingRating: setup.teachingRating,
           researchRating: setup.researchRating,
           serviceRating: setup.serviceRating,
@@ -208,9 +210,14 @@ export default function GenerateStep({
         setError(data?.error || 'Could not generate Summary.');
         return;
       }
-      const summaryAppended = `${draft.text.replace(/\s+$/, '')}\n\n${data.summary}\n`;
-      onDraftChange({ text: summaryAppended, generatedAt: new Date().toISOString() });
-      setStreamedDraft(summaryAppended);
+      // Prefer the fully-assembled letter (handles placeholder substitution
+      // for writer-specific structures). Fall back to summary-append for the
+      // legacy response shape.
+      const finalLetter =
+        data.letter ||
+        `${draft.text.replace(/\s+$/, '')}\n\n${data.summary}\n`;
+      onDraftChange({ text: finalLetter, generatedAt: new Date().toISOString() });
+      setStreamedDraft(finalLetter);
       setPhase('done');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Network error.');
@@ -228,7 +235,7 @@ export default function GenerateStep({
       <PhaseTracker phase={phase} />
 
       {error ? (
-        <div className="text-sm text-status-error border border-status-error/40 bg-status-error/10 rounded-md px-4 py-3">
+        <div className="text-sm text-status-error border border-status-error/40 bg-status-error/10 px-4 py-3">
           {error}
         </div>
       ) : null}
@@ -253,7 +260,8 @@ export default function GenerateStep({
           actions={
             phase === 'review-brief' ? (
               <button type="button" onClick={runDraft} className="btn-primary">
-                Generate Draft Letter →
+                Generate Draft Letter
+                <span className="btn-arrow" aria-hidden="true">&rarr;</span>
               </button>
             ) : null
           }
@@ -277,7 +285,8 @@ export default function GenerateStep({
           actions={
             phase === 'review-draft' ? (
               <button type="button" onClick={runVerify} className="btn-primary">
-                Verify Letter →
+                Verify Letter
+                <span className="btn-arrow" aria-hidden="true">&rarr;</span>
               </button>
             ) : null
           }
@@ -309,7 +318,7 @@ export default function GenerateStep({
             ) : null}
           </div>
 
-          <details className="text-sm text-ink-secondary border border-line rounded p-3">
+          <details className="text-sm text-ink-secondary border border-line p-3">
             <summary className="cursor-pointer font-semibold text-ink-primary">
               Mays Guidelines §3 — rating definitions
             </summary>
@@ -361,7 +370,14 @@ export default function GenerateStep({
               disabled={!ratingsValid}
               className="btn-primary"
             >
-              {phase === 'done' ? 'Re-append Summary' : 'Append Summary →'}
+              {phase === 'done' ? (
+                'Re-append Summary'
+              ) : (
+                <>
+                  Append Summary
+                  <span className="btn-arrow" aria-hidden="true">&rarr;</span>
+                </>
+              )}
             </button>
           </div>
         </section>
@@ -383,7 +399,8 @@ export default function GenerateStep({
             disabled={phase !== 'done'}
             className="btn-primary"
           >
-            Continue to Download →
+            Continue to Download
+            <span className="btn-arrow" aria-hidden="true">&rarr;</span>
           </button>
         </div>
       </div>
@@ -420,7 +437,7 @@ function PhaseTracker({ phase }: { phase: Phase }) {
         return (
           <div
             key={it.key}
-            className={`px-3 py-2 rounded-md border ${
+            className={`px-3 py-2 border ${
               done
                 ? 'border-status-success/40 text-status-success bg-status-success/10'
                 : active

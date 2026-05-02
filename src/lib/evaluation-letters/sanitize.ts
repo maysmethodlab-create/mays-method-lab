@@ -17,9 +17,12 @@ type Sub = { from: RegExp; to: string };
 
 // Single-word substitutions. Each entry handles the lowercase, capitalized,
 // and ALL-CAPS forms automatically via wordSwap below.
+//
+// NOTE: "robust", "notable", "vital", "crucial" are intentionally NOT
+// listed — they appear in real Sean McGuire / Rich Metters / Jamie Brown
+// letters. Sanitizing them out scrubs the writers' own voices.
 const SINGLE_WORD_SWAPS: Record<string, string> = {
   // Adjectives
-  robust: 'strong',
   comprehensive: 'thorough',
   nuanced: 'careful',
   multifaceted: 'broad',
@@ -28,12 +31,9 @@ const SINGLE_WORD_SWAPS: Record<string, string> = {
   'cutting-edge': 'leading',
   seamless: 'smooth',
   pivotal: 'central',
-  crucial: 'important',
-  vital: 'important',
   vibrant: 'active',
   compelling: 'strong',
   profound: 'deep',
-  notable: 'real',
   commendable: 'strong',
   meticulous: 'careful',
   versatile: 'broad',

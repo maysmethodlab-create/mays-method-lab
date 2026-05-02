@@ -56,7 +56,7 @@ export default function LoginForm() {
       </div>
 
       {error ? (
-        <div className="text-sm text-status-error border border-status-error/40 bg-status-error/10 rounded-md px-4 py-3">
+        <div className="text-sm text-status-error border border-status-error/40 bg-status-error/10 px-4 py-3">
           {error}
         </div>
       ) : null}

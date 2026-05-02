@@ -24,7 +24,7 @@ export default function ToolCard({
         <span
           className={`text-[11px] tracking-[0.05em] uppercase px-2.5 py-1 font-semibold ${
             live
-              ? 'text-status-success border border-status-success/40 bg-status-success/5'
+              ? 'text-maroon border border-maroon bg-white'
               : 'text-ink-secondary border border-line bg-bg-subtle'
           }`}
         >

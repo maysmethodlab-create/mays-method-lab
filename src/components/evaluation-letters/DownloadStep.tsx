@@ -79,7 +79,7 @@ export default function DownloadStep({ setup, draft, onBack, onStartOver }: Prop
   return (
     <div className="space-y-8">
       {error ? (
-        <div className="text-sm text-status-error border border-status-error/40 bg-status-error/10 rounded-md px-4 py-3">
+        <div className="text-sm text-status-error border border-status-error/40 bg-status-error/10 px-4 py-3">
           {error}
         </div>
       ) : null}
@@ -97,7 +97,7 @@ export default function DownloadStep({ setup, draft, onBack, onStartOver }: Prop
         </div>
         <details className="text-xs text-ink-muted">
           <summary className="cursor-pointer hover:text-ink-secondary">Preview letter text</summary>
-          <pre className="whitespace-pre-wrap mt-3 text-sm text-ink-secondary leading-relaxed font-body bg-bg-elevated rounded-md p-4 max-h-[400px] overflow-auto">
+          <pre className="whitespace-pre-wrap mt-3 text-sm text-ink-secondary leading-relaxed font-body bg-bg-subtle p-4 max-h-[400px] overflow-auto">
             {draft.text}
           </pre>
         </details>

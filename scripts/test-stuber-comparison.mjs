@@ -15,7 +15,7 @@ const APP_DIR = path.join(ROOT, 'apps', 'Annual Evaluation Letters');
 const BASE = process.env.BASE_URL || 'http://localhost:3000';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'mml-dev-2026';
 
-const OUT_DIR = path.join(APP_DIR, 'test-output', 'sean-stuber-comparison');
+const OUT_DIR = path.join(APP_DIR, 'test-output', 'sean-stuber-comparison-v2');
 const TEMPLATE_DIR = path.join(APP_DIR, 'Template Letters');
 
 const FILES = ['S Stuber CV 20250317 - For Annual Review.pdf'];
@@ -195,11 +195,34 @@ function detectKind(name) {
   }
   console.log(`      lint issues = ${(ver.lintIssues || []).length}`);
 
-  const finalText = ver.correctedText || letter;
-  fs.writeFileSync(path.join(OUT_DIR, '06-final.md'), finalText);
+  const correctedBody = ver.correctedText || letter;
+  fs.writeFileSync(path.join(OUT_DIR, '05-corrected-body.md'), correctedBody);
 
-  // 6. Download
-  console.log('  6/6 docx…');
+  // 6. Append Summary — substitutes [*_RATING_SENTENCE] placeholders for
+  //    Sean's writer-specific structure, OR appends the standard Summary
+  //    block for default writers.
+  console.log('  6/7 append-summary…');
+  const sumRes = await fetch(`${BASE}/api/evaluation-letters/append-summary`, {
+    method: 'POST',
+    headers: authHeaders(true),
+    body: JSON.stringify({
+      recipientName: setup.recipientName,
+      roleCategoryId: setup.roleCategoryId,
+      writerId: 'mcguire',
+      letterText: correctedBody,
+      teachingRating: setup.teachingRating,
+      researchRating: setup.researchRating,
+      serviceRating: setup.serviceRating,
+      overallRating: setup.overallRating,
+    }),
+  });
+  const sumJson = await sumRes.json();
+  const finalText = sumJson.letter || `${correctedBody}\n\n${sumJson.summary}\n`;
+  fs.writeFileSync(path.join(OUT_DIR, '06-final.md'), finalText);
+  console.log(`      final letter ${finalText.length} chars`);
+
+  // 7. Download
+  console.log('  7/7 docx…');
   const buf = await downloadDocx(finalText, 'mcguire', setup.recipientName);
   fs.writeFileSync(path.join(OUT_DIR, 'letter.docx'), buf);
   console.log(`      wrote .docx (${buf.length} bytes)`);

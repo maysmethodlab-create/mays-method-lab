@@ -120,7 +120,7 @@ export default function UploadStep({
           }}
         />
         {setup.recipientName ? (
-          <div className="border border-line rounded-card p-4 bg-white space-y-3">
+          <div className="border border-line p-4 bg-white space-y-3">
             <div className="text-xs uppercase tracking-[0.18em] text-status-success font-semibold">
               ✓ Selected
             </div>
@@ -175,7 +175,7 @@ export default function UploadStep({
               </div>
             </details>
             {role?.warning ? (
-              <div className="text-xs text-status-warning border border-status-warning/40 bg-status-warning/5 rounded p-2">
+              <div className="text-xs text-status-warning border border-status-warning/40 bg-status-warning/5 p-2">
                 {role.warning}
               </div>
             ) : null}
@@ -202,7 +202,7 @@ export default function UploadStep({
             setDrag(false);
             if (e.dataTransfer.files?.length) handleFiles(e.dataTransfer.files);
           }}
-          className={`border border-dashed rounded-card px-6 py-10 text-center transition-colors ${
+          className={`border border-dashed px-6 py-10 text-center transition-colors ${
             drag ? 'border-maroon bg-maroon/5' : 'border-line bg-bg-subtle'
           }`}
         >
@@ -228,13 +228,13 @@ export default function UploadStep({
         </div>
 
         {error ? (
-          <div className="text-sm text-status-error border border-status-error/40 bg-status-error/5 rounded-md px-4 py-3">
+          <div className="text-sm text-status-error border border-status-error/40 bg-status-error/5 px-4 py-3">
             {error}
           </div>
         ) : null}
 
         {files.length > 0 ? (
-          <ul className="divide-y divide-line border border-line rounded-card overflow-hidden">
+          <ul className="divide-y divide-line border border-line overflow-hidden">
             {files.map((f) => (
               <li key={f.id} className="flex items-center gap-4 px-4 py-3 bg-white">
                 <div className="flex-1 min-w-0">
@@ -281,7 +281,7 @@ export default function UploadStep({
       </section>
 
       {!canContinue && files.length > 0 ? (
-        <div className="text-xs text-status-warning border border-status-warning/40 bg-status-warning/5 rounded-md px-3 py-2">
+        <div className="text-xs text-status-warning border border-status-warning/40 bg-status-warning/5 px-3 py-2">
           Before continuing, confirm the recipient&apos;s name, title, and role category above.
         </div>
       ) : null}
@@ -296,7 +296,8 @@ export default function UploadStep({
           disabled={!canContinue}
           className="btn-primary"
         >
-          Continue to Generate →
+          Continue to Generate
+          <span className="btn-arrow" aria-hidden="true">&rarr;</span>
         </button>
       </div>
     </div>
