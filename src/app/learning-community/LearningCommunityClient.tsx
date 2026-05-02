@@ -204,7 +204,7 @@ function BucketSection({ bucket }: { bucket: LearningBucket }) {
    ============================================================= */
 
 function TierBlock({ tier }: { tier: LearningTier }) {
-  // Tier visual rules:
+  // Tier visual rules (Apple/Netflix-style activation-cost hierarchy):
   //   use-now: largest, 2-up grid, big maroon CTA cards
   //   prompt:  3-up grid, medium cards
   //   build:   list rows, text-dense
@@ -216,12 +216,25 @@ function TierBlock({ tier }: { tier: LearningTier }) {
     deeper: 'grid sm:grid-cols-2 lg:grid-cols-4 gap-4',
   };
 
+  // Tier badge number (1..4) signals the activation-cost ladder.
+  const tierIndex: Record<LearningTier['id'], number> = {
+    'use-now': 1,
+    prompt: 2,
+    build: 3,
+    deeper: 4,
+  };
+
   return (
     <div>
-      <div className="flex items-baseline justify-between flex-wrap gap-3 mb-4">
-        <div>
-          <div className="eyebrow text-[12px]">{tier.label}</div>
-          <div className="text-[14px] text-ink-secondary mt-1">{tier.blurb}</div>
+      <div className="flex items-baseline gap-3 mb-4 pb-2 border-b border-line">
+        <span className="font-headline text-[24px] font-semibold text-maroon-muted leading-none">
+          {String(tierIndex[tier.id]).padStart(2, '0')}
+        </span>
+        <div className="flex-1">
+          <div className="font-headline text-[20px] font-semibold text-maroon leading-tight">
+            {tier.label}
+          </div>
+          <div className="text-[13px] text-ink-secondary mt-0.5">{tier.blurb}</div>
         </div>
       </div>
       <div className={layoutByTier[tier.id]}>
