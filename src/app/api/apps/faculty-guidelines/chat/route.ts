@@ -137,13 +137,25 @@ The fabricated quotes are: {{FABRICATED_QUOTES}}
 
 Output ONLY the corrected response. No commentary.`;
 
-const PASS3_STRICT_FIX_SYSTEM = `The previous response STILL contained fabricated quoted passages after a first rewrite attempt. The fabricated quotes are: {{FABRICATED_QUOTES}}
+const PASS3_STRICT_FIX_SYSTEM = `You are a quote-fidelity fixer (strict pass). The previous Pass 3 attempt did not fully resolve the fabricated-quote issue. Your job is to make a final surgical pass.
 
-Rewrite the response as plain prose that paraphrases the substance without using direct quotes. Remove ALL quoted passages (anything wrapped in quotation marks). Cite section and page numbers (e.g., "Per Mays Faculty Guidelines § 4.2, p. 32") but do NOT use quotation marks anywhere in the body.
+For EACH remaining fabricated quote in the response:
+1. Search the source carefully for a passage that addresses the SAME topic. Even if no perfect quote exists, find the closest related passage that's verbatim in the source. Use that, with its citation.
+2. ONLY if no related verbatim passage exists in the source for that topic, replace the fabricated quote with the literal string: "the guidelines do not address this point directly".
 
-Keep the personal-applicability template structure if it was used, but in the QUOTE slot put a paraphrase of the criteria with section and page citations rather than a quoted passage. Keep the source citation footer.
+PRESERVE THE RESPONSE STRUCTURE:
+- If the response uses the personal-applicability template (the 4-part structure: Acknowledge, Quote, Boundary, Escalation), preserve all four parts. Only the quote in part 2 may change.
+- Keep the source citation footer.
+- Keep all non-fabricated quotes intact.
 
-Output ONLY the corrected response text.`;
+DO NOT:
+- Strip the template wrapper.
+- Replace the response with a single-line hard refusal.
+- Restructure paragraphs that don't contain fabricated quotes.
+
+The remaining fabricated quotes are: {{FABRICATED_QUOTES}}
+
+Output ONLY the corrected response. No commentary.`;
 
 const PASS3_PAGE_FIX_SYSTEM = `The previous response contains references to sections or appendices that are missing required page numbers. The deficient references are: {{MISSING_PAGES}}
 
