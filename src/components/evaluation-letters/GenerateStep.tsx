@@ -251,10 +251,11 @@ export default function GenerateStep({
       {phase === 'idle' ? (
         <section className="card text-center py-12">
           <p className="text-ink-secondary mb-6">
-            Start with Phase 1: have Claude read your uploads and produce a research brief.
+            Take all the content you uploaded in the previous step and extract
+            everything needed for the annual evaluation letter.
           </p>
           <button type="button" onClick={runResearch} className="btn-primary">
-            Generate Research Brief
+            Extract Content
           </button>
         </section>
       ) : null}
@@ -398,7 +399,7 @@ export default function GenerateStep({
         <div className="flex gap-3">
           {phase === 'done' ? (
             <button type="button" onClick={runResearch} className="btn-secondary">
-              Restart from Research
+              Restart from Extract
             </button>
           ) : null}
           <button
@@ -484,7 +485,7 @@ function BriefPanel({
   return (
     <section className="card">
       <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
-        <div className="eyebrow text-[11px]">Phase 1 — Research Brief</div>
+        <div className="eyebrow text-[11px]">Phase 1 — Extracted Brief</div>
         <div className="text-[11px] text-ink-muted">Editable</div>
       </div>
       <textarea

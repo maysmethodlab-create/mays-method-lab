@@ -87,7 +87,7 @@ export default function EvaluationLetterWorkflow() {
           <StepHeader
             step={3}
             title="Generate, review, rate."
-            subtitle="Research extracts the facts. Draft writes the letter body. Verify fact-checks every claim. Then you assign per-area ratings — with the Mays definitions visible — and the formal Summary is appended."
+            subtitle="Extract pulls the facts from your uploads. Draft writes the letter body. Verify fact-checks every claim. Then you assign per-area ratings — with the Mays definitions visible — and the formal Summary is appended."
           />
           <GenerateStep
             setup={setup}
