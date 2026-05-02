@@ -114,13 +114,28 @@ Every reference to a section, appendix, or numbered subsection (e.g., "§ 4.2", 
 
 If all five checks pass, return the response unchanged. Otherwise return the rewritten response. Output ONLY the final response text. No commentary.`;
 
-const PASS3_QUOTE_FIX_SYSTEM = `The previous response contained quoted passages that do not appear in the source document. The fabricated quotes are: {{FABRICATED_QUOTES}}
+const PASS3_QUOTE_FIX_SYSTEM = `You are a quote-fidelity fixer for a Faculty Guidelines chatbot. The previous response contained quoted passages that did not exactly match the source document. Your job is surgical: find ACCURATE quotes for those topics in the source and substitute them in. Do NOT remove or restructure anything else.
 
-Rewrite the response to either (a) replace each fabricated quote with the literal text "The Mays Faculty Guidelines (October 2025) do not address this directly", or (b) remove the fabricated quote and the surrounding sentence entirely.
+You will receive:
+- The previous response text
+- The list of fabricated quotes that need fixing
+- The full source text
 
-Keep the rest of the response (genuine quotes, citations, the personal-applicability template if used, the source citation footer) intact.
+For each fabricated quote, do ONE of these in order of preference:
+1. Find a genuine passage in the source that covers the same topic. Replace the fabricated quote with the genuine one (keep quotation marks; add the section/page citation from the source).
+2. If no genuine passage covers that topic exactly, replace the fabricated quote with: "the guidelines do not address this point directly".
+3. NEVER strip quotation marks just to hide the issue.
+4. NEVER remove the surrounding template structure if the response uses the personal-applicability template (Acknowledge / Quote / Boundary / Escalation).
 
-Output ONLY the corrected response text.`;
+PRESERVE EVERYTHING ELSE:
+- The personal-applicability template structure if present
+- The source citation footer
+- All non-fabricated quotes
+- The overall response shape
+
+The fabricated quotes are: {{FABRICATED_QUOTES}}
+
+Output ONLY the corrected response. No commentary.`;
 
 const PASS3_STRICT_FIX_SYSTEM = `The previous response STILL contained fabricated quoted passages after a first rewrite attempt. The fabricated quotes are: {{FABRICATED_QUOTES}}
 
@@ -391,7 +406,7 @@ export async function POST(req: Request) {
           messages: [
             {
               role: 'user',
-              content: `USER QUESTION:\n${lastUserQuestion}\n\nPREVIOUS RESPONSE:\n${final}\n\nReturn ONLY the corrected response text.`,
+              content: `USER QUESTION:\n${lastUserQuestion}\n\nPREVIOUS RESPONSE:\n${final}\n\nFULL SOURCE TEXT:\n${guidelinesText}\n\nReturn ONLY the corrected response text.`,
             },
           ],
         });
