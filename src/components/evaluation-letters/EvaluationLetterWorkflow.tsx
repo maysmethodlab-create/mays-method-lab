@@ -191,7 +191,7 @@ export default function EvaluationLetterWorkflow() {
           <StepHeader
             step={2}
             title="Upload &amp; review the recipient."
-            subtitle="Upload the recipient's self-evaluation and CV. We auto-detect their name, title, department, and role category from the documents. Then add your own observation notes — these shape the letter's tone."
+            subtitle="Upload the recipient's self-evaluation and CV. We auto-detect their name, title, department, and role category from the documents. Then add your own observation notes. These shape the letter's tone."
           />
           <UploadStep
             files={files}
@@ -211,7 +211,7 @@ export default function EvaluationLetterWorkflow() {
           <StepHeader
             step={3}
             title="Generate, review, rate."
-            subtitle="Extract pulls the facts from your uploads. Draft writes the letter body. Verify fact-checks every claim. Then you assign per-area ratings — with the Mays definitions visible — and the formal Summary is appended."
+            subtitle="Extract pulls the facts from your uploads. Draft writes the letter body. Verify fact-checks every claim. Then you assign per-area ratings, with the Mays definitions visible, and the formal Summary is appended."
           />
           <GenerateStep
             setup={setup}

@@ -65,8 +65,8 @@ export default function HeroSection() {
           <h1 className="hero-title">Inventing how America teaches business in an AI world.</h1>
           <p className="hero-sub">
             We make AI a daily advantage for every faculty and staff member. We build
-            world-class AI offerings for our students. And we translate those breakthroughs
-            into a new pedagogical standard — the Mays Method.
+            world-class AI offerings for our students. We translate those breakthroughs
+            into a new pedagogical standard, the Mays Method.
           </p>
           <div className="hero-buttons">
             <Link href="/learning-community" className="btn-primary">

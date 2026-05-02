@@ -2,7 +2,7 @@ import ScrollReveal from '../../components/ScrollReveal';
 import AboutNav from '../../components/AboutNav';
 
 export const metadata = {
-  title: 'About — Mays Method Lab',
+  title: 'About | Mays Method Lab',
   description:
     'About the Mays Method Lab at Mays Business School, Texas A&M University.',
 };
@@ -23,7 +23,7 @@ export default function AboutPage() {
               The Mays Method Lab pursues three reinforcing priorities at Mays Business
               School: making AI a daily advantage for every faculty and staff member,
               building world-class AI offerings for our students, and translating those
-              breakthroughs into a new pedagogical standard — the Mays Method. AI is the
+              breakthroughs into a new pedagogical standard, the Mays Method. AI is the
               defining transformation in higher education. Mays is running toward it,
               together.
             </p>

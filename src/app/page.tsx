@@ -15,17 +15,13 @@ export default function HomePage() {
             <h2 className="mb-6 max-w-4xl">
               An AI learning community. World-class offerings. Breakthrough pedagogy.
             </h2>
-            <p className="text-[18px] text-ink-secondary leading-relaxed max-w-3xl mb-4">
+            <p className="text-[18px] text-ink-secondary leading-relaxed max-w-3xl">
               First, we build a learning community where every faculty and staff member at
               Mays gets really good at using AI in their daily workflow. From there, those
-              workflow gains turn into deep builds — agentic graders, adaptive cases,
-              intelligent simulations — that become world-class AI offerings for our
-              students. Through that process we create breakthrough pedagogy, and Mays is
-              recognized as the center where the next way of teaching business is invented.
-            </p>
-            <p className="text-[16px] text-ink-secondary leading-relaxed max-w-3xl">
-              Each level feeds the next. You cannot reach the apex without the base; without
-              the apex, the base never sees what is possible.
+              workflow gains turn into deep builds that become world-class AI offerings for
+              our students. Through that process we create breakthrough pedagogy, and Mays
+              is recognized as the center where the next way of teaching business is
+              invented.
             </p>
           </div>
         </ScrollReveal>
@@ -40,15 +36,12 @@ export default function HomePage() {
         </ScrollReveal>
         <ScrollReveal>
           <h2 className="max-w-4xl mb-4">
-            The next way America teaches business — defined at Mays.
+            Defining the next way America teaches business.
           </h2>
         </ScrollReveal>
         <ScrollReveal>
           <p className="text-[18px] text-ink-secondary leading-relaxed max-w-3xl">
-            AI is the defining transformation in higher education. Mays is running toward
-            it, together. The Mays Method Lab is the vehicle through which Mays defines
-            that next way — by inventing the instruments that change how a class is
-            taught, then exporting them.
+            AI is rewriting business education. Mays is writing the answer.
           </p>
         </ScrollReveal>
       </section>

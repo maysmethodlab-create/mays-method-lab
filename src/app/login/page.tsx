@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import LoginForm from '@/components/LoginForm';
 
 export const metadata = {
-  title: 'Sign In — Mays Method Lab',
+  title: 'Sign In | Mays Method Lab',
 };
 
 export default function LoginPage() {

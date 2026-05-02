@@ -27,7 +27,7 @@ export default function DemoBanner({ candidateName }: Props) {
         <p className="text-[14px] text-ink-primary leading-relaxed">
           Sample data shown for{' '}
           <span className="font-semibold">{candidateName}</span>. The MRC has not yet met for
-          FY27 cases — replace with real inputs before generating an actual letter.
+          FY27 cases. Replace with real inputs before generating an actual letter.
         </p>
       </div>
       <button

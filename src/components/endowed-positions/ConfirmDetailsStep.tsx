@@ -56,7 +56,7 @@ export default function ConfirmDetailsStep({
           <InlineField
             label="Department head name"
             value={value.candidateDepartmentHead}
-            placeholder="(unknown — please fill in)"
+            placeholder="(unknown, please fill in)"
             onChange={(v) => update('candidateDepartmentHead', v)}
           />
           <InlineField
@@ -90,7 +90,7 @@ export default function ConfirmDetailsStep({
         />
         <p className="text-xs text-ink-muted leading-relaxed">
           The recommended position name is the only field we cannot reliably
-          auto-fill — please type the exact endowed-position name as it should
+          auto-fill. Please type the exact endowed-position name as it should
           appear in the memo (e.g. &quot;Pat &amp; Tom Powers Endowed
           Professorship&quot;).
         </p>

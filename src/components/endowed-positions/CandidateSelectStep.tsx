@@ -108,10 +108,10 @@ export default function CandidateSelectStep({ value, onPickCandidate, onContinue
             value={selectedInTab}
             onChange={(e) => handlePick(e.target.value)}
           >
-            <option value="">— Select a candidate —</option>
+            <option value="">Select a candidate</option>
             {candidatesInTab.map((c) => (
               <option key={c.id} value={c.id}>
-                {c.name} — {candidateDropdownHint(c)}
+                {c.name} ({candidateDropdownHint(c)})
               </option>
             ))}
           </select>

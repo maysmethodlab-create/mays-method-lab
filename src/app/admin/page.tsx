@@ -4,7 +4,7 @@ import SignOutButton from '@/components/SignOutButton';
 import { ADMIN_TOOLS } from '@/lib/tools';
 
 export const metadata = {
-  title: 'Admin Tools — Mays Method Lab',
+  title: 'Admin Tools | Mays Method Lab',
 };
 
 export default function AdminToolsPage() {

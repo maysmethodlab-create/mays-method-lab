@@ -1,7 +1,7 @@
 import ScrollReveal from '@/components/ScrollReveal';
 
 export const metadata = {
-  title: 'AI Learning Community — Mays Method Lab',
+  title: 'AI Learning Community | Mays Method Lab',
   description:
     'A catalog of step-by-step AI agents, prompts, and resources for the Mays Business School community.',
 };
@@ -23,7 +23,7 @@ const AGENT_SECTIONS: AgentSection[] = [
   {
     title: 'Chatbots and Q&A assistants',
     blurb:
-      'Custom chatbots that answer questions from approved sources — syllabi, faculty guidelines, your own documents.',
+      'Custom chatbots that answer questions from approved sources: syllabi, faculty guidelines, your own documents.',
     agents: [
       {
         title: 'Create and Share a TAMU AI Chatbot',
@@ -48,7 +48,7 @@ const AGENT_SECTIONS: AgentSection[] = [
   {
     title: 'Drafting and productivity agents',
     blurb:
-      'Agents that turn raw inputs — a resume, a CSV, a stack of meeting notes — into the next deliverable.',
+      'Agents that turn raw inputs (a resume, a CSV, a stack of meeting notes) into the next deliverable.',
     agents: [
       {
         title: 'Recommendation Letter Agent',
@@ -73,7 +73,7 @@ const AGENT_SECTIONS: AgentSection[] = [
   {
     title: 'Document and knowledge agents',
     blurb:
-      'Search and organize your own corpus — papers, notes, bookmarks — and ask cited questions of it.',
+      'Search and organize your own corpus (papers, notes, bookmarks) and ask cited questions of it.',
     agents: [
       {
         title: 'Chatbot Over Your Documents',
@@ -269,7 +269,7 @@ export default function LearningCommunityPage() {
           </h1>
           <p className="text-[18px] text-ink-secondary leading-relaxed max-w-3xl mb-4">
             The AI Learning Community is the heart of the Mays Method Lab today. Faculty, staff,
-            and students learn by building — three categories of step-by-step agent guides, a
+            and students learn by building. Three categories of step-by-step agent guides, a
             growing prompt library, and a curated set of TAMU-approved AI tools.
           </p>
           <p className="text-[15px] text-ink-secondary leading-relaxed max-w-3xl">

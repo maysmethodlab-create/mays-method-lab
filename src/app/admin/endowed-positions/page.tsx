@@ -2,7 +2,7 @@ import EndowedLetterWorkflow from '@/components/endowed-positions/EndowedLetterW
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'Endowed Positions Letter Writer [Stage 2: ADR] — Mays Method Lab',
+  title: 'Endowed Positions Letter Writer [Stage 2: ADR] | Mays Method Lab',
 };
 
 export default function EndowedPositionsPage() {

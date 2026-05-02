@@ -2,7 +2,7 @@ import EvaluationLetterWorkflow from '@/components/evaluation-letters/Evaluation
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'Evaluation Letter Writer — Mays Method Lab',
+  title: 'Evaluation Letter Writer | Mays Method Lab',
 };
 
 export default function EvaluationLettersPage() {

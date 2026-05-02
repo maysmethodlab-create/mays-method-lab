@@ -3,7 +3,7 @@ import AboutNav from '../../../components/AboutNav';
 import { STUDENT_FELLOWS } from '../../../lib/student-fellows';
 
 export const metadata = {
-  title: 'AI Student Fellows — Mays Method Lab',
+  title: 'AI Student Fellows | Mays Method Lab',
   description:
     'AI Student Fellows of the Mays Method Lab at Mays Business School, Texas A&M University.',
 };
