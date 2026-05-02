@@ -207,15 +207,30 @@ function findCitationsMissingPage(responseText: string): string[] {
 /**
  * Final post-processing pass. Strip em dashes and en dashes from the
  * user-visible response. Hari's durable rule: no em dashes in user-facing
- * prose. " — " becomes a sentence break; bare em / en dashes become a
- * separator. Double-period and whitespace cleanup keeps the output tidy.
+ * prose. Em / en dashes with surrounding whitespace become a sentence
+ * break; em / en dashes with no whitespace (e.g., "word—word") become a
+ * single space so the words do not collide. Stranded hyphens left behind
+ * by either transformation are then cleaned up so we do not ship orphan
+ * "- " or " -" tokens at the end of a bullet or sentence.
  */
 function stripEmDashes(text: string): string {
   return text
-    .replace(/\s*—\s*/g, '. ')
-    .replace(/\s*–\s*/g, '. ')
-    .replace(/\s*--\s*/g, '. ')
+    // Em / en / double-hyphen with surrounding whitespace -> sentence break
+    .replace(/\s+—\s+/g, '. ')
+    .replace(/\s+–\s+/g, '. ')
+    .replace(/\s+--\s+/g, '. ')
+    // Em / en dashes without surrounding whitespace -> single space
+    .replace(/—/g, ' ')
+    .replace(/–/g, ' ')
+    // Standalone " - " mid-sentence -> ", "
+    .replace(/\s+-\s+/g, ', ')
+    // Strip stranded "- " right after sentence punctuation
+    .replace(/([.!?,])\s*-\s+/g, '$1 ')
+    // Strip trailing " -" at end of a line or string
+    .replace(/\s+-(?=\s|\n|$)/g, '')
+    // Collapse cosmetic doubles introduced by the rewrites
     .replace(/\.\s*\./g, '.')
+    .replace(/,\s*,/g, ',')
     .replace(/[ \t]+/g, ' ')
     .replace(/\n /g, '\n')
     .trim();
