@@ -56,5 +56,11 @@ page-*.png
 # All app-level test output stays inside the app folder, never at the root.
 apps/*/test-output/
 
+# Local-only candidate materials for the endowed-positions app — never commit
+# CVs, dept head letters, or anything else PII-bearing. Only the Boivie
+# example (institutional template) and the candidate metadata in
+# src/lib/endowed-positions are tracked.
+apps/Endowed Positions Letter Writer/Source Materials/
+
 # Claude scheduler internals
 /.claude/scheduled_tasks.lock
