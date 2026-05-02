@@ -2,7 +2,7 @@ import EndowedLetterWorkflow from '@/components/endowed-positions/EndowedLetterW
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'Endowed Positions Letter Writer — Mays Method Lab',
+  title: 'Endowed Positions Letter Writer [Stage 2: ADR] — Mays Method Lab',
 };
 
 export default function EndowedPositionsPage() {
@@ -18,10 +18,7 @@ export default function EndowedPositionsPage() {
       <div className="mt-8 mb-10">
         <div className="dotted-frame bg-bg-subtle py-10 px-8 md:px-12">
           <div className="flex items-center gap-3 flex-wrap mb-3">
-            <div className="eyebrow-lg">Endowed Positions Letter Writer</div>
-            <span className="inline-block px-2 py-1 text-[10px] uppercase tracking-[0.18em] font-semibold text-maroon border border-maroon/30 bg-maroon/5">
-              Stage 2: ADR
-            </span>
+            <div className="eyebrow-lg">Endowed Positions Letter Writer [Stage 2: ADR]</div>
           </div>
           <h1 className="mb-4">Recommend an endowed appointment to the Dean.</h1>
           <p className="text-[16px] text-ink-secondary max-w-3xl leading-relaxed">

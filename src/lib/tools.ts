@@ -14,9 +14,9 @@ export const ADMIN_TOOLS: ToolCardProps[] = [
     category: 'Faculty Evaluations',
   },
   {
-    title: 'Endowed Positions Letter Writer',
+    title: 'Endowed Positions Letter Writer [Stage 2: ADR]',
     description:
-      "Stage 2 of the Mays endowed-positions process: the Associate Dean for Research, as Chair of the Mays Research Council, recommends a candidate for appointment, reappointment, or fellowship to the Dean. Five steps with vote collection and a verbatim institutional template. Lands on a sample case (Len Berry) so you can see what a populated workflow looks like before entering real inputs.",
+      "For the Associate Dean for Research (Rogelio Oliva), as Chair of the Mays Research Council, to recommend a candidate for appointment, reappointment, or fellowship to the Dean — AFTER the MRC has met and voted. Stage 1 (department head nomination letter) and Stage 3 (Dean appointment letter) will become separate apps later. Six-step workflow with vote collection and a verbatim institutional template. Lands on a sample case (Len Berry) so you can see a populated workflow before entering real inputs.",
     href: '/admin/endowed-positions',
     status: 'live',
     category: 'Endowed Positions',
