@@ -8,9 +8,15 @@ export default function Header() {
     <header className="sticky top-0 left-0 right-0 z-40 bg-white border-b border-line">
       <div className="max-w-[1280px] mx-auto px-6 md:px-12 h-[88px] flex items-center justify-between gap-6">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-12 h-12 bg-maroon flex items-center justify-center text-white font-headline text-2xl font-normal leading-none">
-            M
-          </div>
+          {/* Official TAMU "ATM" mark — same SVG mays.tamu.edu uses in
+              their header and the file we ship as /favicon.svg. */}
+          <img
+            src="/favicon.svg"
+            alt="Texas A&M University"
+            width={48}
+            height={48}
+            className="w-12 h-12"
+          />
           <div className="leading-tight">
             <div className="text-[11px] tracking-[0.05em] uppercase text-ink-secondary font-semibold group-hover:text-maroon transition-colors">
               Texas A&amp;M University
