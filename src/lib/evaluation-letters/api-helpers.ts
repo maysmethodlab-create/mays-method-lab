@@ -3,12 +3,14 @@ import { NextResponse } from 'next/server';
 import { isAuthenticated } from '@/lib/auth';
 
 /**
- * Per-instance rate limiter: max 10 requests / minute / client.
+ * Per-instance rate limiter: max 10 requests / minute / client (60 in
+ * dev so calibration runs of all writer/role pairs in parallel don't
+ * trip themselves on the local dev server).
  * Sufficient for a single Render instance; replace with Redis for multi-instance.
  */
 const buckets = new Map<string, number[]>();
 const WINDOW_MS = 60_000;
-const MAX_REQUESTS = 10;
+const MAX_REQUESTS = process.env.NODE_ENV === 'production' ? 10 : 60;
 
 export function rateLimit(key: string): { ok: boolean; retryAfterSec?: number } {
   const now = Date.now();

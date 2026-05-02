@@ -58,6 +58,36 @@ export const APT_EXEMPLARS: Record<string, string[]> = {
 };
 
 /**
+ * Strip signature-line and reviewer-acknowledgement boilerplate that
+ * many real letters carry at the end. The model picks these up as
+ * "style cues" and starts pasting them into the body of new letters.
+ * We cut them at load time so the exemplar reads as the writer's prose
+ * alone, ending with the writer's actual closing sentence.
+ */
+function stripTrailingBoilerplate(text: string): string {
+  let cleaned = text;
+  // Cut at any of the well-known reviewer-signature trailers.
+  const cutMarkers = [
+    /\bI have reviewed this performance evaluation\b/i,
+    /\bSignature\s*[_\s]*\s*Date\b/i,
+    /\bEmployee['’]s Signature\b/i,
+    /\bPlease return the signed copy to Donna Shumaker\b/i,
+    /\bPlease sign and return to Donna Shumaker\b/i,
+    /\bI hope you have an enjoyable\b.*?\bquestions\b/i,
+    /\+-+\+/, // ASCII signature box
+  ];
+  for (const re of cutMarkers) {
+    const m = cleaned.match(re);
+    if (m && typeof m.index === 'number') {
+      cleaned = cleaned.slice(0, m.index).trimEnd();
+    }
+  }
+  // Drop any raw image-path artifacts that survived docx-to-text extraction.
+  cleaned = cleaned.replace(/\[[A-Z]:\\.*?\.(jpg|jpeg|png|gif)\]/gi, '');
+  return cleaned.trimEnd();
+}
+
+/**
  * Resolve and read 0-2 exemplar letters for the given writer + role
  * combination. Returns an empty string if none are configured.
  */
@@ -69,8 +99,9 @@ export function loadAptExemplars(writerId: string, roleCategoryId: string): stri
   for (const rel of paths) {
     const abs = path.join(TEMPLATES_ROOT, rel);
     try {
-      const text = fs.readFileSync(abs, 'utf8');
-      out.push(`--- EXEMPLAR LETTER (${path.basename(rel)}) ---\n${text}`);
+      const raw = fs.readFileSync(abs, 'utf8');
+      const cleaned = stripTrailingBoilerplate(raw);
+      out.push(`--- EXEMPLAR LETTER (${path.basename(rel)}) ---\n${cleaned}`);
     } catch {
       // missing exemplar — skip silently; the model will fall back to
       // the skill file alone.
