@@ -62,10 +62,12 @@ export const EDITORIAL_STORIES: EditorialStory[] = [
   {
     publishedAt: '2026-05-02',
     role: 'faculty',
-    eyebrow: 'Coming soon: Mays Faculty Guidelines Chatbot',
+    eyebrow: 'Now in beta: Mays Faculty Guidelines Chatbot',
     headline: 'Ask the guidelines. Get the exact passage with citations.',
     blurb:
-      'A new Lab app in development. Type any question about promotion, evaluation, AACSB criteria, leave, or anything else in the October 2025 guidelines. The chatbot quotes the relevant section verbatim with section and page citations. For questions that need a human ruling on your specific case, one click takes you to the senior associate dean.',
+      'A new Lab app, live as a beta. Type any question about promotion, evaluation, AACSB criteria, leave, or anything else in the October 2025 guidelines. The chatbot quotes the relevant section verbatim with section and page citations. For questions that need a human ruling on your specific case, the senior associate dean is one click away. Send feedback to ssridhar@mays.tamu.edu.',
+    cta: 'Try the beta',
+    href: '/apps/faculty-guidelines',
   },
 
   /* ---------- STAFF ---------- */

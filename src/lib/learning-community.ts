@@ -195,10 +195,9 @@ const APP_AWARD_NOMINATION: LearningItem = {
 const APP_FACULTY_GUIDELINES_CHATBOT: LearningItem = {
   title: 'Mays Faculty Guidelines Chatbot',
   description:
-    'Ask any question about promotion, evaluation, AACSB criteria, leave, or any other topic in the October 2025 guidelines. The chatbot quotes the relevant passage verbatim with section and page citations, and points you to the senior associate dean for any question about your specific case. In design.',
-  href: '#',
-  comingSoon: true,
-  meta: 'Lab app',
+    'Ask any question about promotion, evaluation, AACSB criteria, leave, or any other topic in the October 2025 guidelines. The chatbot quotes the relevant passage verbatim with section and page citations, and points you to the senior associate dean for any question about your specific case. Beta — feedback welcome.',
+  href: '/apps/faculty-guidelines',
+  meta: 'Lab app · Beta',
   buckets: ['research', 'teaching', 'writing', 'faculty-support'],
 };
 

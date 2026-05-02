@@ -20,14 +20,26 @@ export default function FacultyGuidelinesClient({ enabled }: Props) {
     <div className="flex flex-col gap-8">
       <header className="max-w-3xl">
         <div className="eyebrow-lg mb-3">Mays Method Lab · Apps</div>
-        <h1
-          className="mb-3 leading-[1.1] text-maroon"
-          style={{ fontSize: 'clamp(36px, 5vw, 56px)' }}
-        >
-          Mays Faculty Guidelines Chatbot
-        </h1>
+        <div className="flex items-center gap-3 mb-3 flex-wrap">
+          <h1
+            className="leading-[1.1] text-maroon m-0"
+            style={{ fontSize: 'clamp(36px, 5vw, 56px)' }}
+          >
+            Mays Faculty Guidelines Chatbot
+          </h1>
+          <span className="inline-block px-3 py-1 bg-maroon text-white text-[12px] uppercase tracking-[0.18em] font-semibold whitespace-nowrap">
+            Beta
+          </span>
+        </div>
         <p className="text-[17px] text-ink-secondary leading-relaxed">
           Ask any question about the October 2025 guidelines. The chatbot quotes the exact passage that answers it.
+        </p>
+        <p className="text-[14px] text-ink-secondary leading-relaxed mt-3">
+          This is a beta. If an answer feels off, tell us at{' '}
+          <a href="mailto:ssridhar@mays.tamu.edu?subject=Faculty%20Guidelines%20Chatbot%20feedback" className="prose-link font-semibold">
+            ssridhar@mays.tamu.edu
+          </a>
+          . Your feedback shapes the next version.
         </p>
       </header>
 

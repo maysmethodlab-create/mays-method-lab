@@ -621,107 +621,37 @@ export async function POST(req: Request) {
     final = draft;
   }
 
-  // ---------------- Pass 3: deterministic quote-fidelity + page-number checks ----------------
-  // Catch fabricated quotes and missing-page citations that the LLM
-  // verifier missed. Quote fabrication is the worse failure mode and is
-  // fixed first via a retry loop: the first attempt asks the model to
-  // remove or replace the fabricated quote; if quotes are still
-  // fabricated, a second stricter attempt strips ALL quoted passages and
-  // rewrites as paraphrased prose. Only after both retries fail do we
-  // fall back to a hard refusal so genuine content has multiple chances
-  // to survive.
-  let pass3Triggered = false;
-  let pass3Reason: 'fabricated' | 'missing-pages' | 'both' | null = null;
-  let pass3Fallback = false;
-  const initialFabricated = findFabricatedQuotes(final, guidelinesText);
-  let missingPageRefs = findCitationsMissingPage(final);
+  // ---------------- Pass 3: DISABLED in beta mode ----------------
+  // Per Hari's call (May 2026): the multi-layer Pass 3 fidelity / page /
+  // strict-rewrite chain was producing too many false positives — relaxing
+  // the substring matcher cured the most-common typography misses, but
+  // the strict-rewrite fallback still occasionally collapsed substantive
+  // responses into hard refusals or wiped the personal-applicability
+  // template. The bot ships in BETA without Pass 3; faculty can flag
+  // any quote-fidelity slips via the feedback channel, and we re-evaluate
+  // re-enabling Pass 3 once we have real-usage data.
+  //
+  // Pass 1 (strict-quoting prompt) + Pass 2 (verifier with CHECK 1-7) +
+  // template recovery + em-dash strip + stitching cleanup all stay on.
+  const initialFabricated: string[] = [];
+  const pass3Triggered = false;
+  const pass3Reason: 'fabricated' | 'missing-pages' | 'both' | null = null;
+  const pass3Fallback = false;
 
-  if (initialFabricated.length > 0 || missingPageRefs.length > 0) {
-    pass3Triggered = true;
-    pass3Reason =
-      initialFabricated.length > 0 && missingPageRefs.length > 0
-        ? 'both'
-        : initialFabricated.length > 0
-          ? 'fabricated'
-          : 'missing-pages';
-
-    const maxPass3Retries = 2;
-    for (let retry = 0; retry < maxPass3Retries; retry++) {
-      const currentFabricated = findFabricatedQuotes(final, guidelinesText);
-      if (currentFabricated.length === 0) break;
-      const systemPrompt = retry === 0 ? PASS3_QUOTE_FIX_SYSTEM : PASS3_STRICT_FIX_SYSTEM;
-      try {
-        const fixReply = await client.messages.create({
-          model: DEFAULT_MODEL,
-          max_tokens: 900,
-          system: systemPrompt.replace(
-            '{{FABRICATED_QUOTES}}',
-            currentFabricated.map((q) => `"${q}"`).join('; '),
-          ),
-          messages: [
-            {
-              role: 'user',
-              content: `USER QUESTION:\n${lastUserQuestion}\n\nPREVIOUS RESPONSE:\n${final}\n\nFULL SOURCE TEXT:\n${guidelinesText}\n\nReturn ONLY the corrected response text.`,
-            },
-          ],
-        });
-        const fixed = fixReply.content
-          .filter((b): b is { type: 'text'; text: string } => b.type === 'text')
-          .map((b) => b.text)
-          .join('')
-          .trim();
-        if (fixed) final = fixed;
-      } catch {
-        // fall through to the next retry / page-number pass / hard refusal
-      }
-    }
-
-    // Re-evaluate. The quote rewrite may have already resolved the
-    // page-number gap; if not, run a separate targeted pass.
-    missingPageRefs = findCitationsMissingPage(final);
-    if (missingPageRefs.length > 0) {
-      try {
-        const pageReply = await client.messages.create({
-          model: DEFAULT_MODEL,
-          max_tokens: 900,
-          system: PASS3_PAGE_FIX_SYSTEM.replace(
-            '{{MISSING_PAGES}}',
-            missingPageRefs.map((r) => `"${r}"`).join('; '),
-          ),
-          messages: [
-            {
-              role: 'user',
-              content: `USER QUESTION:\n${lastUserQuestion}\n\nPREVIOUS RESPONSE:\n${final}\n\nReturn ONLY the corrected response text.`,
-            },
-          ],
-        });
-        const fixed = pageReply.content
-          .filter((b): b is { type: 'text'; text: string } => b.type === 'text')
-          .map((b) => b.text)
-          .join('')
-          .trim();
-        if (fixed) final = fixed;
-      } catch {
-        // ignore; we still ship the best response we have
-      }
-    }
-
-    const stillFabricated = findFabricatedQuotes(final, guidelinesText);
-    if (stillFabricated.length > 0) {
-      pass3Fallback = true;
-      final = HARD_REFUSAL;
-    }
-  }
+  // Suppress unused-import warnings for Pass-3-only helpers.
+  void findFabricatedQuotes;
+  void findCitationsMissingPage;
+  void PASS3_QUOTE_FIX_SYSTEM;
+  void PASS3_STRICT_FIX_SYSTEM;
+  void PASS3_PAGE_FIX_SYSTEM;
+  void HARD_REFUSAL;
 
   // ---------------- Personal-applicability template recovery ----------------
   // If the user asked a personal-applicability question (first-person +
   // applicability framing, or a "hypothetical faculty member" gaming
   // frame) but the response no longer wears the 4-part template, ask the
-  // model to re-wrap the current content in the scaffold. This catches
-  // cases where Pass 3 retries collapsed a templated response down to a
-  // single-line refusal (run 3, Q10).
+  // model to re-wrap the current content in the scaffold.
   if (
-    !pass3Fallback &&
     detectPersonalApplicability(lastUserQuestion) &&
     !hasTemplateStructure(final)
   ) {
