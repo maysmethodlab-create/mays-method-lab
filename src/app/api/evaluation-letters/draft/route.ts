@@ -11,7 +11,12 @@ import {
   loadStyleBundle,
 } from '@/lib/evaluation-letters/letter-skills';
 import { getRoleCategory } from '@/lib/evaluation-letters/role-categories';
-import { fromBlockLines, getWriter } from '@/lib/evaluation-letters/writers';
+import {
+  fromBlockLines,
+  getWriter,
+  resolveStyleOverrides,
+} from '@/lib/evaluation-letters/writers';
+import { loadAptExemplars } from '@/lib/evaluation-letters/apt-exemplars';
 import { placeholderNotice, requireAuth } from '@/lib/evaluation-letters/api-helpers';
 
 export const runtime = 'nodejs';
@@ -63,6 +68,8 @@ export async function POST(req: Request) {
   }
 
   const writerFromLines = fromBlockLines(writer);
+  const styleOverrides = resolveStyleOverrides(writer.id);
+  const exemplars = loadAptExemplars(writer.id, body.setup.roleCategoryId);
 
   const args = {
     writerId: writer.id,
@@ -83,6 +90,8 @@ export async function POST(req: Request) {
     hasResearchEvaluation: hasResearch,
     researchBrief: body.researchBrief,
     writerNotes: body.writerNotes || '',
+    styleOverrides,
+    exemplars,
   };
 
   const { cachedReference, role: instruction, user } = writingPrompt(args);

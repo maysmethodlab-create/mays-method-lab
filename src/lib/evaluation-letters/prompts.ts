@@ -1,4 +1,5 @@
 import { renderWritingRules, renderTopPriorityRules } from './writing-rules';
+import type { WriterStyleOverrides } from './writers';
 
 /* ==========================================================================
  * Phase 1 — Research Agent
@@ -103,6 +104,10 @@ export type WritingPromptArgs = {
   hasResearchEvaluation: boolean;
   researchBrief: string;
   writerNotes: string;
+  /** Per-writer style overrides resolved from writers.ts */
+  styleOverrides: Required<WriterStyleOverrides>;
+  /** Concatenated exemplar letters (1-2) for the writer + role pair */
+  exemplars: string;
 };
 
 /**
@@ -168,36 +173,68 @@ ${args.peerComments}` : ''}`;
   const winStart = winEnd - 2;
   const scholarshipWindow = `FY${winStart}–FY${winEnd}`;
 
-  const role = `${renderTopPriorityRules()}
+  // -------- Style override resolution (used by both APT and TT branches) --------
+  const isApt = !args.hasResearchEvaluation;
 
-You are writing a formal annual performance evaluation letter on behalf of ${args.writerName}, ${args.writerTitle} at Mays Business School, Texas A&M University.
+  const fromLines = args.writerFromLines.slice(0, args.styleOverrides.fromBlockMaxLines);
 
-The letter evaluates ${args.recipientName}, ${args.recipientTitle}${
-    args.recipientDepartment ? `, ${args.recipientDepartment}` : ''
-  } for the year ${args.evaluationYear}.
+  const fromBlockRendered = fromLines
+    .map((l, i) => (i === 0 ? l : `         ${l}`))
+    .join('\n   ');
 
-Recipient's role category: ${args.roleCategory}.
+  const salutation = args.styleOverrides.salutationStyle === 'none'
+    ? '(NO salutation — go straight from SUBJECT line to the OPENING paragraph; do NOT write "Dear X,")'
+    : `"Dear ${args.recipientFirstName},"`;
 
-${args.hasResearchEvaluation ? '' : 'NOTE: This is an APT / lecturer category. Do NOT include any research evaluation. Do NOT reference the absence of research negatively.'}
+  const targetLength = `Target length: ${args.styleOverrides.targetWords.min}-${args.styleOverrides.targetWords.max} words. Be concise. Cut filler.`;
 
-Use the LETTER SKILL REFERENCE (in the cached system block above) to match the expected structure, tone, and section ordering for this faculty category.
+  const openingInstr = args.styleOverrides.openingBoilerplate
+    ? `Open with this exact paragraph (verbatim, no rewording):\n   "${args.styleOverrides.openingBoilerplate.replace(/\{YEAR\}/g, String(args.evaluationYear))}"`
+    : 'OPENING PARAGRAPH: thank them, reference their Professional Activity Report (faculty) or self-evaluation (staff/APT), note this letter follows the annual performance review meeting.';
 
-REQUIRED HEADER (always — applies to every writer):
+  const closingBlock = args.styleOverrides.closingLines.length > 0
+    ? `\nCLOSING — end the body with these lines verbatim (each as its own sentence; the LAST one is the final sentence of the letter, with NO writer signature, no "Sincerely", no name):\n${args.styleOverrides.closingLines.map((l, i) => `   ${i + 1}. "${l}"`).join('\n')}\n`
+    : '';
 
-1. DATE LINE: current month and year, e.g., "May 2026"
+  const headerStyleInstr = args.styleOverrides.useSectionHeadings
+    ? `SUBHEADING FORMATTING — CRITICAL:
+Every section heading MUST be wrapped in double-asterisk markdown so it
+renders as bold in the .docx. Like this: **Heading Name**. NOT plain
+text. If you forget the asterisks, the section header will render as
+plain body text and the letter will look broken.`
+    : `NO SECTION HEADINGS:
+Do NOT use any bold section headings in the body. NO **Teaching**, NO
+**Service**, NO **AACSB**, NO **My Observations**, NO **Your Plan**.
+Write the body as flowing paragraphs separated by blank lines. The
+writer's voice is conversational and headings would feel wrong.`;
 
-2. The word "MEMORANDUM" on its own line, all caps
+  // -------- APT body structure --------
+  const aptBodyStructure = `
+APT BODY STRUCTURE:
 
-3. TO/FROM/SUBJECT block:
-   TO: ${args.recipientName}
-       ${args.recipientTitle}
-   FROM: ${args.writerFromLines.map((l, i) => (i === 0 ? l : `         ${l}`)).join('\n   ')}
-   SUBJECT: ${args.evaluationYear} Performance Evaluation
+${headerStyleInstr}
 
-4. SALUTATION: "Dear ${args.recipientFirstName},"
+${args.styleOverrides.useSectionHeadings ? `Use these bold sections in this order:
+1. **Teaching** — primary section, longest. Be specific to courses, evaluations, mentoring, curricular contributions, course development.
+2. **Service** — committee work, student-org advising, BUSN 101, exam proctoring, etc.
+3. **AACSB** — discrete paragraph quoting AACSB language about maintaining "currency and relevance" of instruction. Mention CPA / professional license if relevant.` : `Write 3-5 flowing paragraphs in this order, NO headings:
+- Paragraph 1-2: Teaching narrative — specific course numbers, evaluations, course development, student feedback, co-teaching, online program contributions, willingness to teach new preps. EXPAND on what the writer's notes emphasize.
+- Paragraph 3 (only if substantial): Service narrative — committee work, advising, BUSN 101, exam proctoring, etc.
+- Paragraph 4: AACSB paragraph — discrete block. Quote AACSB language about maintaining "currency and relevance of their instruction" and "all accounting faculty demonstrate sufficient ongoing professional interaction to support their role in achieving the unit's mission." Mention CPA / professional license if relevant.
+- Paragraph 5 (closing): support stated goals (call out the SPECIFIC goals from the writer's notes — e.g., expanding ACCT 421 into a three-hour course), encourage growth (mentoring from experienced instructors, teaching workshops), warm close.`}
 
-5. OPENING PARAGRAPH: thank them, reference their Professional Activity Report (faculty) or self-evaluation (staff/APT), note this letter follows the annual performance review meeting.
+After the body content but BEFORE the closing lines below, include ONE paragraph with the rating sentences placeholders:
+[TEACHING_RATING_SENTENCE] [SERVICE_RATING_SENTENCE] [OVERALL_RATING_SENTENCE]
+(These will be filled in after the writer assigns ratings.)
+${closingBlock}
+${targetLength}
 
+CRITICAL: This is APT. Do NOT include any research evaluation. Do NOT reference the absence of research negatively. Per Mays Guidelines Section 6.2, lack of research activity is NOT a negative factor.
+
+${args.exemplars ? `\nREFERENCE EXEMPLAR LETTERS — these are PRIOR letters from the SAME writer for similar APT faculty. Match their structure, voice, length, and paragraphing rhythm. Do NOT copy facts from exemplars; only mimic their style.\n\n${args.exemplars}\n` : ''}`;
+
+  // -------- TT body structure (preserved verbatim from prior implementation) --------
+  const ttBodyStructure = `
 SUBHEADING FORMATTING — CRITICAL:
 Every section heading MUST be wrapped in double-asterisk markdown so it
 renders as bold in the .docx. Like this: **Heading Name**. NOT plain
@@ -224,7 +261,7 @@ BODY STRUCTURE:
    praise statement must be tied to a specific accomplishment with names
    and numbers.
 
-   ${args.hasResearchEvaluation ? `**RESEARCH-PARAGRAPH STRUCTURE (mandatory ordering — mirrors Hari Sridhar's P&T pattern):**
+   **RESEARCH-PARAGRAPH STRUCTURE (mandatory ordering — mirrors Hari Sridhar's P&T pattern):**
 
    For research-active faculty, the FIRST 2-3 paragraphs cover research, in this strict order:
 
@@ -234,7 +271,7 @@ BODY STRUCTURE:
 
    (c) **Lower-prestige scholarship in a SHORT separate paragraph.** Conference proceedings, book chapters, editorials. State them factually but briefly.
 
-   (d) **Quality and themes.** Move from quantity to quality. What are the main themes? Mention PhD-student co-authors by name, cross-faculty collaborations, methodologically novel work.` : ''}
+   (d) **Quality and themes.** Move from quantity to quality. What are the main themes? Mention PhD-student co-authors by name, cross-faculty collaborations, methodologically novel work.
 
    For Teaching and Service paragraphs, do NOT just list courses and committees. READ the recipient's self-evaluation narrative carefully and EXPAND on the points they themselves emphasize. Pull in specific student-comment themes, course-development efforts, mentoring stories, and service-leadership episodes.
 
@@ -250,12 +287,44 @@ BODY STRUCTURE:
 
 DO NOT include a "Summary" section or any rating language at the end. The
 formal Summary paragraph will be APPENDED after the writer assigns ratings.
-Stop after the closing sentence of section 8.
+Stop after the closing sentence of section 8.`;
+
+  const role = `${renderTopPriorityRules()}
+
+You are writing a formal annual performance evaluation letter on behalf of ${args.writerName}, ${args.writerTitle} at Mays Business School, Texas A&M University.
+
+The letter evaluates ${args.recipientName}, ${args.recipientTitle}${
+    args.recipientDepartment ? `, ${args.recipientDepartment}` : ''
+  } for the year ${args.evaluationYear}.
+
+Recipient's role category: ${args.roleCategory}.
+
+${isApt ? 'NOTE: This is an APT / lecturer category. Do NOT include any research evaluation. Do NOT reference the absence of research negatively.' : ''}
+
+Use the LETTER SKILL REFERENCE (in the cached system block above) to match the expected structure, tone, and section ordering for this faculty category.
+
+REQUIRED HEADER (always — applies to every writer):
+
+1. DATE LINE: current month and year, e.g., "May 2026"
+
+2. The word "MEMORANDUM" on its own line, all caps
+
+3. TO/FROM/SUBJECT block (use EXACTLY these lines, including the FROM lines as shown):
+   TO: ${args.recipientName}
+       ${args.recipientTitle}
+   FROM: ${fromBlockRendered}
+   SUBJECT: ${args.evaluationYear} Performance Evaluation
+
+4. SALUTATION: ${salutation}
+
+5. ${openingInstr}
+
+${isApt ? aptBodyStructure : ttBodyStructure}
 
 TONE: write a balanced, evidence-based body. Be warm where the evidence
 supports it and direct where the recipient needs to hear something hard.
 
-${args.hasResearchEvaluation ? '' : 'CRITICAL: This is an APT / lecturer category. Do NOT include any research evaluation. Do NOT reference the absence of research negatively. Per Mays Guidelines Section 6.2, lack of research activity must NOT be viewed as a negative factor.'}
+${isApt ? 'CRITICAL: This is an APT / lecturer category. Do NOT include any research evaluation. Do NOT reference the absence of research negatively. Per Mays Guidelines Section 6.2, lack of research activity must NOT be viewed as a negative factor.' : ''}
 
 Output ONLY the letter text. No preamble, no commentary, no markdown code fence.`;
 
