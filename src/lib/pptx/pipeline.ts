@@ -303,6 +303,19 @@ async function stepPlan(deck: SynthesizedDeck, brandStudy: BrandStudy): Promise<
         index: i + 1,
         sourceIndex: typeof s.sourceIndex === 'number' ? s.sourceIndex : (deck.slides[i]?.index ?? i + 1),
         layout: (MAYS_LAYOUTS as readonly string[]).includes(s.layout) ? s.layout : 'content',
+        // Image provenance: the parser does not currently extract source
+        // alt text or image bytes, so any image block on a planner output
+        // is by construction synthesized + a placeholder. Mark both
+        // signals false explicitly so the accessibility scorer can flag
+        // honestly. When real extraction lands, flip these per slide.
+        image: s.image
+          ? {
+              ...s.image,
+              placeholder: true as const,
+              altTextFromSource: false,
+              imageBytesFromSource: false,
+            }
+          : undefined,
       }));
       out.slideCount = out.slides.length;
       out.reviewed = false;
@@ -382,6 +395,16 @@ async function stepReview(plan: BrandedDeckPlan): Promise<BrandedDeckPlan> {
         ...s,
         index: i + 1,
         layout: (MAYS_LAYOUTS as readonly string[]).includes(s.layout) ? s.layout : 'content',
+        // Re-stamp image provenance after the review pass so the LLM
+        // cannot accidentally promote synthesized alt to source-provided.
+        image: s.image
+          ? {
+              ...s.image,
+              placeholder: true as const,
+              altTextFromSource: false,
+              imageBytesFromSource: false,
+            }
+          : undefined,
       }));
       out.slideCount = out.slides.length;
       out.reviewed = true;
@@ -421,12 +444,17 @@ async function stepAccessibility(plan: BrandedDeckPlan): Promise<AccessibilityPl
     });
     const out = parseJson<AccessibilityPlan>(raw);
     if (out && Array.isArray(out.slides) && out.slides.length > 0) {
-      // Sanitize.
+      // Sanitize. Image provenance is fixed to "synthesized" because
+      // Step 5 generates alt text from slide context (the parser does
+      // not extract source alt or image bytes). The generator uses
+      // these flags to score honestly.
       out.slides = out.slides.map((a) => ({
         index: typeof a.index === 'number' ? a.index : 0,
         srTitle: String(a.srTitle || '').slice(0, 200),
         readingOrder: Array.isArray(a.readingOrder) ? a.readingOrder.slice(0, 8) : ['title', 'body', 'footer'],
         imageAltText: a.imageAltText ? String(a.imageAltText).slice(0, 400) : undefined,
+        imageAltFromSource: false,
+        imageBytesFromSource: false,
         links: Array.isArray(a.links)
           ? a.links.map((l) => ({
               url: String(l.url || ''),
@@ -442,7 +470,8 @@ async function stepAccessibility(plan: BrandedDeckPlan): Promise<AccessibilityPl
   }
 
   // Deterministic fallback. Reuse the headline as the screen-reader
-  // title and assume the standard reading order.
+  // title and assume the standard reading order. Image provenance is
+  // synthesized in this branch too (no source extraction yet).
   return {
     slides: plan.slides.map((s) => ({
       index: s.index,
@@ -455,6 +484,8 @@ async function stepAccessibility(plan: BrandedDeckPlan): Promise<AccessibilityPl
             : ['title', 'body', 'footer'],
       imageAltText:
         s.layout === 'image-caption' ? s.image?.altText || s.image?.caption || s.headline : undefined,
+      imageAltFromSource: false,
+      imageBytesFromSource: false,
       links: [],
       flaggedColor: false,
     })),

@@ -100,8 +100,27 @@ export type BrandedSlide = {
   bullets?: string[];
   /** Two-column body. Used only for layout='two-column'. */
   twoColumn?: { left: string[]; right: string[]; leftHeading?: string; rightHeading?: string };
-  /** Caption + alt text for image-caption layouts. */
-  image?: { caption: string; altText?: string; placeholder: true };
+  /**
+   * Caption + alt text for image-caption layouts.
+   *
+   * `altTextFromSource` flags whether the alt text came from the source
+   * deck (true = real, set on the input shape) or was synthesized from
+   * slide context by the pipeline (false / omitted = synthesized). The
+   * accessibility scorer uses this to mark synthesized alt as
+   * needs-review rather than passed.
+   *
+   * `imageBytesFromSource` flags whether the original image bytes were
+   * carried through to the output. False / omitted means we substituted
+   * a captioned placeholder rectangle and the user must re-attach the
+   * original image before sharing.
+   */
+  image?: {
+    caption: string;
+    altText?: string;
+    placeholder: true;
+    altTextFromSource?: boolean;
+    imageBytesFromSource?: boolean;
+  };
   /** Footer override (rare). Defaults to the brand footer. */
   footer?: string;
   /** Speaker notes. Carried through to the output deck. */
@@ -137,6 +156,20 @@ export type AccessibilitySlideAnnotation = {
   readingOrder: string[];
   /** Image alt text override, if the slide has an image. */
   imageAltText?: string;
+  /**
+   * Whether `imageAltText` came from the source deck (true) or was
+   * synthesized from slide context (false / omitted). Synthesized alt
+   * is marked needs-review by the scorer because the user must verify
+   * accuracy before sharing.
+   */
+  imageAltFromSource?: boolean;
+  /**
+   * Whether the original image bytes from the source slide were carried
+   * through to the output (true) or substituted with a captioned
+   * placeholder rectangle (false / omitted). Placeholder substitution
+   * is marked needs-review so the user knows to re-attach the image.
+   */
+  imageBytesFromSource?: boolean;
   /** Hyperlinks on the slide, with their descriptive text (no "click here"). */
   links: Array<{ url: string; description: string }>;
   /** True when the planner flagged a contrast or color-only issue. */
@@ -153,6 +186,7 @@ export type AccessibilityFinding = {
   /** Category. */
   category:
     | 'alt-text'
+    | 'image-source'
     | 'reading-order'
     | 'contrast'
     | 'min-size'

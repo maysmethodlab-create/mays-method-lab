@@ -619,16 +619,51 @@ export async function generatePptx(input: GenerateInput): Promise<GenerateOutput
       detail: `Reading order: ${(annot?.readingOrder || ['title', 'body', 'footer']).join(' -> ')}`,
     });
 
-    // Image alt text.
+    // Image alt text. Synthesized alt (generated from slide context) is
+    // marked needs-review so the user verifies accuracy before sharing.
+    // Only alt text carried over from the source deck counts as passed.
     if (s.layout === 'image-caption') {
       const alt = annot?.imageAltText || s.image?.altText;
+      const altFromSource = Boolean(
+        annot?.imageAltFromSource || s.image?.altTextFromSource,
+      );
+      if (!alt) {
+        record(findings, {
+          slideIndex: s.index,
+          category: 'alt-text',
+          status: 'needs-review',
+          detail: 'Image is on the slide but no alt text was supplied. Add one before sharing.',
+        });
+      } else if (altFromSource) {
+        record(findings, {
+          slideIndex: s.index,
+          category: 'alt-text',
+          status: 'passed',
+          detail: `Source-provided alt text preserved: "${alt.slice(0, 80)}".`,
+        });
+      } else {
+        record(findings, {
+          slideIndex: s.index,
+          category: 'alt-text',
+          status: 'needs-review',
+          detail: `Synthesized alt text from slide context: "${alt.slice(0, 80)}". Verify accuracy before sharing.`,
+        });
+      }
+
+      // Image-source provenance: was the original image transferred, or
+      // did we substitute a captioned placeholder? The generator never
+      // carries source bytes today, so unless the planner explicitly
+      // marks bytes as from-source the slide gets needs-review.
+      const bytesFromSource = Boolean(
+        annot?.imageBytesFromSource || s.image?.imageBytesFromSource,
+      );
       record(findings, {
         slideIndex: s.index,
-        category: 'alt-text',
-        status: alt ? 'passed' : 'needs-review',
-        detail: alt
-          ? `Image alt text set: "${alt.slice(0, 80)}".`
-          : 'Image is on the slide but no alt text was supplied. Add one before sharing.',
+        category: 'image-source',
+        status: bytesFromSource ? 'passed' : 'needs-review',
+        detail: bytesFromSource
+          ? 'Original image bytes carried through from the source deck.'
+          : 'Image not transferred from source. Re-attach the original image.',
       });
     }
 
