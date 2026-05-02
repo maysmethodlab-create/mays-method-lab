@@ -3,7 +3,7 @@ services:
     name: mays-method-lab
     runtime: node
     plan: starter
-    buildCommand: npm install && npm run build
+    buildCommand: npm install && node scripts/_scrape-academic-calendar.mjs && npm run build
     startCommand: npm start
     healthCheckPath: /
     autoDeploy: true
