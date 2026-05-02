@@ -165,23 +165,41 @@ Keep the rest of the response (genuine quotes, the personal-applicability templa
 
 Output ONLY the corrected response text.`;
 
-const TEMPLATE_RECOVERY_SYSTEM = `The user asked a personal-applicability question. The response should follow the 4-part template:
+const TEMPLATE_RECOVERY_SYSTEM = `The user asked a personal-applicability question. Your job: produce a response that follows this 4-part template:
 
 1. ACKNOWLEDGE: "That's a question the guidelines speak to. Here's what they say."
-2. QUOTE: A verbatim passage from the source with section/page citation. If no relevant passage exists, use: "The Mays Faculty Guidelines (October 2025) do not address this point directly."
-3. EXPLICIT BOUNDARY: "I can describe the criteria. The determination for your specific case rests with [the appropriate decision-maker]. I do not and cannot make that determination."
+2. QUOTE: A verbatim passage from the source with section/page citation. THIS IS THE CRITICAL FIELD.
+3. EXPLICIT BOUNDARY: "I can describe the criteria. The determination for your specific case rests with [the appropriate decision-maker from the source]. I do not and cannot make that determination."
 4. ESCALATION: "Two paths to discuss your case: (1) Email Hari Sridhar at ssridhar@mays.tamu.edu with your CV and a specific question. (2) Reach out to your department head."
 
 End with: "Source: Mays Faculty Guidelines, October 17, 2025 (Approved version)."
 
+CRITICAL RULE FOR THE QUOTE FIELD:
+
+Before using any fallback like "the guidelines do not address this point directly," you MUST search the full source text thoroughly for content relevant to the user's topic. Specifically:
+
+- If the user asks about promotion criteria for any rank (Assistant, Associate, Professor, etc.), look for sections defining the criteria for that rank. The source has dedicated sections for each.
+- If the user asks about evaluation, look for sections on annual review, third-year review, etc.
+- If the user asks about leave, look for the leave-related sections.
+- If the user asks about AACSB classification, look for the AACSB-related provisions.
+- If the user asks about teaching effectiveness, look for the teaching evaluation criteria.
+
+DO NOT TRUST the existing response's quote field if:
+- It contains the literal text "do not address this point directly"
+- It contains "guidelines do not address"
+- It is empty or generic boilerplate
+- It does NOT include actual quoted content from the source
+
+In any of those cases, ignore the existing quote and search the source yourself. Find a verbatim passage on the user's topic and use that.
+
+ONLY use the "guidelines do not address" fallback if the source genuinely has nothing on the topic — and only after a thorough search.
+
 You will receive:
 - The user's question
-- The current response (which may be missing template structure)
+- The current response (which may have a stub quote field)
 - The full source text
 
-Re-write the response to use all 4 template parts. Pull the QUOTE part from the existing response if it has a valid quote; otherwise find a relevant verbatim passage from the source; otherwise use the "do not address" string.
-
-Output ONLY the corrected response.`;
+Output ONLY the corrected response with all 4 template parts. No commentary.`;
 
 const HARD_REFUSAL =
   'The Mays Faculty Guidelines (October 2025) do not address this directly. For your specific situation, contact your department head or email Hari Sridhar at ssridhar@mays.tamu.edu. Source: Mays Faculty Guidelines, October 17, 2025 (Approved version).';
