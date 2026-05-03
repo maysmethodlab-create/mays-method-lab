@@ -656,14 +656,20 @@ export async function POST(req: Request) {
     !hasTemplateStructure(final)
   ) {
     try {
+      // Move the full source text into a cached system block (10% of
+      // normal input cost on cache hits) so the recovery pass does not
+      // pay the full 80k-token bill every time it fires.
       const recoveryReply = await client.messages.create({
         model: DEFAULT_MODEL,
         max_tokens: 900,
-        system: TEMPLATE_RECOVERY_SYSTEM,
+        system: buildCachedSystem(
+          `${TEMPLATE_RECOVERY_SYSTEM}\n\nFULL SOURCE TEXT:\n${guidelinesText}`,
+          'Apply the personal-applicability template using ONLY quotes from the source above.',
+        ),
         messages: [
           {
             role: 'user',
-            content: `USER QUESTION:\n${lastUserQuestion}\n\nCURRENT RESPONSE:\n${final}\n\nFULL SOURCE TEXT:\n${guidelinesText}\n\nReturn ONLY the corrected response text.`,
+            content: `USER QUESTION:\n${lastUserQuestion}\n\nCURRENT RESPONSE:\n${final}\n\nReturn ONLY the corrected response text.`,
           },
         ],
       });

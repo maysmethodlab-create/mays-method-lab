@@ -6,6 +6,14 @@ import Anthropic from '@anthropic-ai/sdk';
  */
 export const DEFAULT_MODEL = process.env.EVALUATION_LETTER_MODEL || 'claude-sonnet-4-5';
 
+/**
+ * Cheap model for high-volume reference apps where the cost of Sonnet
+ * is not justified (e.g. Academic Calendar Chatbot, PowerPoint
+ * Reformatter). Override with CHEAP_MODEL env var. Defaults to the
+ * cheapest current Anthropic model.
+ */
+export const CHEAP_MODEL = process.env.CHEAP_MODEL || 'claude-haiku-4-5-20251001';
+
 let client: Anthropic | null = null;
 
 export function isApiKeyConfigured(): boolean {

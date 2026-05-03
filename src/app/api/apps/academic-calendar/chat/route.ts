@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { NextResponse } from 'next/server';
 import {
-  DEFAULT_MODEL,
+  CHEAP_MODEL,
   buildCachedSystem,
   getClient,
   isApiKeyConfigured,
@@ -101,7 +101,7 @@ export async function POST(req: Request) {
   try {
     const client = getClient();
     const reply = await client.messages.create({
-      model: DEFAULT_MODEL,
+      model: CHEAP_MODEL,
       max_tokens: 600,
       system: buildCachedSystem(
         cachedReference,
