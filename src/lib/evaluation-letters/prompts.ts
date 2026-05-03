@@ -480,7 +480,13 @@ ${args.researchBrief}
 
 WRITER'S PERSONAL OBSERVATIONS AND NOTES (these MUST appear naturally in the "My Observations" and "Your Plan" sections):
 
-${args.writerNotes || '(none provided)'}`;
+${args.writerNotes || '(none provided)'}
+
+WHEN THE NOTES ABOVE CONTAIN LABELED SECTIONS, weight them as follows:
+- STANDOUT — the single thing the writer most wants this letter to convey. Open "My Observations and Our Discussion" with the specific behavior this calls out. Do NOT reduce it to a generic compliment.
+- GROWTH AREA — frame in the second paragraph of "My Observations and Our Discussion" as a constructive next step, not a critique. The recipient should read this as forward-looking guidance.
+- SENSITIVE — thread the substance into the body in the writer's voice without naming a specific incident verbatim. If the overall rating is positive, this content informs phrasing rather than dominating a paragraph. If the rating is mixed, it can take a more direct paragraph.
+If a label is absent or empty in the notes above, ignore that bullet.`;
 
   return { cachedReference, role, user };
 }
@@ -654,6 +660,10 @@ For each claim, classify:
 - ℹ INFERRED: not explicitly stated but reasonably implied by the source. These are usually fine but flag them so the writer can verify.
 
 For each ⚠ EMBELLISHED or ❌ FABRICATED, quote the letter snippet and quote the source (or note the absence).
+
+## Writer's Notes Coverage
+
+If the WRITER'S NOTES contain labeled sections (STANDOUT, GROWTH AREA, SENSITIVE), check whether the substance of each POPULATED section is reflected somewhere in the body of the letter. If a populated section was dropped from the letter, flag it as ⓘ MISSING WRITER OBSERVATION and write one sentence naming which section is unaddressed and what it said. This is advisory only — do NOT add the missing observation to the Corrected Letter and do NOT treat it as a fabrication. The writer reads this section to decide whether to regenerate. If a labeled section is empty or absent in the notes, skip it.
 
 ## Verdict
 - READY TO SEND if zero EMBELLISHED and zero FABRICATED.
