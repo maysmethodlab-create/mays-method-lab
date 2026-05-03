@@ -14,8 +14,10 @@ import type {
   VerificationResult,
 } from '@/lib/evaluation-letters/types';
 
-const today = new Date();
-const defaultEvaluationYear = today.getMonth() < 2 ? today.getFullYear() - 1 : today.getFullYear() - 1;
+// Eval letter writes today are for last year's performance. Default to
+// (currentYear - 1). E.g. a letter written in May 2026 evaluates 2025
+// performance and is dated 2026.
+const defaultEvaluationYear = new Date().getFullYear() - 1;
 
 const initialSetup: SetupData = {
   writerId: '',
