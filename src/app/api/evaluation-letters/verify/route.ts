@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { DEFAULT_MODEL, getClient, isApiKeyConfigured } from '@/lib/evaluation-letters/claude';
+import { CHEAP_MODEL, getClient, isApiKeyConfigured } from '@/lib/evaluation-letters/claude';
 import { hallucinationPrompt, verifyPrompt } from '@/lib/evaluation-letters/prompts';
 import { lintLetter } from '@/lib/evaluation-letters/writing-rules';
 import { sanitizeLetter } from '@/lib/evaluation-letters/sanitize';
@@ -84,7 +84,7 @@ ${postLint.length === 0 ? 'READY TO SEND (sanitizer-only check passed)' : 'NEEDS
       writerNotes: body.writerNotes || '',
     });
     const hRes = await client.messages.create({
-      model: DEFAULT_MODEL,
+      model: CHEAP_MODEL,
       max_tokens: 5000,
       system: hp.system,
       messages: [{ role: 'user', content: hp.user }],
@@ -97,7 +97,7 @@ ${postLint.length === 0 ? 'READY TO SEND (sanitizer-only check passed)' : 'NEEDS
     // ---- Phase 3b: Style Agent (operates on the fact-corrected letter) ----
     const sp = verifyPrompt({ letterText: factCorrected });
     const sRes = await client.messages.create({
-      model: DEFAULT_MODEL,
+      model: CHEAP_MODEL,
       max_tokens: 5000,
       system: sp.system,
       messages: [{ role: 'user', content: sp.user }],

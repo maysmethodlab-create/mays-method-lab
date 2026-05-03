@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { DEFAULT_MODEL, getClient, isApiKeyConfigured } from '@/lib/evaluation-letters/claude';
+import { CHEAP_MODEL, getClient, isApiKeyConfigured } from '@/lib/evaluation-letters/claude';
 import { coerceIdentifyJson, regexIdentify } from '@/lib/evaluation-letters/identify';
 import { requireAuth } from '@/lib/evaluation-letters/api-helpers';
 
@@ -43,7 +43,7 @@ export async function POST(req: Request) {
   try {
     const client = getClient();
     const response = await client.messages.create({
-      model: DEFAULT_MODEL,
+      model: CHEAP_MODEL,
       max_tokens: 200,
       system: SYSTEM,
       messages: [{ role: 'user', content: text }],

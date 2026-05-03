@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { DEFAULT_MODEL, getClient, isApiKeyConfigured } from '@/lib/evaluation-letters/claude';
+import { CHEAP_MODEL, getClient, isApiKeyConfigured } from '@/lib/evaluation-letters/claude';
 import { emailPrompt } from '@/lib/evaluation-letters/prompts';
 import { getWriter } from '@/lib/evaluation-letters/writers';
 import { placeholderNotice, requireAuth } from '@/lib/evaluation-letters/api-helpers';
@@ -70,7 +70,7 @@ ${writer.firstName}
   try {
     const client = getClient();
     const response = await client.messages.create({
-      model: DEFAULT_MODEL,
+      model: CHEAP_MODEL,
       max_tokens: 700,
       system,
       messages: [{ role: 'user', content: user }],
