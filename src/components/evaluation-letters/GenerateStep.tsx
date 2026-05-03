@@ -113,7 +113,10 @@ export default function GenerateStep({
       const res = await fetch('/api/evaluation-letters/research', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sourceDocuments }),
+        body: JSON.stringify({
+          sourceDocuments,
+          evaluationYear: setup.evaluationYear,
+        }),
       });
       const data = await res.json();
       if (!res.ok) {

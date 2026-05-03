@@ -8,6 +8,10 @@ export const maxDuration = 120;
 
 type Body = {
   sourceDocuments: string;
+  /** The performance year being evaluated (e.g. 2025). Required so the
+   *  research brief can hard-exclude pre-window content (papers, courses,
+   *  service activities outside the relevant window). */
+  evaluationYear?: number;
 };
 
 export async function POST(req: Request) {
@@ -22,7 +26,17 @@ export async function POST(req: Request) {
     );
   }
 
-  const { system, user } = researchPrompt({ sourceDocuments: body.sourceDocuments });
+  // Default to (currentYear - 1) when caller omits the year. Eval letters
+  // written today are for last year's performance.
+  const evaluationYear =
+    typeof body.evaluationYear === 'number' && Number.isFinite(body.evaluationYear)
+      ? body.evaluationYear
+      : new Date().getFullYear() - 1;
+
+  const { system, user } = researchPrompt({
+    sourceDocuments: body.sourceDocuments,
+    evaluationYear,
+  });
 
   if (!isApiKeyConfigured()) {
     return NextResponse.json({

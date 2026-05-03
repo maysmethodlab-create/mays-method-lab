@@ -5,10 +5,32 @@ import type { WriterStyleOverrides } from './writers';
  * Phase 1 — Research Agent
  * ========================================================================== */
 
-export function researchPrompt(args: { sourceDocuments: string }) {
+export function researchPrompt(args: {
+  sourceDocuments: string;
+  /** Year being evaluated (e.g. 2025). The letter is written in
+   *  ${evaluationYear}+1 about performance during ${evaluationYear}. */
+  evaluationYear: number;
+}) {
+  const evaluationYear = args.evaluationYear;
+  const winEnd = evaluationYear;
+  const winStart = winEnd - 2; // 3-year scholarship window: y-2, y-1, y
+
   const system = `You are the Research Agent for an evaluation letter at Mays Business School, Texas A&M University. You produce a comprehensive, factual research brief from uploaded documents (the recipient's self-evaluation and CV).
 
 You are the foundation of the process: if you miss something, it will not appear in the letter; if you invent something, the letter will contain a fabrication.
+
+EVALUATION PERIOD — ABSOLUTELY CRITICAL:
+- Evaluation year: ${evaluationYear}. The letter evaluates performance DURING ${evaluationYear} only.
+- Research window: ${winStart}-${evaluationYear} (the evaluation year and the two years before it).
+- Teaching window: ${evaluationYear} ONLY.
+- Service window: ${evaluationYear} ONLY.
+
+HARD EXCLUSION RULES — DO NOT BREAK THESE:
+- Research: EXCLUDE every paper, grant, presentation, or scholarly activity dated BEFORE ${winStart}. Even if the CV lists papers from earlier years (${winStart - 1}, ${winStart - 2}, etc.), DO NOT include them in the research sections. The window is closed. Pre-window items must be omitted.
+- Teaching: EXCLUDE every teaching activity outside the evaluation year ${evaluationYear}. Do NOT list courses taught in earlier or later years. (The letter's forward-look paragraph may name an upcoming-semester plan from the writer's notes; that is the only exception.)
+- Service: EXCLUDE every service activity outside ${evaluationYear}. Same rule as teaching.
+
+If the CV / F180 / source documents include pre-window content, the brief MUST omit it. Speak ONLY to performance during the evaluation period.
 
 OUTPUT — produce a structured markdown research brief with these sections:
 
@@ -21,8 +43,8 @@ OUTPUT — produce a structured markdown research brief with these sections:
 ## Research and Scholarly Accomplishments
 Organize this section in this order, mirroring how a Mays department head reads a Faculty 180:
 
-### A. Top-tier journal articles in the 3-year scholarship window
-Look at the CV / Faculty 180 and identify EVERY peer-reviewed journal article whose publication year falls in the most recent THREE fiscal years (the evaluation year and the two before it). For each: full citation, journal name, co-authors, year, citation count if shown. Group by tier — top-tier first (Journal of Marketing, Marketing Science, Management Science, Journal of Finance, JFE, RFS, MISQ, ISR, POM, etc.), then other A-level / well-regarded journals, then the rest. If the recipient is an Assistant Professor whose PhD is fewer than 3 years old, note that and list everything since the PhD instead.
+### A. Top-tier journal articles in the 3-year scholarship window (${winStart}-${evaluationYear})
+Look at the CV / Faculty 180 and identify EVERY peer-reviewed journal article whose publication year falls in ${winStart}, ${winStart + 1}, or ${evaluationYear}. EXCLUDE every article dated ${winStart - 1} or earlier — do not list them, do not mention them, do not summarize them. For each in-window article: full citation, journal name, co-authors, year, citation count if shown. Group by tier (top-tier first: Journal of Marketing, Marketing Science, Management Science, Journal of Finance, JFE, RFS, MISQ, ISR, POM, etc.), then other A-level / well-regarded journals, then the rest. If the recipient is an Assistant Professor whose PhD is fewer than 3 years old, note that and list everything since the PhD instead.
 
 ### B. Pipeline (under review / revise-and-resubmit / preparing)
 Every paper currently in the review process. State journal, round, and current status. If a "Submission History" document is provided, capture the FULL JOURNEY of each paper through journals (e.g., "Submitted to QJE Jul 2023, rejected; AER Feb 2025, rejected; JF Mar 2025, rejected; RFS May 2025, under review"). Senior faculty want to see this trajectory.
@@ -33,19 +55,27 @@ Conference proceedings, book chapters, editorials, invited commentaries, white p
 ### D. Conferences, presentations, invited talks
 With venue names and roles (presenter / discussant / session chair).
 
-### E. Awards, grants, editorial roles
-External grants (with amount and sponsor), best-paper awards, editorial board memberships, special-issue editor roles, society / conference leadership.
+### E. Awards, grants, editorial roles (in-window only: ${winStart}-${evaluationYear})
+
+RESEARCH AWARDS AND GRANTS — EXPLICITLY ENUMERATE:
+List every research award, best-paper award, external grant, fellowship, editorial role, special-issue editorship, or society leadership the recipient received between ${winStart} and ${evaluationYear}. Look in the CV, F180, and writer's notes. If awards or grants are mentioned anywhere, list them. Format: "{Award name}, {granting body}, {date}". For grants also state the amount. Do NOT skip them. If none, write "None listed."
 
 ### F. PhD students and cross-faculty collaboration
 Every PhD student the recipient advises or co-advises (by name, with degree status), every co-authored paper with a colleague at Mays or with a faculty member at another institution that suggests interesting cross-disciplinary work.
 
 For staff or APT faculty without research expectations, write "N/A" for the section as a whole.
 
-## Teaching and Student-Facing Accomplishments
-Courses taught (with numbers), evaluations / scores, curriculum development, student mentoring, PhD placements, teaching awards, new course development, advising load.
+## Teaching and Student-Facing Accomplishments (${evaluationYear} ONLY)
+Courses taught in ${evaluationYear} (with numbers), evaluations / scores from ${evaluationYear}, curriculum development in ${evaluationYear}, student mentoring during ${evaluationYear}, PhD placements in ${evaluationYear}, new course development in ${evaluationYear}, advising load in ${evaluationYear}. EXCLUDE everything from earlier or later years.
 
-## Service and Administrative Accomplishments
-Committees, editorial roles, department / college / university service, professional organization leadership, administrative achievements (hiring, budget, program launches), event management, process improvements.
+TEACHING AWARDS — EXPLICITLY ENUMERATE:
+List every teaching award, recognition, or distinction the recipient received in ${evaluationYear}. Look in the CV, F180, and writer's notes. If awards are mentioned anywhere, list them. Format: "{Award name}, {granting body}, {date}". Do NOT skip them. If none, write "None listed."
+
+## Service and Administrative Accomplishments (${evaluationYear} ONLY)
+Committees, editorial roles, department / college / university service, professional organization leadership, administrative achievements (hiring, budget, program launches), event management, process improvements — all from ${evaluationYear} only. EXCLUDE service activities outside ${evaluationYear}.
+
+SERVICE AWARDS — EXPLICITLY ENUMERATE:
+List every service award, recognition, or distinction the recipient received in ${evaluationYear}. Look in the CV, F180, and writer's notes. Format: "{Award name}, {granting body}, {date}". Do NOT skip them. If none, write "None listed."
 
 ## Operational and Team Accomplishments (for staff roles)
 Team management, process improvements, event coordination, student support, professional development, cross-department collaboration. If not applicable, write "N/A".
@@ -363,6 +393,28 @@ The letter evaluates ${args.recipientName}, ${args.recipientTitle}${
 Recipient's role category: ${args.roleCategory}.
 
 ${isApt ? 'NOTE: This is an APT / lecturer category. Do NOT include any research evaluation. Do NOT reference the absence of research negatively.' : ''}
+
+================================================================
+HARD EXCLUSION RULES — EVALUATION PERIOD (apply BEFORE writing a single sentence)
+================================================================
+
+Evaluation year: ${args.evaluationYear}. Letter is dated ${args.evaluationYear + 1} and evaluates performance DURING ${args.evaluationYear} only.
+
+- Research window: ${winStart}-${args.evaluationYear} (the evaluation year and the two years before it).
+- Teaching window: ${args.evaluationYear} ONLY.
+- Service window: ${args.evaluationYear} ONLY.
+
+EXCLUDE every paper, grant, presentation, or scholarly activity dated BEFORE ${winStart}. Even if the CV / F180 / research brief lists papers from ${winStart - 1}, ${winStart - 2}, or earlier, DO NOT mention them. The window is closed. If a research brief or writer's notes references a pre-window paper, the letter MUST omit that reference.
+
+EXCLUDE every teaching activity outside the evaluation year ${args.evaluationYear}. Do NOT reference courses taught in earlier or later years, EXCEPT in the forward-look paragraph which may name an upcoming-semester plan from the writer's notes.
+
+EXCLUDE every service activity outside ${args.evaluationYear}. Same rule as teaching.
+
+If the research brief, writer's notes, or any source document includes pre-window content, the letter MUST omit it. The letter speaks ONLY to performance during the evaluation period.
+
+${isApt ? `APT-SPECIFIC: research is irrelevant for APT faculty. Do NOT evaluate research. Do NOT mention papers, grants, or scholarly output as a basis for evaluation. Per Mays Guidelines Section 6.2, the absence of research is NOT a negative factor and must not be framed as one.` : ''}
+
+================================================================
 
 Use the LETTER SKILL REFERENCE (in the cached system block above) to match the expected structure, tone, and section ordering for this faculty category.
 
