@@ -135,7 +135,7 @@ function detectKind(name) {
 
   const setup = {
     writerId: 'metters',
-    evaluationYear: 2024,
+    evaluationYear: 2025,
     recipientName: 'Wanda Curtsinger',
     recipientTitle: 'Senior Lecturer',
     recipientDepartment: 'Department of Information and Operations Management',

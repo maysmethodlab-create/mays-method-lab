@@ -161,7 +161,7 @@ function detectKind(name) {
 
   const setup = {
     writerId: 'brown',
-    evaluationYear: 2024,
+    evaluationYear: 2025,
     recipientName: 'Jill Cetina',
     recipientTitle: 'Professor of Practice (Clinical Professor)',
     recipientDepartment: "Adam C. Sinn '00 Department of Finance",

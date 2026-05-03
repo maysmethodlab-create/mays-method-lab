@@ -154,7 +154,7 @@ function detectKind(name) {
 
   const setup = {
     writerId: 'brown',
-    evaluationYear: 2024,
+    evaluationYear: 2025,
     recipientName: 'Peter Cziraki',
     recipientTitle: 'Assistant Professor',
     recipientDepartment: "Adam C. Sinn '00 Department of Finance",

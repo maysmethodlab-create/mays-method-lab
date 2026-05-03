@@ -143,7 +143,7 @@ function detectKind(name) {
 
   const setup = {
     writerId: 'metters',
-    evaluationYear: 2024,
+    evaluationYear: 2025,
     recipientName: 'Aaron Becker',
     recipientTitle: 'Clinical Professor',
     recipientDepartment: 'Department of Information and Operations Management',

@@ -171,7 +171,7 @@ function detectKind(name) {
 
   const setup = {
     writerId: 'mcguire',
-    evaluationYear: 2024,
+    evaluationYear: 2025,
     recipientName: ident.name || 'Amy Hurta',
     recipientTitle: ident.title || 'Lecturer',
     recipientDepartment: 'James Benjamin Department of Accounting',
