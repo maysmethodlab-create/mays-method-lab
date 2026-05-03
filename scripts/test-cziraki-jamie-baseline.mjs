@@ -24,6 +24,7 @@ const FILES = ['Cziraki Peter F180.pdf', 'Cziraki Peter CV.pdf'];
 
 const RATINGS = {
   teachingRating: 'Excellent',
+  researchRating: 'Effective',
   serviceRating: 'Excellent',
   overallRating: 'Effective',
 };
@@ -189,6 +190,7 @@ function detectKind(name) {
       writerId: 'brown',
       letterText: correctedBody,
       teachingRating: setup.teachingRating,
+      researchRating: setup.researchRating,
       serviceRating: setup.serviceRating,
       overallRating: setup.overallRating,
     }),
