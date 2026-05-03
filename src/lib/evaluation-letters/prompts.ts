@@ -57,8 +57,11 @@ With venue names and roles (presenter / discussant / session chair).
 
 ### E. Awards, grants, editorial roles (in-window only: ${winStart}-${evaluationYear})
 
-RESEARCH AWARDS AND GRANTS — EXPLICITLY ENUMERATE:
-List every research award, best-paper award, external grant, fellowship, editorial role, special-issue editorship, or society leadership the recipient received between ${winStart} and ${evaluationYear}. Look in the CV, F180, and writer's notes. If awards or grants are mentioned anywhere, list them. Format: "{Award name}, {granting body}, {date}". For grants also state the amount. Do NOT skip them. If none, write "None listed."
+RESEARCH AWARDS — EXPLICITLY ENUMERATE:
+List EVERY research award, best-paper award, fellowship, editorial role, special-issue editorship, or society leadership the recipient received between ${winStart} and ${evaluationYear}. Look in the CV, F180, AND the writer's notes. Do NOT skip any. Format: "{Award name}, {granting body}, {date}". If none in the source, write "None listed."
+
+GRANTS — EXPLICITLY ENUMERATE:
+List EVERY external grant, fellowship, contract, or funded project the recipient received in the 3-year scholarship window (${winStart}-${evaluationYear}). Look in the CV, F180, AND the writer's notes. Format: "{Grant name}, {funding body}, {amount}, {date}". Do NOT skip any. If none in the source, write "None listed." (For APT recipients, list grants here for completeness; downstream the writing agent will only mention them as a bonus acknowledgment if present.)
 
 ### F. PhD students and cross-faculty collaboration
 Every PhD student the recipient advises or co-advises (by name, with degree status), every co-authored paper with a colleague at Mays or with a faculty member at another institution that suggests interesting cross-disciplinary work.
@@ -69,13 +72,13 @@ For staff or APT faculty without research expectations, write "N/A" for the sect
 Courses taught in ${evaluationYear} (with numbers), evaluations / scores from ${evaluationYear}, curriculum development in ${evaluationYear}, student mentoring during ${evaluationYear}, PhD placements in ${evaluationYear}, new course development in ${evaluationYear}, advising load in ${evaluationYear}. EXCLUDE everything from earlier or later years.
 
 TEACHING AWARDS — EXPLICITLY ENUMERATE:
-List every teaching award, recognition, or distinction the recipient received in ${evaluationYear}. Look in the CV, F180, and writer's notes. If awards are mentioned anywhere, list them. Format: "{Award name}, {granting body}, {date}". Do NOT skip them. If none, write "None listed."
+List EVERY teaching award, recognition, or distinction the recipient received in ${evaluationYear}. Look in the CV, F180, AND the writer's notes. Format: "{Award name}, {granting body}, {date}". Do NOT skip any. If none in the source, write "None listed."
 
 ## Service and Administrative Accomplishments (${evaluationYear} ONLY)
 Committees, editorial roles, department / college / university service, professional organization leadership, administrative achievements (hiring, budget, program launches), event management, process improvements — all from ${evaluationYear} only. EXCLUDE service activities outside ${evaluationYear}.
 
 SERVICE AWARDS — EXPLICITLY ENUMERATE:
-List every service award, recognition, or distinction the recipient received in ${evaluationYear}. Look in the CV, F180, and writer's notes. Format: "{Award name}, {granting body}, {date}". Do NOT skip them. If none, write "None listed."
+List EVERY service award, recognition, or distinction the recipient received in ${evaluationYear}. Look in the CV, F180, AND the writer's notes. Format: "{Award name}, {granting body}, {date}". Do NOT skip any. If none in the source, write "None listed."
 
 ## Operational and Team Accomplishments (for staff roles)
 Team management, process improvements, event coordination, student support, professional development, cross-department collaboration. If not applicable, write "N/A".
@@ -285,11 +288,34 @@ ${args.styleOverrides.useSectionHeadings ? `Use these bold sections in this orde
 1. **Teaching** — primary section, longest. Be specific to courses, evaluations, mentoring, curricular contributions, course development.
 2. **Service** — committee work, student-org advising, BUSN 101, exam proctoring, etc.
 3. AACSB section — follow the AACSB rule below. ${aacsbInstr}
-4. Forward-look paragraph — see FORWARD-LOOK rule below.` : `Write 3-5 flowing paragraphs in this order, NO headings:
+4. Research bonus-acknowledgment paragraph (CONDITIONAL) — see RESEARCH BONUS-ACKNOWLEDGMENT rule below.
+5. Forward-look paragraph — see FORWARD-LOOK rule below.` : `Write 3-5 flowing paragraphs in this order, NO headings:
 - Paragraph 1-2: Teaching narrative — specific course numbers, evaluations, course development, student feedback, co-teaching, online program contributions, willingness to teach new preps. EXPAND on what the writer's notes emphasize.
 - Paragraph 3 (only if substantial): Service narrative — committee work, advising, BUSN 101, exam proctoring, etc.
 - Paragraph 4 (AACSB): ${aacsbInstr}
-- Paragraph 5 (closing / forward-look): see FORWARD-LOOK rule below.`}
+- Optional paragraph (CONDITIONAL — only if research activity in source): bonus-acknowledgment, see RESEARCH BONUS-ACKNOWLEDGMENT rule below.
+- Closing paragraph (forward-look): see FORWARD-LOOK rule below.`}
+
+RESEARCH BONUS-ACKNOWLEDGMENT rule — APT-SPECIFIC:
+This is an APT (Academic Professional Track) recipient. Research is NOT
+evaluated and the absence of research is NOT a negative. However, if the
+research brief shows ANY research activity by the recipient in the
+3-year window (${winStart}-${args.evaluationYear}) — a journal article,
+a book chapter, a conference paper, an editorial role, an external grant,
+a working paper, an invited talk, or any scholarly engagement — include
+ONE short paragraph (2-3 sentences) acknowledging it. Tone is encouraging
+and non-evaluative. Use phrasing like:
+  - "We appreciate your scholarly engagement, including {specific item}."
+  - "Your continued participation in {venue / journal / project} is a
+    welcome contribution that we encourage you to continue."
+  - "Beyond your teaching and service, you also contributed {specific
+    research item}, which we appreciate."
+DO NOT use any rating language ("excellent," "effective," "needs
+improvement," "strong," "outstanding"). DO NOT evaluate quality. DO NOT
+compare against any standard. DO NOT include this paragraph if the
+research brief and source documents show NO research activity in the
+window. If the brief's Research section says "N/A" or lists nothing in
+the window, OMIT this paragraph entirely.
 
 FORWARD-LOOK rule — REQUIRED for every APT letter:
 The closing paragraph (or final 2-3 sentences before the rating-sentence
@@ -552,8 +578,20 @@ export function assembleFinalLetter(args: {
       .replace(/\[TEACHING_RATING_SENTENCE\]/g, sentences.teaching)
       .replace(/\[SERVICE_RATING_SENTENCE\]/g, sentences.service)
       .replace(/\[OVERALL_RATING_SENTENCE\]/g, sentences.overall);
-    // Clean up empty lines a placeholder substitution may have left behind.
-    out = out.replace(/\n{3,}/g, '\n\n');
+    // Clean up artifacts from empty placeholder substitution (e.g., APT
+    // letters where sentences.research === ''):
+    //   - collapse runs of 2+ inline spaces (NOT line-leading whitespace,
+    //     which preserves the FROM-block indentation in the memo header).
+    //   - collapse 3+ newlines to a single blank line.
+    out = out
+      .split('\n')
+      .map((line) => {
+        const lead = line.match(/^[ \t]*/)?.[0] || '';
+        const rest = line.slice(lead.length).replace(/[ \t]{2,}/g, ' ');
+        return lead + rest;
+      })
+      .join('\n')
+      .replace(/\n{3,}/g, '\n\n');
     if (args.writerSignatureClose) {
       out = `${out.trimEnd()}\n\n${args.writerSignatureClose.trim()}\n`;
     }
