@@ -85,7 +85,7 @@ ${postLint.length === 0 ? 'READY TO SEND (sanitizer-only check passed)' : 'NEEDS
     });
     const hRes = await client.messages.create({
       model: CHEAP_MODEL,
-      max_tokens: 5000,
+      max_tokens: 7500,
       system: hp.system,
       messages: [{ role: 'user', content: hp.user }],
     });
