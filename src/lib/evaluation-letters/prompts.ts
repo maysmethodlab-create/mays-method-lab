@@ -58,7 +58,7 @@ Use this exact tier-classification reference — do NOT improvise:
 
 ${journalTierBlock}
 
-For each article, label its tier explicitly in the brief: **A-TIER (dept A-list)**, **A-TIER (FT50)**, **other A-level / well-regarded**, or **lower-tier**. Group articles by tier (A-tier first, then other A-level, then the rest). If a journal is not on the department A-list AND not on the FT50, do not call it A-tier — even if the title sounds prestigious or contains the word "Journal." If the recipient is an Assistant Professor whose PhD is fewer than 3 years old, note that and list everything since the PhD instead.
+For each article, label its tier explicitly in the brief: **A-TIER (dept A-list)**, **A-TIER (FT50)**, **other well-regarded outlet**, or **lower-tier**. Group articles by tier (A-tier first, then other well-regarded outlets, then the rest). NEVER use the phrase "A-level" or "A-list" for the third group — that wording is reserved exclusively for journals on the dept A-list or the FT50. If a journal is not on the department A-list AND not on the FT50, do not call it A-tier — even if the title sounds prestigious or contains the word "Journal." If the recipient is an Assistant Professor whose PhD is fewer than 3 years old, note that and list everything since the PhD instead.
 
 ### B. Pipeline (under review / revise-and-resubmit / preparing)
 Every paper currently in the review process. State journal, round, and current status. If a "Submission History" document is provided, capture the FULL JOURNEY of each paper through journals (e.g., "Submitted to QJE Jul 2023, rejected; AER Feb 2025, rejected; JF Mar 2025, rejected; RFS May 2025, under review"). Senior faculty want to see this trajectory.

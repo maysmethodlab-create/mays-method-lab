@@ -184,8 +184,8 @@ A journal on the FT50 list is also recognized as top-tier even when it is not on
 
 CLASSIFICATION RULE — apply both lists strictly:
 1. A-tier = on the recipient's department A-list (above) OR on the FT50.
-2. Other A-level / well-regarded = peer-reviewed but not on either list.
+2. Other well-regarded outlets = peer-reviewed but not on either list. Do NOT label these "A-level" — the term "A-level" / "A-list" / "A-tier" is reserved exclusively for journals on the lists above.
 3. Lower-tier = conference proceedings, book chapters, editorials, practitioner outlets.
 
-Do NOT default journals to A-tier just because they sound prestigious. If a journal is not on either list above, it is NOT A-tier. Group it under "other A-level / well-regarded" or the appropriate lower tier.`;
+Do NOT default journals to A-tier just because they sound prestigious. If a journal is not on either list above, it is NOT A-tier. Group it under "other well-regarded outlets" or the appropriate lower tier.`;
 }
