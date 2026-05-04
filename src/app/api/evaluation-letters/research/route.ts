@@ -12,6 +12,12 @@ type Body = {
    *  research brief can hard-exclude pre-window content (papers, courses,
    *  service activities outside the relevant window). */
   evaluationYear?: number;
+  /** Recipient's department (e.g. "Department of Information and
+   *  Operations Management"). Used to look up the department-specific
+   *  A-level journal list from Appendix J of the Mays Faculty
+   *  Guidelines so the brief classifies journals against the
+   *  authoritative list rather than defaulting everything to A-tier. */
+  recipientDepartment?: string;
 };
 
 export async function POST(req: Request) {
@@ -36,6 +42,7 @@ export async function POST(req: Request) {
   const { system, user } = researchPrompt({
     sourceDocuments: body.sourceDocuments,
     evaluationYear,
+    recipientDepartment: body.recipientDepartment,
   });
 
   if (!isApiKeyConfigured()) {

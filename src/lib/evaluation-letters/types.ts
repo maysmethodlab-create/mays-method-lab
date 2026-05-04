@@ -25,8 +25,8 @@ export type UploadedFile = {
   text: string;
   /** Original byte size for display */
   size: number;
-  /** Tag for the user — "self-evaluation" | "cv" | "other" */
-  kind: 'self-evaluation' | 'cv' | 'other';
+  /** Tag for the user — "self-evaluation" | "cv" | "peer-comments" | "other" */
+  kind: 'self-evaluation' | 'cv' | 'peer-comments' | 'other';
 };
 
 export type ResearchBrief = {

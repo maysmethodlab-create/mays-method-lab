@@ -116,6 +116,7 @@ export default function GenerateStep({
         body: JSON.stringify({
           sourceDocuments,
           evaluationYear: setup.evaluationYear,
+          recipientDepartment: setup.recipientDepartment,
         }),
       });
       const data = await res.json();

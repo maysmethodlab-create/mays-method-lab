@@ -1,4 +1,5 @@
 import { renderWritingRules, renderTopPriorityRules } from './writing-rules';
+import { renderJournalTierReference } from './journal-tiers';
 import type { WriterStyleOverrides } from './writers';
 
 /* ==========================================================================
@@ -10,10 +11,17 @@ export function researchPrompt(args: {
   /** Year being evaluated (e.g. 2025). The letter is written in
    *  ${evaluationYear}+1 about performance during ${evaluationYear}. */
   evaluationYear: number;
+  /** Recipient's department string (e.g. "Department of Information and
+   *  Operations Management"). Used to look up the department's A-level
+   *  journal list from Appendix J of the Mays Faculty Guidelines so the
+   *  brief classifies journals against the authoritative list rather
+   *  than defaulting everything to A-tier. */
+  recipientDepartment?: string;
 }) {
   const evaluationYear = args.evaluationYear;
   const winEnd = evaluationYear;
   const winStart = winEnd - 2; // 3-year scholarship window: y-2, y-1, y
+  const journalTierBlock = renderJournalTierReference(args.recipientDepartment);
 
   const system = `You are the Research Agent for an evaluation letter at Mays Business School, Texas A&M University. You produce a comprehensive, factual research brief from uploaded documents (the recipient's self-evaluation and CV).
 
@@ -44,7 +52,13 @@ OUTPUT — produce a structured markdown research brief with these sections:
 Organize this section in this order, mirroring how a Mays department head reads a Faculty 180:
 
 ### A. Top-tier journal articles in the 3-year scholarship window (${winStart}-${evaluationYear})
-Look at the CV / Faculty 180 and identify EVERY peer-reviewed journal article whose publication year falls in ${winStart}, ${winStart + 1}, or ${evaluationYear}. EXCLUDE every article dated ${winStart - 1} or earlier — do not list them, do not mention them, do not summarize them. For each in-window article: full citation, journal name, co-authors, year, citation count if shown. Group by tier (top-tier first: Journal of Marketing, Marketing Science, Management Science, Journal of Finance, JFE, RFS, MISQ, ISR, POM, etc.), then other A-level / well-regarded journals, then the rest. If the recipient is an Assistant Professor whose PhD is fewer than 3 years old, note that and list everything since the PhD instead.
+Look at the CV / Faculty 180 and identify EVERY peer-reviewed journal article whose publication year falls in ${winStart}, ${winStart + 1}, or ${evaluationYear}. EXCLUDE every article dated ${winStart - 1} or earlier — do not list them, do not mention them, do not summarize them. For each in-window article: full citation, journal name, co-authors, year, citation count if shown.
+
+Use this exact tier-classification reference — do NOT improvise:
+
+${journalTierBlock}
+
+For each article, label its tier explicitly in the brief: **A-TIER (dept A-list)**, **A-TIER (FT50)**, **other A-level / well-regarded**, or **lower-tier**. Group articles by tier (A-tier first, then other A-level, then the rest). If a journal is not on the department A-list AND not on the FT50, do not call it A-tier — even if the title sounds prestigious or contains the word "Journal." If the recipient is an Assistant Professor whose PhD is fewer than 3 years old, note that and list everything since the PhD instead.
 
 ### B. Pipeline (under review / revise-and-resubmit / preparing)
 Every paper currently in the review process. State journal, round, and current status. If a "Submission History" document is provided, capture the FULL JOURNEY of each paper through journals (e.g., "Submitted to QJE Jul 2023, rejected; AER Feb 2025, rejected; JF Mar 2025, rejected; RFS May 2025, under review"). Senior faculty want to see this trajectory.
@@ -88,6 +102,9 @@ Quote or closely paraphrase what the person themselves said about shortcomings. 
 
 ## Goals for the Upcoming Year
 List every goal they stated. Use their own language as closely as possible.
+
+## Peer Comments from Other Faculty
+If any source document is labeled PEER-COMMENTS (these are written by senior or tenured faculty about the recipient), capture the substance of every relevant remark here. Quote 2-4 specific points verbatim or near-verbatim, attributed only to "senior faculty" or "tenured faculty colleagues" (NEVER name an individual peer). If no PEER-COMMENTS document is present in the source, write "None provided." This section is the input to the letter's "Comments from Other Faculty" subsection — do not invent peer feedback if none is present, and do not generalize the recipient's self-evaluation as peer commentary.
 
 ## Key Themes and Patterns
 Note 2-3 overarching themes across their materials.
@@ -289,12 +306,17 @@ ${args.styleOverrides.useSectionHeadings ? `Use these bold sections in this orde
 2. **Service** — committee work, student-org advising, BUSN 101, exam proctoring, etc.
 3. AACSB section — follow the AACSB rule below. ${aacsbInstr}
 4. Research bonus-acknowledgment paragraph (CONDITIONAL) — see RESEARCH BONUS-ACKNOWLEDGMENT rule below.
-5. Forward-look paragraph — see FORWARD-LOOK rule below.` : `Write 3-5 flowing paragraphs in this order, NO headings:
+5. **Comments from Other Faculty** (CONDITIONAL) — see PEER COMMENTS rule below.
+6. Forward-look paragraph — see FORWARD-LOOK rule below.` : `Write 3-5 flowing paragraphs in this order, NO headings:
 - Paragraph 1-2: Teaching narrative — specific course numbers, evaluations, course development, student feedback, co-teaching, online program contributions, willingness to teach new preps. EXPAND on what the writer's notes emphasize.
 - Paragraph 3 (only if substantial): Service narrative — committee work, advising, BUSN 101, exam proctoring, etc.
 - Paragraph 4 (AACSB): ${aacsbInstr}
 - Optional paragraph (CONDITIONAL — only if research activity in source): bonus-acknowledgment, see RESEARCH BONUS-ACKNOWLEDGMENT rule below.
+- Optional paragraph (CONDITIONAL — only if peer comments are in the brief): "Comments from Other Faculty" — see PEER COMMENTS rule below.
 - Closing paragraph (forward-look): see FORWARD-LOOK rule below.`}
+
+PEER COMMENTS rule — applies to APT and TT alike:
+Include a "Comments from Other Faculty" subsection ONLY if the research brief's "Peer Comments from Other Faculty" section contains substantive content (NOT "None provided."). Write 2-4 sentences summarizing the substance. Quote 1-2 specific phrases verbatim or near-verbatim. Attribute as "senior faculty" or "tenured faculty colleagues" — NEVER name an individual peer. Do NOT invent feedback when the brief says none was provided. If the brief shows "None provided.", OMIT this section entirely (do not write the heading at all).
 
 RESEARCH BONUS-ACKNOWLEDGMENT rule — APT-SPECIFIC:
 This is an APT (Academic Professional Track) recipient. Research is NOT
@@ -399,7 +421,9 @@ BODY STRUCTURE:
    - Paragraph 2: growth area, framed constructively as a natural next step.
    - Paragraph 3 (optional): additional nuance or context.
 
-8. **Your Plan for the Upcoming Year** (heading wrapped in **):
+8. **Comments from Other Faculty** (heading wrapped in **): CONDITIONAL — include this section ONLY if the research brief's "Peer Comments from Other Faculty" section contains substantive content (i.e. NOT "None provided."). Write one short paragraph (3-5 sentences) summarizing the substance of the peer feedback. Quote 1-2 specific phrases verbatim or near-verbatim. Attribute as "senior faculty" or "tenured faculty colleagues" — NEVER name an individual peer. Do NOT invent feedback if the brief shows none. If the brief says "None provided." for peer comments, OMIT this entire section (do not write the heading at all).
+
+9. **Your Plan for the Upcoming Year** (heading wrapped in **):
    - Opening sentence connecting their goals to the institutional moment.
    - 3-5 bullet points of specific goals from the self-evaluation and writer's notes.
    - Closing sentence affirming confidence.
@@ -637,7 +661,7 @@ export function hallucinationPrompt(args: {
 
 YOUR ONLY JOB IS FACTUAL ACCURACY. You are not concerned with sentence rhythm, banned words, em-dashes, or any other writing-style issue. A separate Style Agent will handle those after you. Focus 100% on facts.
 
-GROUND-TRUTH SOURCES — both are authoritative:
+GROUND-TRUTH SOURCES — all are authoritative:
 1. SOURCE DOCUMENTS (the recipient's CV / F180 / self-evaluation).
 2. WRITER'S NOTES (the department head's personal observations and
    first-hand knowledge about the recipient — co-teaching plans,
@@ -646,6 +670,15 @@ GROUND-TRUTH SOURCES — both are authoritative:
    letter, so their factual statements ARE ground truth even when they
    do not appear in the CV. Do NOT flag a claim as fabricated when the
    writer's notes assert it.
+3. PEER COMMENTS — any section labeled PEER-COMMENTS within the source
+   documents (e.g. a file uploaded as "peer comments" alongside the CV
+   and self-evaluation), OR text in the dedicated peer-comments block
+   below if provided. Peer comments are written by senior or tenured
+   faculty colleagues about the recipient. Treat any factual statement
+   that appears in PEER-COMMENTS sections as ground truth, even when it
+   does not appear in the recipient's CV. Do NOT flag the letter's
+   "Comments from Other Faculty" section as fabricated when the
+   underlying claims trace to PEER-COMMENTS content.
 
 OUTPUT FORMAT — return a markdown report followed by a CORRECTED LETTER inside a fenced code block:
 

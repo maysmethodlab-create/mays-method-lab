@@ -83,6 +83,17 @@ export default function UploadStep({
 
   function detectKind(name: string): UploadedFile['kind'] {
     const n = name.toLowerCase();
+    // Peer-comments must be checked BEFORE self-evaluation because file
+    // names like "Annual review comments of associate profs" would
+    // otherwise match the self-evaluation pattern (which keys on
+    // "annual" / "review").
+    if (
+      /peer|comments?\s+(?:from|by|of|about|junior|senior|associate|tenured|faculty|other)|review\s+comments|other\s+faculty|tenured\s+faculty|senior\s+faculty/.test(
+        n,
+      )
+    ) {
+      return 'peer-comments';
+    }
     if (/cv|vita|curriculum|resume/.test(n)) return 'cv';
     if (/self|annual|evaluation|review|f180|faculty\s*180/.test(n)) return 'self-evaluation';
     return 'other';
@@ -188,8 +199,9 @@ export default function UploadStep({
         <div className="eyebrow text-[11px]">Documents</div>
         <p className="text-sm text-ink-secondary leading-relaxed">
           Upload the recipient&apos;s self-evaluation (Faculty 180 / annual report) and CV.
-          The AI reads these to write the letter body. Accepted formats: .docx, .pdf, .txt, .md
-          (10MB max each).
+          Include all peer comments as well, if you collected feedback from senior or
+          tenured faculty. The AI reads these to write the letter body. Accepted formats:
+          .docx, .pdf, .txt, .md (10MB max each).
         </p>
 
         <div
@@ -251,6 +263,7 @@ export default function UploadStep({
                 >
                   <option value="self-evaluation">Self-evaluation</option>
                   <option value="cv">CV</option>
+                  <option value="peer-comments">Peer comments</option>
                   <option value="other">Other</option>
                 </select>
                 <button
