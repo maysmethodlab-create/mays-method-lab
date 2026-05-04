@@ -54,6 +54,10 @@ const config: Config = {
         headline: ['Oswald', 'Arial', 'sans-serif'],
         body: ['"Work Sans"', 'Arial', 'sans-serif'],
         display: ['Oswald', 'Arial', 'sans-serif'],
+        // Open Sans is the official TAMU wordmark / system-brand font.
+        // Used on the header logo block so the lockup reads as the
+        // official Texas A&M brand standard.
+        brand: ['"Open Sans"', 'Arial', 'sans-serif'],
       },
       letterSpacing: {
         eyebrow: '0.05em',

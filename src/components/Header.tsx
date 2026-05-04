@@ -17,14 +17,11 @@ export default function Header() {
             height={48}
             className="w-12 h-12"
           />
-          <div className="leading-tight">
-            <div className="text-[11px] tracking-[0.05em] uppercase text-ink-secondary font-semibold group-hover:text-maroon transition-colors">
-              Texas A&amp;M University
-            </div>
+          <div className="leading-tight font-brand">
             <div className="text-[11px] tracking-[0.05em] uppercase text-ink-secondary font-semibold group-hover:text-maroon transition-colors">
               Mays Business School
             </div>
-            <div className="text-xl md:text-[22px] text-ink-primary font-normal font-headline leading-[1.15] mt-0.5">
+            <div className="text-xl md:text-[22px] text-ink-primary font-normal leading-[1.15] mt-0.5">
               Mays Method Lab
             </div>
           </div>
