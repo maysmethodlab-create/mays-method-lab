@@ -80,7 +80,7 @@ export async function POST(req: Request) {
     const client = getClient();
     const response = await client.messages.create({
       model: CHEAP_MODEL,
-      max_tokens: 4000,
+      max_tokens: 7500,
       system,
       messages: [{ role: 'user', content: user }],
     });
