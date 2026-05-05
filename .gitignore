@@ -100,3 +100,9 @@ data/pptx-outputs/
 
 # PowerPoint Reformatter — local-only user-test decks (e.g. Sara Chen messy deck)
 data/test-decks/
+
+# Staff evaluation letters — Hari's own direct-report letters stay local-only.
+# Letters/ is for sanitized worked examples; Letters/private/ is for personal
+# staff evaluations (executive assistant, etc.) that should not appear in a
+# public repo.
+apps/Annual Evaluation Letters/staff-evaluation-letter-writer-skill/Letters/private/

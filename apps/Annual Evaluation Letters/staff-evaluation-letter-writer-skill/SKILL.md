@@ -129,4 +129,21 @@ In that case:
 
 ## Where letters go
 
-Final letters live in `Letters/[Year]/[Full Name].docx` within this skill folder, or at a user-specified path. For staff letters Hari is signing for his own direct reports (e.g., his executive assistant), file alongside the faculty letters. For letters Hari is helping a colleague draft, deliver the .docx to the colleague directly and keep a working copy in `Letters/`.
+Two storage patterns, depending on who the letter is about and who is signing:
+
+- **Sanitized worked examples** that demonstrate the skill (signing for someone else, anonymous-friendly content) live in `Letters/` and ARE committed to git. The Alyssa Morgan example (Venard Koerwer signing for his Assistant Director at CED) is the canonical example here.
+- **Hari's own direct-report letters** (his executive assistant, any future personal staff) live in `Letters/private/` and are **gitignored**. The repo is public on GitHub, so personal-staff evaluation content stays out of source control by default. The Kathleen Rowland 2025 letter (Hari signing for his Executive Assistant) is the canonical example in this category.
+
+If a colleague Hari is helping wants their letter kept private as well, save under `Letters/private/[colleague-last-name]/` and deliver the .docx to them directly.
+
+## Worked examples shipped with this skill
+
+| File | Path | Signer | Recipient | Branch |
+|---|---|---|---|---|
+| Alyssa Morgan input JSON | `references/example-input-alyssa-morgan.json` | Venard Scott Koerwer | Alyssa Morgan, Asst. Director, CED | "Hari helps another administrator draft" |
+| Alyssa Morgan draft .docx | `Letters/Alyssa Morgan 2026 Performance Evaluation Venard Koerwer (5 4 2026) DRAFT.docx` | Venard Scott Koerwer | Alyssa Morgan | committed example |
+| Kathleen Rowland 2025 letter | `Letters/private/Kathleen Rowland Evaluation Letter Shrihari Sridhar (5 4 2026).docx` | Hari Sridhar | Kathleen Rowland, Executive Assistant | gitignored, Hari's own staff |
+| Kathleen Rowland input JSON | `Letters/private/Kathleen Rowland - Letter Input.json` | Hari Sridhar | Kathleen Rowland | gitignored |
+| Kathleen Rowland accompanying email | `Letters/private/Kathleen Rowland - Accompanying Email.md` | Hari Sridhar | Kathleen Rowland | gitignored |
+
+Use these as reference templates when drafting future letters. The Alyssa example shows the "signing for someone else" pattern (configurable FROM block, supervisor's voice + annotations). The Kathleen example shows the "Hari signing for his own staff" pattern (Hari's voice, multi-year continuity from prior letters, four-paragraph Major Accomplishments structure for a longer-tenured EA).
