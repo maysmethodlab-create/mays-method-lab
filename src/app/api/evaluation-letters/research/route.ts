@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { CHEAP_MODEL, getClient, isApiKeyConfigured } from '@/lib/evaluation-letters/claude';
 import { researchPrompt } from '@/lib/evaluation-letters/prompts';
+import { auditBriefForTierHallucinations } from '@/lib/evaluation-letters/journal-tiers';
 import { placeholderNotice, requireAuth } from '@/lib/evaluation-letters/api-helpers';
 
 export const runtime = 'nodejs';
@@ -87,7 +88,12 @@ export async function POST(req: Request) {
     const text = response.content
       .map((block) => (block.type === 'text' ? block.text : ''))
       .join('');
-    return NextResponse.json({ brief: text });
+    // Belt-and-suspenders audit: deterministic check that no journal
+    // outside the canonical lists slipped into the brief's Top-Tier
+    // section. Surfaces warnings to the caller so the UI / smoke
+    // tests can flag hallucinated A-tier classifications.
+    const tierWarnings = auditBriefForTierHallucinations(text, body.recipientDepartment);
+    return NextResponse.json({ brief: text, tierWarnings });
   } catch (e) {
     return NextResponse.json(
       { error: e instanceof Error ? e.message : 'Research phase failed.' },

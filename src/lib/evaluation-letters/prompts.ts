@@ -51,25 +51,36 @@ OUTPUT — produce a structured markdown research brief with these sections:
 ## Research and Scholarly Accomplishments
 Organize this section in this order, mirroring how a Mays department head reads a Faculty 180:
 
-### A. Top-tier journal articles in the 3-year scholarship window (${winStart}-${evaluationYear})
-Look at the CV / Faculty 180 and identify EVERY peer-reviewed journal article whose publication year falls in ${winStart}, ${winStart + 1}, or ${evaluationYear}. EXCLUDE every article dated ${winStart - 1} or earlier — do not list them, do not mention them, do not summarize them. For each in-window article: full citation, journal name, co-authors, year, citation count if shown.
+### A. Top-Tier Journal Articles in the 3-year scholarship window (${winStart}-${evaluationYear})
 
-Use this exact tier-classification reference — do NOT improvise:
+This section is RESERVED for in-window peer-reviewed journal articles published in journals ON the canonical lists below. NO OTHER JOURNAL belongs in this section, regardless of how prestigious it sounds.
 
 ${journalTierBlock}
 
-For each article, label its tier explicitly in the brief: **A-TIER (dept A-list)**, **A-TIER (FT50)**, **other well-regarded outlet**, or **lower-tier**. Group articles by tier (A-tier first, then other well-regarded outlets, then the rest). NEVER use the phrase "A-level" or "A-list" for the third group — that wording is reserved exclusively for journals on the dept A-list or the FT50. If a journal is not on the department A-list AND not on the FT50, do not call it A-tier — even if the title sounds prestigious or contains the word "Journal." If the recipient is an Assistant Professor whose PhD is fewer than 3 years old, note that and list everything since the PhD instead.
+ENFORCEMENT — read this carefully:
+1. For EACH peer-reviewed journal article in the window (${winStart}-${evaluationYear}), look at the journal name in the citation and compare it CHARACTER-BY-CHARACTER against the dept A-list AND the FT50 list above.
+2. If the journal name is LITERALLY one of the canonical names, include the article here under section A.
+3. If the journal name is NOT on either list, even if it looks similar, even if it has a respected reputation, even if it contains the word "Journal" or "Review" or "Science" — do NOT include it here. Place it in section B (Other Publications) below.
+4. Do NOT lump multiple journals together. Each citation must be classified individually against the canonical lists.
+5. If you find no in-window articles in canonical journals, write "None in window." Do not pad this section with non-canonical journals.
 
-### B. Pipeline (under review / revise-and-resubmit / preparing)
-Every paper currently in the review process. State journal, round, and current status. If a "Submission History" document is provided, capture the FULL JOURNEY of each paper through journals (e.g., "Submitted to QJE Jul 2023, rejected; AER Feb 2025, rejected; JF Mar 2025, rejected; RFS May 2025, under review"). Senior faculty want to see this trajectory.
+For each in-window article you place in section A: full citation, journal name (italicized in single asterisks), co-authors, year, citation count if shown. Tag each as either **A-TIER (dept A-list)** or **A-TIER (FT50)** — and explicitly cite which canonical-list entry the journal name matches.
 
-### C. Lower-prestige scholarly output
+SPECIAL CASE: if the recipient is an Assistant Professor whose PhD is fewer than 3 years old, do NOT impose the three-year window. Instead, list canonical-journal articles since their PhD.
+
+### B. Other Publications in the 3-year scholarship window (${winStart}-${evaluationYear})
+This section is for peer-reviewed journal articles in the window whose journals are NOT on the dept A-list and NOT on the FT50. List each: full citation, journal name (italicized), co-authors, year. Frame factually as "additional peer-reviewed publications in well-regarded outlets" — never inflate to A-tier. If no such articles exist, write "None in window."
+
+### C. Pipeline (under review / revise-and-resubmit / preparing)
+Every paper currently in the review process. State journal, round, and current status. If a "Submission History" document is provided, capture the FULL JOURNEY of each paper through journals (e.g., "Submitted to QJE Jul 2023, rejected; AER Feb 2025, rejected; JF Mar 2025, rejected; RFS May 2025, under review"). Senior faculty want to see this trajectory. Tag each pipeline paper's TARGET journal as A-TIER (dept A-list / FT50) or Other, using the same canonical-list lookup rule from section A.
+
+### D. Lower-prestige scholarly output
 Conference proceedings, book chapters, editorials, invited commentaries, white papers, working papers without a clear target journal. List separately and briefly. These are real activity but are evaluated at a different bar from journal articles.
 
-### D. Conferences, presentations, invited talks
+### E. Conferences, presentations, invited talks
 With venue names and roles (presenter / discussant / session chair).
 
-### E. Awards, grants, editorial roles (in-window only: ${winStart}-${evaluationYear})
+### F. Awards, grants, editorial roles (in-window only: ${winStart}-${evaluationYear})
 
 RESEARCH AWARDS — EXPLICITLY ENUMERATE:
 List EVERY research award, best-paper award, fellowship, editorial role, special-issue editorship, or society leadership the recipient received between ${winStart} and ${evaluationYear}. Look in the CV, F180, AND the writer's notes. Do NOT skip any. Format: "{Award name}, {granting body}, {date}". If none in the source, write "None listed."
@@ -77,7 +88,7 @@ List EVERY research award, best-paper award, fellowship, editorial role, special
 GRANTS — EXPLICITLY ENUMERATE:
 List EVERY external grant, fellowship, contract, or funded project the recipient received in the 3-year scholarship window (${winStart}-${evaluationYear}). Look in the CV, F180, AND the writer's notes. Format: "{Grant name}, {funding body}, {amount}, {date}". Do NOT skip any. If none in the source, write "None listed." (For APT recipients, list grants here for completeness; downstream the writing agent will only mention them as a bonus acknowledgment if present.)
 
-### F. PhD students and cross-faculty collaboration
+### G. PhD students and cross-faculty collaboration
 Every PhD student the recipient advises or co-advises (by name, with degree status), every co-authored paper with a colleague at Mays or with a faculty member at another institution that suggests interesting cross-disciplinary work.
 
 For staff or APT faculty without research expectations, write "N/A" for the section as a whole.
@@ -404,15 +415,22 @@ BODY STRUCTURE:
 
    **RESEARCH-PARAGRAPH STRUCTURE (mandatory ordering — mirrors Hari Sridhar's P&T pattern):**
 
-   For research-active faculty, the FIRST 2-3 paragraphs cover research, in this strict order:
+   For research-active faculty, the research paragraphs cover four areas, in this strict order. Each area uses the research brief's pre-classified labels — do NOT re-classify journals yourself. Section A of the brief lists in-window articles in dept-A-list / FT50 journals; Section B lists in-window articles in non-canonical journals.
 
-   (a) **Quantity over the 3-year scholarship window (${scholarshipWindow}).** Open with a sense of how much research has appeared in the last three fiscal years. State the count of peer-reviewed journal articles in that window. Name the top journals where the work appeared (italicize every journal title — use *single-asterisk* markdown, e.g. *Journal of Marketing*, *Management Science*, *Review of Financial Studies*). For Finance use *Journal of Finance*, *Journal of Financial Economics*, *Review of Financial Studies* as the top three; for Marketing use *Journal of Marketing*, *Journal of Consumer Research*, *Journal of Marketing Research*, *Marketing Science*, *Management Science*; for Information & Operations Management use *Management Science*, *Production and Operations Management*, *MIS Quarterly*, *Information Systems Research*. SPECIAL CASE: if the recipient is an Assistant Professor whose PhD was awarded fewer than three years ago, do NOT impose the three-year window. Instead, state the years they have been on the tenure clock and discuss their record over that shorter window.
+   (a) **Top-tier scholarship in the 3-year scholarship window (${scholarshipWindow}).** Open with the count of articles published in the recipient's department A-list or FT50 journals during the window — exactly the articles in the brief's Section A. Name those journals (italicize each title in *single-asterisk* markdown). Do NOT include any journal that the brief did not place in Section A. If the brief's Section A says "None in window," state factually that the recipient had no in-window publications in dept-A-list or FT50 journals during this window — do NOT promote a non-canonical journal to fill this paragraph. SPECIAL CASE: if the recipient is an Assistant Professor whose PhD was awarded fewer than three years ago, state the years they have been on the tenure clock and discuss their record over that shorter window.
 
-   (b) **Pipeline.** Papers under review (with journal name and round if known), revise-and-resubmits (state the round and the journal), papers being prepared for submission. Use the submission-history document if available — describe the journey of important papers through journals.
+   (b) **Other publications in the window.** ONE short paragraph describing additional peer-reviewed publications from Section B of the brief (journals not on the canonical lists). Frame these factually as "additional peer-reviewed publications" or "other publications in well-regarded outlets" — NEVER call them top-tier, A-list, A-level, or FT50, because they are not. Italicize the journal names in *single-asterisk* markdown. If the brief's Section B says "None in window," omit this paragraph entirely.
 
-   (c) **Lower-prestige scholarship in a SHORT separate paragraph.** Conference proceedings, book chapters, editorials. State them factually but briefly.
+   (c) **Pipeline.** Papers under review (with journal name and round if known), revise-and-resubmits (state the round and the journal), papers being prepared for submission. Use the submission-history document if available — describe the journey of important papers through journals. Use the brief's pre-classified target-journal labels — do not re-classify.
 
-   (d) **Quality and themes.** Move from quantity to quality. What are the main themes? Mention PhD-student co-authors by name, cross-faculty collaborations, methodologically novel work.
+   (d) **Lower-prestige scholarship in a SHORT separate paragraph.** Conference proceedings, book chapters, editorials. State them factually but briefly.
+
+   (e) **Quality and themes.** Move from quantity to quality. What are the main themes? Mention PhD-student co-authors by name, cross-faculty collaborations, methodologically novel work.
+
+   JOURNAL-TIER DISCIPLINE — applies throughout the letter:
+   - The research brief's tier classifications (Section A = top-tier, Section B = other) are AUTHORITATIVE. The brief was produced by a deterministic classifier, not by guess. Re-using its labels keeps the letter accurate.
+   - Do NOT add words like "FT50," "top-tier," "A-list," or "A-level" to a journal that the brief placed in Section B or among lower-tier output. Doing so would misrepresent the publication record.
+   - If you are uncertain about a journal's tier, default to neutral phrasing ("a peer-reviewed journal") and let the brief's classification stand.
 
    For Teaching and Service paragraphs, do NOT just list courses and committees. READ the recipient's self-evaluation narrative carefully and EXPAND on the points they themselves emphasize. Pull in specific student-comment themes, course-development efforts, mentoring stories, and service-leadership episodes.
 
@@ -428,9 +446,13 @@ BODY STRUCTURE:
    - 3-5 bullet points of specific goals from the self-evaluation and writer's notes.
    - Closing sentence affirming confidence.
 
-DO NOT include a "Summary" section or any rating language at the end. The
-formal Summary paragraph will be APPENDED after the writer assigns ratings.
-Stop after the closing sentence of section 8.`;
+10. RATING SENTENCES paragraph (REQUIRED — do not skip, do not add a heading): after the closing sentence of section 9, include exactly ONE paragraph containing these four placeholders, separated by single spaces, in this exact order:
+
+    [RESEARCH_RATING_SENTENCE] [TEACHING_RATING_SENTENCE] [SERVICE_RATING_SENTENCE] [OVERALL_RATING_SENTENCE]
+
+    Write nothing else in this paragraph. The placeholders will be substituted at letter-assembly time with the writer's actual ratings, producing the standard "Based on the Mays Guidelines, I assess your research / teaching / service as ..." sentences. Do NOT write your own rating sentences here, do NOT skip placeholders even if a category lacks a rating, and do NOT bracket additional commentary inside or beside them. The placeholder paragraph must appear before any closing line(s) the writer's style provides.
+
+After the rating-sentences paragraph, output the writer's CLOSING line(s) per the CLOSING block above. Do NOT add any "Summary" heading. The four rating sentences ARE the summary.`;
 
   const role = `${renderTopPriorityRules()}
 

@@ -162,6 +162,101 @@ export function getDepartmentAJournals(recipientDepartment: string | undefined):
 }
 
 /**
+ * Normalize a free-text journal name for comparison against the canonical
+ * lists. Lowercases, trims, removes leading "the ", swaps "&" for "and",
+ * and collapses whitespace. Designed to make the classifier tolerant of
+ * the small variations writers use in citations.
+ */
+function normalizeJournalName(raw: string): string {
+  return raw
+    .toLowerCase()
+    .trim()
+    .replace(/^the\s+/, '')
+    .replace(/\s*&\s*/g, ' and ')
+    .replace(/[ \s]+/g, ' ');
+}
+
+/**
+ * Deterministic classifier — given a journal name and the recipient's
+ * department, returns whether it is on the dept A-list, the FT50, or
+ * neither. The LLM is told to use this same logic in the prompt, but
+ * we also use this server-side to verify the brief's tier labels and
+ * catch any hallucinated A-tier claims.
+ */
+export type JournalTier = 'dept-A-list' | 'FT50' | 'other';
+
+export function classifyJournal(
+  journalName: string,
+  recipientDepartment?: string,
+): { tier: JournalTier; matchedCanonicalName?: string } {
+  const target = normalizeJournalName(journalName);
+  if (!target) return { tier: 'other' };
+
+  const deptAList = getDepartmentAJournals(recipientDepartment);
+  if (deptAList) {
+    for (const canonical of deptAList) {
+      if (normalizeJournalName(canonical) === target) {
+        return { tier: 'dept-A-list', matchedCanonicalName: canonical };
+      }
+    }
+  }
+  for (const canonical of FT50_JOURNALS) {
+    if (normalizeJournalName(canonical) === target) {
+      return { tier: 'FT50', matchedCanonicalName: canonical };
+    }
+  }
+  return { tier: 'other' };
+}
+
+/**
+ * Server-side audit pass over a research brief — finds every claim the
+ * model made about a journal being top-tier (FT50 or dept A-list) and
+ * verifies it against the canonical lists. Returns warnings for any
+ * mismatch so the research route can log them. This is the
+ * "belt-and-suspenders" check that catches LLM hallucinations even when
+ * the prompt was followed correctly the rest of the time.
+ *
+ * The function is intentionally read-only — it does not mutate the
+ * brief. Its purpose is observability + future enforcement.
+ */
+export function auditBriefForTierHallucinations(
+  brief: string,
+  recipientDepartment?: string,
+): string[] {
+  const warnings: string[] = [];
+  // Only inspect the section labeled "Top-Tier" / "A-TIER" — that's
+  // where mislabeled papers do damage. We grab a window starting from
+  // the section header and ending at the next "##" or "###" boundary.
+  const topTierMatch = brief.match(
+    /(?:###?\s*A\b[\s\S]*?Top-?Tier[\s\S]*?|^|\n)((?:[\s\S](?!^##\s|^###\s))*)/im,
+  );
+  const region = topTierMatch ? topTierMatch[0] : brief;
+
+  // Pull every italicized journal name (single-asterisk markdown) from
+  // the top-tier region. The brief uses *Journal Name* citation form.
+  const seen = new Set<string>();
+  for (const m of region.matchAll(/\*([^*\n]{4,120})\*/g)) {
+    const candidate = m[1].trim();
+    // Skip clearly non-journal italics (titles, page-ranges, etc).
+    if (!/journal|review|science|quarterly|studies|research|management|economics|theory|practice|letters|reports|systems|operations|finance|accounting|marketing|behavior|psychology|relations|policy|strategic|organization/i.test(
+      candidate,
+    )) {
+      continue;
+    }
+    if (seen.has(candidate.toLowerCase())) continue;
+    seen.add(candidate.toLowerCase());
+
+    const result = classifyJournal(candidate, recipientDepartment);
+    if (result.tier === 'other') {
+      warnings.push(
+        `Journal "${candidate}" appears in the Top-Tier section but is NOT on the dept A-list and NOT on the FT50. The model likely hallucinated its tier. Move to "Other Publications".`,
+      );
+    }
+  }
+  return warnings;
+}
+
+/**
  * Render the journal-tier reference block for the research-brief prompt.
  * Replaces the previous incomplete short list of top-tier journals.
  */
