@@ -131,7 +131,12 @@ export const WRITERS: Writer[] = [
       // time." The standard `**Summary**` block would duplicate that.
       appendStandardSummary: false,
       openingBoilerplate:
-        'Both Texas A&M University and Mays Business School require that the performance of all faculty be reviewed on an annual basis. As noted in the Mays Faculty Promotion and Tenure Guidelines, the purposes of the annual performance review include creating a sound and logical basis for merit compensation recommendations, providing evaluative feedback regarding how well the individual is currently performing, providing developmental feedback regarding areas where the faculty member’s contribution may be enhanced and/or improved in the future, and providing feedback regarding progress toward promotion and as relevant. The senior clinical faculty reviewed your annual report, which contains extensive information on your teaching, and current resume. The following is an abbreviated summary of your accomplishments in the past year, followed by their assessment. This assessment will be the basis for any department resource allocation decisions.',
+        // Per Rich's 2026-05-05 feedback on the Arreola-Risa letter: dropped
+        // the specific "senior clinical faculty" attribution because it
+        // mis-described the actual reviewers (Full Professors). Generic
+        // "senior colleagues" sidesteps the attribution problem entirely
+        // and works for both TT and APT cases under Rich.
+        'Both Texas A&M University and Mays Business School require that the performance of all faculty be reviewed on an annual basis. As noted in the Mays Faculty Promotion and Tenure Guidelines, the purposes of the annual performance review include creating a sound and logical basis for merit compensation recommendations, providing evaluative feedback regarding how well the individual is currently performing, providing developmental feedback regarding areas where the faculty member’s contribution may be enhanced and/or improved in the future, and providing feedback regarding progress toward promotion and as relevant. Senior colleagues reviewed your annual report, which contains extensive information on your teaching, and current resume. The following is an abbreviated summary of your accomplishments in the past year, followed by their assessment. This assessment will be the basis for any department resource allocation decisions.',
       closingLines: [
         'If you wish to discuss your review, schedule a time.',
       ],

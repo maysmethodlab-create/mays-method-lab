@@ -115,7 +115,19 @@ Quote or closely paraphrase what the person themselves said about shortcomings. 
 List every goal they stated. Use their own language as closely as possible.
 
 ## Peer Comments from Other Faculty
-If any source document is labeled PEER-COMMENTS (these are written by senior or tenured faculty about the recipient), capture the substance of every relevant remark here. Quote 2-4 specific points verbatim or near-verbatim, attributed only to "senior faculty" or "tenured faculty colleagues" (NEVER name an individual peer). If no PEER-COMMENTS document is present in the source, write "None provided." This section is the input to the letter's "Comments from Other Faculty" subsection — do not invent peer feedback if none is present, and do not generalize the recipient's self-evaluation as peer commentary.
+
+If any source document is labeled PEER-COMMENTS (these are written by senior or tenured faculty about the recipient), capture the substance of every relevant remark here.
+
+CRITICAL — multi-faculty filtering. PEER-COMMENTS documents commonly cover MULTIPLE faculty members in a single file (one section per faculty, with the faculty member's name as a header). You MUST only use the section that pertains to the recipient — whose full name is in the Basic Information section you produced at the top of this brief. Comments that appear in another faculty member's section are NOT relevant and MUST NOT be quoted, paraphrased, or referenced.
+
+How to identify the recipient's section:
+1. Locate the recipient's name (full name OR last name) as it appears in the PEER-COMMENTS document, used as a section header / label / divider.
+2. Use ONLY the comments that fall after the recipient's name header and before the next faculty member's name. Treat any name that matches a faculty-style label (Firstname Lastname on its own line, often followed by "Research", "Teaching", "Service", "Collegiality", or "Overall") as a section break.
+3. If you find yourself about to quote a remark and you are uncertain whether it sits in the recipient's section or someone else's, DISCARD it. Do not include uncertain quotes.
+4. If you cannot confidently locate the recipient's section in the document at all, write the literal text "Could not identify the recipient's section in the PEER-COMMENTS document — please verify the upload." Do NOT default to summarizing the whole document.
+
+Output for the recipient's section:
+Quote 2-4 specific points verbatim or near-verbatim from the recipient's section only, attributed only to "senior faculty" or "tenured faculty colleagues" (NEVER name an individual peer). If no PEER-COMMENTS document is present in the source, write "None provided." If a PEER-COMMENTS document is present but its content covers only other faculty (no recipient section), write "None provided." This section is the input to the letter's "Comments from Other Faculty" subsection — do not invent peer feedback if none is present, do not generalize the recipient's self-evaluation as peer commentary, and do not borrow from another faculty member's section.
 
 ## Key Themes and Patterns
 Note 2-3 overarching themes across their materials.
