@@ -69,7 +69,7 @@ For each in-window article you place in section A: full citation, journal name (
 SPECIAL CASE: if the recipient is an Assistant Professor whose PhD is fewer than 3 years old, do NOT impose the three-year window. Instead, list canonical-journal articles since their PhD.
 
 ### B. Other Publications in the 3-year scholarship window (${winStart}-${evaluationYear})
-This section is for peer-reviewed journal articles in the window whose journals are NOT on the dept A-list and NOT on the FT50. List each: full citation, journal name (italicized), co-authors, year. Frame factually as "additional peer-reviewed publications in well-regarded outlets" — never inflate to A-tier. If no such articles exist, write "None in window."
+REQUIRED SECTION — the heading "### B. Other Publications" MUST appear in every brief, even if empty. Do NOT skip it. Do NOT renumber subsequent sections. This section is for peer-reviewed journal articles in the window whose journals are NOT on the dept A-list and NOT on the FT50. List each: full citation, journal name (italicized), co-authors, year. Frame factually as "additional peer-reviewed publications in well-regarded outlets" — never inflate to A-tier. If no such articles exist, write the literal text "None in window." underneath the heading and proceed to section C.
 
 ### C. Pipeline (under review / revise-and-resubmit / preparing)
 Every paper currently in the review process. State journal, round, and current status. If a "Submission History" document is provided, capture the FULL JOURNEY of each paper through journals (e.g., "Submitted to QJE Jul 2023, rejected; AER Feb 2025, rejected; JF Mar 2025, rejected; RFS May 2025, under review"). Senior faculty want to see this trajectory. Tag each pipeline paper's TARGET journal as A-TIER (dept A-list / FT50) or Other, using the same canonical-list lookup rule from section A.
@@ -450,9 +450,10 @@ BODY STRUCTURE:
 
     [RESEARCH_RATING_SENTENCE] [TEACHING_RATING_SENTENCE] [SERVICE_RATING_SENTENCE] [OVERALL_RATING_SENTENCE]
 
-    Write nothing else in this paragraph. The placeholders will be substituted at letter-assembly time with the writer's actual ratings, producing the standard "Based on the Mays Guidelines, I assess your research / teaching / service as ..." sentences. Do NOT write your own rating sentences here, do NOT skip placeholders even if a category lacks a rating, and do NOT bracket additional commentary inside or beside them. The placeholder paragraph must appear before any closing line(s) the writer's style provides.
+    Write nothing else in this paragraph. The placeholders will be substituted at letter-assembly time with the writer's actual ratings, producing the standard "Based on the Mays Guidelines, I assess your research / teaching / service as ..." sentences. Do NOT write your own rating sentences here, do NOT skip placeholders even if a category lacks a rating, and do NOT bracket additional commentary inside or beside them. This paragraph is REQUIRED and must appear in every TT letter. Do NOT end the letter immediately after section 9 — section 10 (the placeholder paragraph) is mandatory.
+${closingBlock}
 
-After the rating-sentences paragraph, output the writer's CLOSING line(s) per the CLOSING block above. Do NOT add any "Summary" heading. The four rating sentences ARE the summary.`;
+After the rating-sentences paragraph${args.styleOverrides.closingLines.length > 0 ? ', output the writer\'s CLOSING line(s) shown above (one per sentence, verbatim)' : ''}, end the letter. Do NOT add any "Summary" heading. The four rating sentences ARE the summary.`;
 
   const role = `${renderTopPriorityRules()}
 
@@ -616,7 +617,7 @@ export function assembleFinalLetter(args: {
   ratings: AppendSummaryArgs;
   /** Optional writer style overrides. When present, drives whether the
    *  standard Summary block is appended to bodies without placeholders. */
-  styleOverrides?: Pick<WriterStyleOverrides, 'appendStandardSummary'>;
+  styleOverrides?: Pick<WriterStyleOverrides, 'appendStandardSummary' | 'closingLines'>;
   writerSignatureClose?: string;
 }): string {
   const sentences = buildRatingSentences(args.ratings);
@@ -650,10 +651,31 @@ export function assembleFinalLetter(args: {
     return out;
   }
 
-  // Writer opted out of the standard Summary block: their body already
-  // ends with their own sign-off and weaves rating sentences in-line.
+  // Writer opted out of the standard Summary block (Sean / Rich / Wendy /
+  // Jamie). Body should contain placeholders per the TT body structure;
+  // if the writer agent skipped them (occasional drift on long letters),
+  // inject the rating sentences as a fallback paragraph followed by the
+  // writer's closing lines. This is the safety net so a missing
+  // placeholder paragraph does not silently produce a ratings-free
+  // letter — which is the bug Rich Metters caught on Antonio's letter.
   if (args.styleOverrides && args.styleOverrides.appendStandardSummary === false) {
-    return `${args.letterText.trimEnd()}\n`;
+    const ratingsParagraph = [sentences.research, sentences.teaching, sentences.service, sentences.overall]
+      .filter(Boolean)
+      .join(' ');
+    const closingLines = args.styleOverrides.closingLines || [];
+    // Detect whether the body already ends with the writer's closing
+    // line(s). We compare the first 30 characters of each closingLine
+    // against the body to avoid false positives from partial
+    // paraphrases. If absent, we inject them after the rating paragraph.
+    const bodyEnd = args.letterText.slice(-800);
+    const closingPresent =
+      closingLines.length > 0 &&
+      closingLines.every((line) => bodyEnd.includes(line.slice(0, 30)));
+    let out = `${args.letterText.trimEnd()}\n\n${ratingsParagraph}`;
+    if (closingLines.length > 0 && !closingPresent) {
+      out += `\n\n${closingLines.join('\n\n')}`;
+    }
+    return `${out}\n`;
   }
 
   // Default path: append the standard Summary block.
