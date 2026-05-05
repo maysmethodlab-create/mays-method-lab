@@ -705,24 +705,49 @@ export function hallucinationPrompt(args: {
 
 YOUR ONLY JOB IS FACTUAL ACCURACY. You are not concerned with sentence rhythm, banned words, em-dashes, or any other writing-style issue. A separate Style Agent will handle those after you. Focus 100% on facts.
 
-GROUND-TRUTH SOURCES — all are authoritative:
-1. SOURCE DOCUMENTS (the recipient's CV / F180 / self-evaluation).
-2. WRITER'S NOTES (the department head's personal observations and
-   first-hand knowledge about the recipient — co-teaching plans,
-   discussions, future course assignments, mentoring conversations).
-   These are not hearsay; the writer is the dept head and authors the
-   letter, so their factual statements ARE ground truth even when they
-   do not appear in the CV. Do NOT flag a claim as fabricated when the
-   writer's notes assert it.
-3. PEER COMMENTS — any section labeled PEER-COMMENTS within the source
-   documents (e.g. a file uploaded as "peer comments" alongside the CV
-   and self-evaluation), OR text in the dedicated peer-comments block
-   below if provided. Peer comments are written by senior or tenured
-   faculty colleagues about the recipient. Treat any factual statement
-   that appears in PEER-COMMENTS sections as ground truth, even when it
-   does not appear in the recipient's CV. Do NOT flag the letter's
-   "Comments from Other Faculty" section as fabricated when the
-   underlying claims trace to PEER-COMMENTS content.
+GROUND-TRUTH SOURCES — listed in priority order. When sources disagree, the higher-priority source wins.
+
+1. THE CV is the PRIMARY ground truth for every research-related claim.
+   The CV (the source document labeled "===== CV — ..." in the SOURCE
+   DOCUMENTS block below) is the canonical record of the recipient's
+   publications, journal names, publication years, co-authors, awards,
+   grants, editorial roles, and conference presentations. Whenever the
+   letter makes a claim about a journal article, paper title, journal
+   name, year, co-author, citation count, award name, granting body,
+   grant amount, or editorial role, you MUST verify the claim
+   character-by-character against the CV. If the CV does not support
+   the claim, the claim is ❌ FABRICATED — even if the F180, the
+   self-evaluation, or another source mentions something similar.
+   Paraphrases that change a fact (e.g., the journal name, the year,
+   the coauthor list) count as ❌ FABRICATED. The CV always wins on
+   research facts.
+
+2. F180 / SELF-EVALUATION (also in the SOURCE DOCUMENTS block, labeled
+   "===== SELF-EVALUATION — ..." or similar). These contain the
+   recipient's narrative about their year, including teaching
+   evaluations, mentoring stories, course-development efforts, and
+   service activities. They are authoritative for in-year teaching and
+   service detail and for the recipient's own framing. They are NOT
+   authoritative for research facts — when the F180 paraphrases a
+   publication and the CV records different details, the CV wins.
+
+3. WRITER'S NOTES (the department head's personal observations and
+   first-hand knowledge — co-teaching plans, discussions, future
+   course assignments, mentoring conversations). These are not
+   hearsay; the writer is the dept head and authors the letter, so
+   their factual statements ARE ground truth for forward-looking
+   plans and first-hand observations even when they do not appear in
+   the CV. Do NOT flag a claim as fabricated when the writer's notes
+   assert it.
+
+4. PEER COMMENTS — any section labeled PEER-COMMENTS within the source
+   documents, OR text in the dedicated peer-comments block below if
+   provided. Peer comments are written by senior or tenured faculty
+   colleagues about the recipient. Treat any factual statement that
+   appears in PEER-COMMENTS sections as ground truth for the "Comments
+   from Other Faculty" letter section. Do NOT flag that section as
+   fabricated when the underlying claims trace to PEER-COMMENTS
+   content.
 
 OUTPUT FORMAT — return a markdown report followed by a CORRECTED LETTER inside a fenced code block:
 
@@ -737,6 +762,29 @@ For each claim, classify:
 - ℹ INFERRED: not explicitly stated but reasonably implied by the source. These are usually fine but flag them so the writer can verify.
 
 For each ⚠ EMBELLISHED or ❌ FABRICATED, quote the letter snippet and quote the source (or note the absence).
+
+## CV Cross-Check — REQUIRED for every research-related claim
+
+The CV is the canonical record of all publications, journals, awards, and grants. This section forces a deliberate check of every research-related claim in the letter against the CV specifically (not the F180, not the self-evaluation).
+
+For EACH of the following items mentioned in the letter, list the claim verbatim, then quote the matching CV passage (or state explicitly that the CV does not contain it):
+
+1. Every journal article title — does the CV contain this exact title?
+2. Every journal name — does the CV record the article in that journal?
+3. Every publication year — does the CV record the article in that year?
+4. Every co-author name — does the CV list these exact co-authors?
+5. Every award name — does the CV list this exact award name and year?
+6. Every grant name and amount — does the CV record this grant?
+7. Every editorial board appointment — does the CV record it?
+
+Format each entry as:
+  - Letter claim: "<verbatim from letter>"
+  - CV evidence: "<verbatim from CV>" — OR "CV does NOT contain this claim."
+  - Verdict: ✅ confirmed by CV / ❌ NOT in CV / ⚠ CV says something different
+
+Any ❌ NOT in CV or ⚠ CV says something different counts as a FABRICATION for purposes of the Verdict and Corrected Letter sections below, regardless of whether another source (F180 / self-evaluation) hints at the claim. The CV always wins on research facts.
+
+If the brief or letter mentions that no in-window publications exist on the CV, write "No in-window publications on CV — no items to cross-check." and proceed.
 
 ## Writer's Notes Coverage
 
