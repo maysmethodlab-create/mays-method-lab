@@ -35,7 +35,7 @@ export default function SetupForm({ value, onChange, onContinue }: Props) {
       }}
     >
       <section className="card space-y-5">
-        <div className="eyebrow text-[11px]">Department Head</div>
+        <div className="eyebrow text-[16px]">Department Head</div>
         <Field label="Choose the writer">
           <select
             className="input"
@@ -51,8 +51,8 @@ export default function SetupForm({ value, onChange, onContinue }: Props) {
         {writer ? (
           <div className="text-sm text-ink-secondary border-t border-line pt-4">
             <div className="text-ink-primary font-semibold">{writer.title}</div>
-            <div className="text-ink-muted text-[13px] mt-1">{writer.department}</div>
-            <div className="text-[11px] text-ink-muted mt-3">
+            <div className="text-ink-muted text-[16px] mt-1">{writer.department}</div>
+            <div className="text-[16px] text-ink-muted mt-3">
               The department&apos;s letterhead will be applied to the downloaded letter.
             </div>
           </div>
@@ -60,7 +60,7 @@ export default function SetupForm({ value, onChange, onContinue }: Props) {
       </section>
 
       <section className="card space-y-4">
-        <div className="eyebrow text-[11px]">Evaluation Period</div>
+        <div className="eyebrow text-[16px]">Evaluation Period</div>
         <Field label="Evaluation year">
           <input
             type="number"
@@ -73,7 +73,7 @@ export default function SetupForm({ value, onChange, onContinue }: Props) {
             }
           />
         </Field>
-        <p className="text-[11px] text-ink-muted">{periodLabel}</p>
+        <p className="text-[16px] text-ink-muted">{periodLabel}</p>
       </section>
 
       <div className="card bg-bg-subtle border-line">

@@ -48,7 +48,7 @@ export default function MRCVoteStep({
   return (
     <div className="space-y-6">
       <section className="card space-y-3">
-        <div className="eyebrow text-[11px]">Voting members of the Mays Research Council</div>
+        <div className="eyebrow text-[16px]">Voting members of the Mays Research Council</div>
         <p className="text-sm text-ink-secondary leading-relaxed">
           Each member casts a single ballot on whether the Council concurs with the
           department head&apos;s recommendation: <strong>Yes</strong> (concur),{' '}
@@ -70,11 +70,11 @@ export default function MRCVoteStep({
                 </div>
               </div>
               {v?.choice ? (
-                <span className="text-[11px] uppercase tracking-[0.18em] text-status-success font-semibold">
+                <span className="text-[16px] uppercase tracking-[0.18em] text-status-success font-semibold">
                   Recorded
                 </span>
               ) : (
-                <span className="text-[11px] uppercase tracking-[0.18em] text-ink-muted font-semibold">
+                <span className="text-[16px] uppercase tracking-[0.18em] text-ink-muted font-semibold">
                   Pending
                 </span>
               )}
@@ -106,7 +106,7 @@ export default function MRCVoteStep({
       })}
 
       <section className="card space-y-3">
-        <div className="eyebrow text-[11px]">Anonymous comments (shared)</div>
+        <div className="eyebrow text-[16px]">Anonymous comments (shared)</div>
         <p className="text-sm text-ink-secondary leading-relaxed">
           A single shared comment box for the Council. Whatever you write here will appear
           anonymously in the memo for the Dean&apos;s consideration. Leave blank if there are
@@ -121,7 +121,7 @@ export default function MRCVoteStep({
       </section>
 
       <section className="card bg-bg-subtle border-line">
-        <div className="eyebrow text-[11px] mb-2">Live tally</div>
+        <div className="eyebrow text-[16px] mb-2">Live tally</div>
         <div className="grid sm:grid-cols-3 gap-4 text-sm">
           <Tally label="Yes" value={tally.yes} />
           <Tally label="No" value={tally.no} />
@@ -150,7 +150,7 @@ export default function MRCVoteStep({
 function Tally({ label, value }: { label: string; value: number }) {
   return (
     <div className="border border-line bg-white p-3">
-      <div className="eyebrow text-[10px] mb-1">{label}</div>
+      <div className="eyebrow text-[16px] mb-1">{label}</div>
       <div className="text-2xl font-headline text-maroon font-semibold">{value}</div>
     </div>
   );

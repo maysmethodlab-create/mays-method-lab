@@ -73,7 +73,7 @@ export default function PromptsClient() {
           options={ROLES}
           onChange={(v) => setRole(v as PromptRole | 'all')}
         />
-        <div className="text-[13px] text-ink-muted ml-auto">
+        <div className="text-[16px] text-ink-muted ml-auto">
           {filtered.length} prompt{filtered.length === 1 ? '' : 's'}
         </div>
       </div>
@@ -98,7 +98,7 @@ export default function PromptsClient() {
       <div className="mt-16 pt-6 border-t border-line text-center">
         <Link
           href="/learning-community"
-          className="text-[14px] uppercase tracking-[0.1em] font-semibold text-maroon-muted hover:text-maroon"
+          className="text-[16px] uppercase tracking-[0.1em] font-semibold text-maroon-muted hover:text-maroon"
         >
           &larr; Back to the AI Learning Community
         </Link>
@@ -131,7 +131,7 @@ function Filter<T extends string>({
 }) {
   return (
     <div>
-      <div className="text-[12px] tracking-[0.18em] uppercase font-semibold text-maroon-muted mb-2">
+      <div className="text-[16px] tracking-[0.18em] uppercase font-semibold text-maroon-muted mb-2">
         {label}
       </div>
       <div className="flex flex-wrap gap-2">
@@ -143,7 +143,7 @@ function Filter<T extends string>({
               type="button"
               onClick={() => onChange(o.value)}
               className={[
-                'px-4 py-2 border-2 text-[13px] font-semibold tracking-wide transition-colors',
+                'px-4 py-2 border-2 text-[16px] font-semibold tracking-wide transition-colors',
                 active
                   ? 'border-maroon bg-maroon text-white'
                   : 'border-maroon text-maroon hover:bg-maroon/5',
@@ -182,18 +182,18 @@ function PromptCard({
         </svg>
       </span>
       <div className="flex items-center justify-between mb-3 pr-8">
-        <span className="eyebrow text-[11px]">{BUCKET_LABELS[prompt.bucket]}</span>
-        <span className="text-[10px] tracking-[0.05em] uppercase font-semibold text-maroon-muted">
+        <span className="eyebrow text-[16px]">{BUCKET_LABELS[prompt.bucket]}</span>
+        <span className="text-[16px] tracking-[0.05em] uppercase font-semibold text-maroon-muted">
           {prompt.role === 'both' ? 'Faculty + staff' : prompt.role}
         </span>
       </div>
       <h3 className="font-headline text-[22px] font-semibold text-maroon mb-3 leading-tight pr-8">
         {prompt.title}
       </h3>
-      <p className="text-[15px] text-ink-secondary leading-relaxed flex-1">
+      <p className="text-[16px] text-ink-secondary leading-relaxed flex-1">
         {prompt.blurb}
       </p>
-      <div className="mt-5 text-[12px] tracking-[0.1em] uppercase font-semibold text-maroon-muted">
+      <div className="mt-5 text-[16px] tracking-[0.1em] uppercase font-semibold text-maroon-muted">
         Open prompt &rarr;
       </div>
     </button>

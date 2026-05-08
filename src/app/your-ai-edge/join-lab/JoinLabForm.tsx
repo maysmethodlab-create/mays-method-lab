@@ -134,7 +134,7 @@ export default function JoinLabForm() {
         </Field>
 
         {error ? (
-          <p className="text-[14px] text-maroon font-semibold">{error}</p>
+          <p className="text-[16px] text-maroon font-semibold">{error}</p>
         ) : null}
 
         <div>
@@ -181,7 +181,7 @@ function RadioPill({
   return (
     <label
       className={[
-        'inline-flex items-center gap-2 px-4 py-2 border-2 cursor-pointer text-[14px] font-semibold',
+        'inline-flex items-center gap-2 px-4 py-2 border-2 cursor-pointer text-[16px] font-semibold',
         checked
           ? 'bg-maroon text-white border-maroon'
           : 'bg-white text-maroon border-maroon hover:bg-maroon/5',
@@ -212,7 +212,7 @@ function Checkbox({
   return (
     <label
       className={[
-        'inline-flex items-center gap-2 px-4 py-2 border-2 cursor-pointer text-[14px] font-semibold',
+        'inline-flex items-center gap-2 px-4 py-2 border-2 cursor-pointer text-[16px] font-semibold',
         checked
           ? 'bg-maroon text-white border-maroon'
           : 'bg-white text-maroon border-maroon hover:bg-maroon/5',

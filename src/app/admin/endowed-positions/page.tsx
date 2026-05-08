@@ -10,7 +10,7 @@ export default function EndowedPositionsPage() {
     <section className="section pt-16 max-w-5xl">
       <Link
         href="/admin"
-        className="text-[13px] uppercase tracking-[0.05em] font-semibold text-maroon-muted hover:text-maroon transition-colors"
+        className="text-[16px] uppercase tracking-[0.05em] font-semibold text-maroon-muted hover:text-maroon transition-colors"
       >
         <span aria-hidden="true">&larr;</span> Back to Admin Tools
       </Link>

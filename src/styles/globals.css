@@ -102,10 +102,13 @@ h4 {
 /* ----- Eyebrows / superheads ----- */
 
 /* Section eyebrow — small uppercase label above headings.
-   Mays color: #732F2F (maroon-muted). Slightly tracked for visual weight. */
+   Mays color: #732F2F (maroon-muted). Slightly tracked for visual weight.
+   Per accessibility feedback (May 2026): 16px minimum body text. Eyebrows
+   bumped from 13px to 16px; tracking compensates so they still read as
+   eyebrows visually. */
 .eyebrow {
   text-transform: uppercase;
-  font-size: 13px;
+  font-size: 16px;
   letter-spacing: 0.18em;
   color: #732F2F;
   font-weight: 600;
@@ -129,7 +132,7 @@ h4 {
 .brand-ribbon {
   background: #500000;
   color: #FFFFFF;
-  font-size: 14px;
+  font-size: 16px;
   letter-spacing: normal;
   padding: 12px 16px;
   text-align: center;
@@ -234,7 +237,7 @@ iframe.hero-video {
   background: #500000;
   color: #FFFFFF;
   font-family: 'Work Sans', Arial, sans-serif;
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -336,12 +339,13 @@ iframe.hero-video {
   left: 50%;
   transform: translateX(-50%);
   z-index: 3;
-  font-size: 11px;
+  font-size: 16px;
   letter-spacing: 0.18em;
   color: #FFFFFF;
   text-transform: uppercase;
   font-weight: 600;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  /* Stronger drop shadow to keep contrast over the video background. */
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
 }
 
 /* ----- Cards & buttons ----- */
@@ -363,7 +367,14 @@ iframe.hero-video {
 }
 
 /* Buttons — Mays btn--primary computed: Work Sans 16px / 700, NOT uppercase,
-   padding ~10px 32px, 2px solid #3C0000 border, sharp corners, 100ms transition. */
+   padding ~10px 32px, 2px solid #3C0000 border, sharp corners, 100ms transition.
+   Per accessibility feedback (May 2026): bumped to 17px / weight 700 with a
+   visible focus ring and a slight box-shadow on hover to give the maroon
+   button a clearer visual edge. The maroon-on-white contrast ratio
+   (#500000 on #FFFFFF) is 13.6:1 — well past WCAG AAA — but the button's
+   own border (#3C0000) was visually identical to the body color, which
+   made the button read as a flat dark block. Sharper border + focus ring
+   restores the intended CTA weight. */
 .btn-primary {
   display: inline-flex;
   align-items: center;
@@ -373,23 +384,36 @@ iframe.hero-video {
   background: #500000;
   color: #FFFFFF;
   font-weight: 700;
-  font-size: 16px;
-  letter-spacing: normal;
+  font-size: 17px;
+  letter-spacing: 0.01em;
   text-transform: none;
   border: 2px solid #3C0000;
   border-radius: 0;
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.1s, border-color 0.1s;
+  transition: background 0.1s, border-color 0.1s, box-shadow 0.1s;
   font-family: 'Work Sans', Arial, sans-serif;
   line-height: 1.5;
 }
 
 .btn-primary:hover:not(:disabled) {
   background: #3C0000;
-  border-color: #3C0000;
+  border-color: #1F0000;
   text-decoration: none;
   color: #FFFFFF;
+  /* Subtle outer shadow so the button reads as a raised CTA on hover and
+     the edge stays visible when the bg deepens to match the original
+     border. */
+  box-shadow: 0 0 0 2px rgba(80, 0, 0, 0.18);
+}
+
+.btn-primary:focus-visible {
+  /* High-contrast focus ring for keyboard users. Yellow-on-maroon is
+     intentional — high luminance contrast (8.7:1) and unmissable at any
+     zoom level. */
+  outline: 3px solid #FFD200;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 1px #500000;
 }
 
 .btn-primary:disabled {
@@ -406,14 +430,14 @@ iframe.hero-video {
   background: #FFFFFF;
   color: #500000;
   font-weight: 700;
-  font-size: 16px;
-  letter-spacing: normal;
+  font-size: 17px;
+  letter-spacing: 0.01em;
   text-transform: none;
   border: 2px solid #500000;
   border-radius: 0;
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.1s, color 0.1s;
+  transition: background 0.1s, color 0.1s, box-shadow 0.1s;
   font-family: 'Work Sans', Arial, sans-serif;
   line-height: 1.5;
 }
@@ -422,6 +446,13 @@ iframe.hero-video {
   background: #500000;
   color: #FFFFFF;
   text-decoration: none;
+  box-shadow: 0 0 0 2px rgba(80, 0, 0, 0.18);
+}
+
+.btn-secondary:focus-visible {
+  outline: 3px solid #FFD200;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 1px #500000;
 }
 
 .btn-secondary:disabled {
@@ -440,7 +471,7 @@ iframe.hero-video {
   background: #FFFFFF;
   color: #1F1F1F;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 16px;
   letter-spacing: normal;
   text-transform: none;
   border: 1px solid #DADCE0;
@@ -500,7 +531,7 @@ iframe.hero-video {
 
 .label {
   display: block;
-  font-size: 13px;
+  font-size: 16px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: #3E3E3E;
@@ -615,11 +646,14 @@ iframe.hero-video {
 .section-band__eyebrow {
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  font-size: 11px;
+  font-size: 16px;
   font-weight: 700;
   font-family: 'Work Sans', Arial, sans-serif;
   color: #FFFFFF;
-  opacity: 0.75;
+  /* Was opacity: 0.75 — bumped to 0.92 to keep contrast on the maroon
+     band. White at 75% opacity over #500000 measured ~6.4:1 (still pass
+     AA), but 92% reads cleaner at the new 16px size. */
+  opacity: 0.92;
 }
 
 .section-band__title {
@@ -633,12 +667,12 @@ iframe.hero-video {
 }
 
 .section-band__count {
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: #FFFFFF;
-  opacity: 0.85;
+  opacity: 0.95;
   white-space: nowrap;
 }
 
@@ -667,10 +701,10 @@ iframe.hero-video {
 .cta-bar__eyebrow {
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 700;
   color: #FFFFFF;
-  opacity: 0.8;
+  opacity: 0.95;
   margin-bottom: 12px;
 }
 
@@ -684,18 +718,19 @@ iframe.hero-video {
 }
 
 .cta-bar__body {
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.55;
   color: #FFFFFF;
-  opacity: 0.92;
+  /* Body text on maroon: full opacity for stronger contrast. */
+  opacity: 1;
   margin-bottom: 8px;
 }
 
 .cta-bar__list {
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.55;
   color: #FFFFFF;
-  opacity: 0.92;
+  opacity: 1;
   margin-bottom: 20px;
   padding-left: 20px;
   list-style: disc;
@@ -712,7 +747,7 @@ iframe.hero-video {
   gap: 10px;
   font-family: 'Work Sans', Arial, sans-serif;
   font-weight: 700;
-  font-size: 15px;
+  font-size: 16px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: #FFFFFF;

@@ -308,7 +308,7 @@ export default function GenerateStep({
 
       {phase === 'drafting' ? (
         <section className="card">
-          <div className="eyebrow text-[11px] mb-3">Phase 2 — Drafting (streaming)</div>
+          <div className="eyebrow text-[16px] mb-3">Phase 2 — Drafting (streaming)</div>
           <div className="progress-bar mb-4" />
           <pre className="whitespace-pre-wrap text-sm text-ink-primary leading-relaxed font-body">
             {streamedDraft || '…'}
@@ -342,7 +342,7 @@ export default function GenerateStep({
         <section className="card space-y-5">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div>
-              <div className="eyebrow text-[11px] mb-1">Now rate the recipient</div>
+              <div className="eyebrow text-[16px] mb-1">Now rate the recipient</div>
               <p className="text-sm text-ink-secondary leading-relaxed max-w-2xl">
                 You&apos;ve seen the body of the letter and the verification.
                 Pick the per-area ratings and the overall rating. The formal
@@ -350,7 +350,7 @@ export default function GenerateStep({
               </p>
             </div>
             {phase === 'done' ? (
-              <span className="text-[11px] uppercase tracking-[0.18em] text-status-success font-semibold">
+              <span className="text-[16px] uppercase tracking-[0.18em] text-status-success font-semibold">
                 Summary appended ✓
               </span>
             ) : null}
@@ -486,7 +486,7 @@ function PhaseTracker({ phase }: { phase: Phase }) {
   const cur = phaseToStep[phase];
 
   return (
-    <div className="flex flex-wrap gap-3 text-[11px] uppercase tracking-[0.2em]">
+    <div className="flex flex-wrap gap-3 text-[16px] uppercase tracking-[0.2em]">
       {items.map((it, i) => {
         const idx = order.indexOf(it.key);
         const done = idx < cur;
@@ -514,7 +514,7 @@ function PhaseTracker({ phase }: { phase: Phase }) {
 function Working({ label }: { label: string }) {
   return (
     <section className="card">
-      <div className="eyebrow text-[11px] mb-3">Working</div>
+      <div className="eyebrow text-[16px] mb-3">Working</div>
       <p className="text-sm text-ink-secondary mb-4">{label}…</p>
       <div className="progress-bar" />
     </section>
@@ -533,8 +533,8 @@ function BriefPanel({
   return (
     <section className="card">
       <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
-        <div className="eyebrow text-[11px]">Phase 1 — Extracted Brief</div>
-        <div className="text-[11px] text-ink-muted">Editable</div>
+        <div className="eyebrow text-[16px]">Phase 1 — Extracted Brief</div>
+        <div className="text-[16px] text-ink-muted">Editable</div>
       </div>
       <textarea
         className="input min-h-[320px] font-body text-sm leading-relaxed"
@@ -558,8 +558,8 @@ function DraftPanel({
   return (
     <section className="card">
       <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
-        <div className="eyebrow text-[11px]">Letter Body</div>
-        <div className="text-[11px] text-ink-muted">Editable</div>
+        <div className="eyebrow text-[16px]">Letter Body</div>
+        <div className="text-[16px] text-ink-muted">Editable</div>
       </div>
       <textarea
         className="input min-h-[480px] font-body text-sm leading-relaxed"
@@ -574,7 +574,7 @@ function DraftPanel({
 function VerificationPanel({ result }: { result: VerificationResult }) {
   return (
     <section className="card">
-      <div className="eyebrow text-[11px] mb-3">Phase 3 — Verification Report</div>
+      <div className="eyebrow text-[16px] mb-3">Phase 3 — Verification Report</div>
       <pre className="whitespace-pre-wrap text-sm text-ink-secondary leading-relaxed font-body">
         {result.report}
       </pre>
@@ -626,11 +626,11 @@ function NotApplicableField({ label, note }: { label: string; note: string }) {
       <div className="label">{label}</div>
       <div className="input flex items-center justify-between bg-bg-subtle text-ink-muted cursor-not-allowed select-none">
         <span>Not applicable</span>
-        <span className="text-[10px] uppercase tracking-[0.18em] font-semibold text-ink-muted">
+        <span className="text-[16px] uppercase tracking-[0.18em] font-semibold text-ink-muted">
           APT
         </span>
       </div>
-      <div className="text-[11px] text-ink-muted mt-1">{note}</div>
+      <div className="text-[16px] text-ink-muted mt-1">{note}</div>
     </label>
   );
 }

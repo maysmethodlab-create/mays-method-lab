@@ -41,7 +41,7 @@ export default function ConfirmDetailsStep({
       }}
     >
       <section className="card space-y-4">
-        <div className="eyebrow text-[11px]">Candidate</div>
+        <div className="eyebrow text-[16px]">Candidate</div>
         <div className="grid sm:grid-cols-2 gap-4">
           <InlineField
             label="Candidate name"
@@ -68,7 +68,7 @@ export default function ConfirmDetailsStep({
       </section>
 
       <section className="card space-y-4">
-        <div className="eyebrow text-[11px]">Endowed Position</div>
+        <div className="eyebrow text-[16px]">Endowed Position</div>
         <div className="grid sm:grid-cols-2 gap-4">
           <InlineField
             label="Current endowed position"
@@ -97,7 +97,7 @@ export default function ConfirmDetailsStep({
       </section>
 
       <section className="card space-y-4">
-        <div className="eyebrow text-[11px]">Memo Metadata</div>
+        <div className="eyebrow text-[16px]">Memo Metadata</div>
         <div className="grid sm:grid-cols-3 gap-4">
           <InlineField
             label="Term length (years)"

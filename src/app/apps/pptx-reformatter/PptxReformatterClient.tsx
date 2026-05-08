@@ -145,7 +145,7 @@ export default function PptxReformatterClient() {
           >
             PowerPoint Reformatter
           </h1>
-          <span className="inline-block px-3 py-1 bg-maroon text-white text-[12px] uppercase tracking-[0.18em] font-semibold whitespace-nowrap">
+          <span className="inline-block px-3 py-1 bg-maroon text-white text-[16px] uppercase tracking-[0.18em] font-semibold whitespace-nowrap">
             Beta
           </span>
         </div>
@@ -160,7 +160,7 @@ export default function PptxReformatterClient() {
         {stage === 'idle' && (
           <div className="flex flex-col gap-4">
             <div className="eyebrow-lg font-headline text-maroon">Upload your deck</div>
-            <p className="text-[15px] text-ink-primary leading-relaxed">
+            <p className="text-[16px] text-ink-primary leading-relaxed">
               Drop a .pptx file (max 25 MB, up to 60 slides). The pipeline reads
               every slide, picks Mays layouts, rewrites headlines into sentence case,
               enforces 18pt body and 28pt heading minimums, and ships an
@@ -170,7 +170,7 @@ export default function PptxReformatterClient() {
               <button
                 type="button"
                 onClick={onPickClick}
-                className="inline-block px-5 py-3 bg-maroon text-white font-semibold uppercase tracking-[0.12em] text-[13px] hover:bg-maroon-deep"
+                className="inline-block px-5 py-3 bg-maroon text-white font-semibold uppercase tracking-[0.12em] text-[16px] hover:bg-maroon-deep"
                 style={{ borderRadius: 0 }}
               >
                 Choose a .pptx file
@@ -183,7 +183,7 @@ export default function PptxReformatterClient() {
                 className="hidden"
               />
             </div>
-            <p className="text-[13px] text-ink-secondary">
+            <p className="text-[16px] text-ink-secondary">
               Files stay on the server. Outputs are private and tied to your session.
             </p>
           </div>
@@ -195,7 +195,7 @@ export default function PptxReformatterClient() {
               {stage === 'ready' ? 'Ready' : 'Working'}
             </div>
             {fileName && (
-              <p className="text-[14px] text-ink-secondary">
+              <p className="text-[16px] text-ink-secondary">
                 Source: <span className="font-semibold text-ink-primary">{fileName}</span>
               </p>
             )}
@@ -207,7 +207,7 @@ export default function PptxReformatterClient() {
                 return (
                   <li
                     key={s}
-                    className="flex items-center gap-3 text-[14px]"
+                    className="flex items-center gap-3 text-[16px]"
                     aria-current={status === 'active' ? 'step' : undefined}
                   >
                     <span
@@ -243,7 +243,7 @@ export default function PptxReformatterClient() {
           <div className="flex flex-col gap-4 mt-6">
             <div className="border-t border-maroon-muted pt-4">
               <div className="eyebrow-lg font-headline text-maroon mb-2">Results</div>
-              <ul className="text-[14px] text-ink-primary leading-relaxed list-none p-0 m-0 flex flex-col gap-1">
+              <ul className="text-[16px] text-ink-primary leading-relaxed list-none p-0 m-0 flex flex-col gap-1">
                 <li>
                   Source slide count: <span className="font-semibold">{result.sourceSlideCount}</span>
                 </li>
@@ -263,14 +263,14 @@ export default function PptxReformatterClient() {
             <div className="flex gap-3 flex-wrap">
               <a
                 href={result.pptxUrl}
-                className="inline-block px-5 py-3 bg-maroon text-white font-semibold uppercase tracking-[0.12em] text-[13px] hover:bg-maroon-deep"
+                className="inline-block px-5 py-3 bg-maroon text-white font-semibold uppercase tracking-[0.12em] text-[16px] hover:bg-maroon-deep"
                 style={{ borderRadius: 0 }}
               >
                 Download .pptx
               </a>
               <a
                 href={result.accessibilityReportUrl}
-                className="inline-block px-5 py-3 bg-white text-maroon border-2 border-maroon font-semibold uppercase tracking-[0.12em] text-[13px] hover:bg-bg-soft"
+                className="inline-block px-5 py-3 bg-white text-maroon border-2 border-maroon font-semibold uppercase tracking-[0.12em] text-[16px] hover:bg-bg-soft"
                 style={{ borderRadius: 0 }}
               >
                 Download accessibility report
@@ -284,7 +284,7 @@ export default function PptxReformatterClient() {
                   setError(null);
                   if (inputRef.current) inputRef.current.value = '';
                 }}
-                className="inline-block px-5 py-3 bg-bg-soft text-ink-primary border border-maroon-muted font-semibold uppercase tracking-[0.12em] text-[13px] hover:bg-white"
+                className="inline-block px-5 py-3 bg-bg-soft text-ink-primary border border-maroon-muted font-semibold uppercase tracking-[0.12em] text-[16px] hover:bg-white"
                 style={{ borderRadius: 0 }}
               >
                 Reformat another deck
@@ -296,7 +296,7 @@ export default function PptxReformatterClient() {
         {stage === 'error' && (
           <div className="flex flex-col gap-3">
             <div className="eyebrow-lg font-headline text-maroon">Something went wrong</div>
-            <p className="text-[15px] text-ink-primary leading-relaxed">
+            <p className="text-[16px] text-ink-primary leading-relaxed">
               {error || 'Unknown error.'}
             </p>
             <div>
@@ -308,7 +308,7 @@ export default function PptxReformatterClient() {
                   setFileName(null);
                   if (inputRef.current) inputRef.current.value = '';
                 }}
-                className="inline-block px-5 py-3 bg-maroon text-white font-semibold uppercase tracking-[0.12em] text-[13px] hover:bg-maroon-deep"
+                className="inline-block px-5 py-3 bg-maroon text-white font-semibold uppercase tracking-[0.12em] text-[16px] hover:bg-maroon-deep"
                 style={{ borderRadius: 0 }}
               >
                 Try again
@@ -320,7 +320,7 @@ export default function PptxReformatterClient() {
 
       <section className="max-w-3xl">
         <div className="eyebrow-lg font-headline text-maroon mb-3">What the pipeline does</div>
-        <ol className="list-decimal pl-6 text-[15px] text-ink-primary leading-relaxed flex flex-col gap-2">
+        <ol className="list-decimal pl-6 text-[16px] text-ink-primary leading-relaxed flex flex-col gap-2">
           <li>Reads every slide and labels its purpose (title, section, content, two-column, data, image, closing).</li>
           <li>Picks the best Mays layout for each slide.</li>
           <li>Plans new headlines, body copy, and bullets that respect the brand caps.</li>
@@ -328,7 +328,7 @@ export default function PptxReformatterClient() {
           <li>Runs an accessibility pass: alt text, screen-reader titles, reading order, contrast, minimum type size, descriptive hyperlinks, color-only flags.</li>
           <li>Writes a Mays-branded, ADA-aware .pptx and a plain-text accessibility report.</li>
         </ol>
-        <p className="text-[13px] text-ink-secondary mt-4">
+        <p className="text-[16px] text-ink-secondary mt-4">
           Beta. The pipeline does its best with vanilla decks; complex tables, embedded charts, and SmartArt may flag for human review. Tell us what is missing at{' '}
           <a href="mailto:ssridhar@mays.tamu.edu?subject=PowerPoint%20Reformatter%20feedback" className="prose-link font-semibold">
             ssridhar@mays.tamu.edu

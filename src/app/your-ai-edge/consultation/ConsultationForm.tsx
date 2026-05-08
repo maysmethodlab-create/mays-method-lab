@@ -143,7 +143,7 @@ export default function ConsultationForm() {
         </Field>
 
         {error ? (
-          <p className="text-[14px] text-maroon font-semibold">{error}</p>
+          <p className="text-[16px] text-maroon font-semibold">{error}</p>
         ) : null}
 
         <div>
@@ -190,7 +190,7 @@ function RadioOption({
   return (
     <label
       className={[
-        'inline-flex items-center gap-3 px-4 py-3 border-2 cursor-pointer text-[15px] font-semibold',
+        'inline-flex items-center gap-3 px-4 py-3 border-2 cursor-pointer text-[16px] font-semibold',
         checked
           ? 'bg-maroon text-white border-maroon'
           : 'bg-white text-maroon border-maroon hover:bg-maroon/5',

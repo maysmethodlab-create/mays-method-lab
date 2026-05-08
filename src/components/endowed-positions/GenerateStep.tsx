@@ -176,7 +176,7 @@ export default function GenerateStep({
 
       {phase === 'drafting' ? (
         <section className="card">
-          <div className="eyebrow text-[11px] mb-3">Drafting…</div>
+          <div className="eyebrow text-[16px] mb-3">Drafting…</div>
           <div className="progress-bar mb-4" />
           <pre className="whitespace-pre-wrap text-sm text-ink-primary leading-relaxed font-body bg-bg-subtle p-4 max-h-[420px] overflow-auto">
             {streamed || '…'}
@@ -186,7 +186,7 @@ export default function GenerateStep({
 
       {parts && phase !== 'idle' && phase !== 'drafting' ? (
         <section className="card">
-          <div className="eyebrow text-[11px] mb-3">AI-generated fields</div>
+          <div className="eyebrow text-[16px] mb-3">AI-generated fields</div>
           <div className="grid gap-3 text-sm">
             <Field label="Subject line" value={parts.subjectLine} onChange={(v) => onPartsChange({ ...parts, subjectLine: v })} />
             <Field label="Opening sentence" value={parts.openingSentence} onChange={(v) => onPartsChange({ ...parts, openingSentence: v })} multiline />
@@ -199,8 +199,8 @@ export default function GenerateStep({
       {draft && (phase === 'review' || phase === 'verifying' || phase === 'done') ? (
         <section className="card">
           <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
-            <div className="eyebrow text-[11px]">Memo body (assembled)</div>
-            <div className="text-[11px] text-ink-muted">Editable</div>
+            <div className="eyebrow text-[16px]">Memo body (assembled)</div>
+            <div className="text-[16px] text-ink-muted">Editable</div>
           </div>
           <textarea
             className="input min-h-[420px] font-body text-sm leading-relaxed"
@@ -223,7 +223,7 @@ export default function GenerateStep({
               </button>
             ) : null}
             {phase === 'done' ? (
-              <span className="text-[11px] uppercase tracking-[0.18em] text-status-success font-semibold self-center">
+              <span className="text-[16px] uppercase tracking-[0.18em] text-status-success font-semibold self-center">
                 Sanitizer pass complete ✓
               </span>
             ) : null}

@@ -95,11 +95,11 @@ function LeaderCard({
 }) {
   return (
     <div className="card h-full">
-      <div className="eyebrow text-[12px] mb-3">{role}</div>
+      <div className="eyebrow text-[16px] mb-3">{role}</div>
       <h3 className="font-headline text-[26px] font-semibold text-maroon mb-3 leading-tight">
         {name}
       </h3>
-      <p className="text-[15px] text-ink-secondary leading-relaxed">{note}</p>
+      <p className="text-[16px] text-ink-secondary leading-relaxed">{note}</p>
     </div>
   );
 }

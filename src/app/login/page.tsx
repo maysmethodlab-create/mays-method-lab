@@ -11,7 +11,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="eyebrow-lg mb-3">Admin Access</div>
         <h1 className="mb-3">Sign in to the Lab.</h1>
-        <p className="text-[15px] text-ink-secondary mb-10 leading-relaxed">
+        <p className="text-[16px] text-ink-secondary mb-10 leading-relaxed">
           Sign in with your TAMU Google account to continue. Admin Tools are
           restricted to @tamu.edu users.
         </p>

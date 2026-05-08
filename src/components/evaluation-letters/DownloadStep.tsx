@@ -85,7 +85,7 @@ export default function DownloadStep({ setup, draft, onBack, onStartOver }: Prop
       ) : null}
 
       <section className="card space-y-4">
-        <div className="eyebrow text-[11px]">Final Letter</div>
+        <div className="eyebrow text-[16px]">Final Letter</div>
         <p className="text-sm text-ink-secondary leading-relaxed">
           Download the finished evaluation letter as a Word document. 11pt Calibri, US Letter,
           1&quot; margins, with a signature block.
@@ -104,7 +104,7 @@ export default function DownloadStep({ setup, draft, onBack, onStartOver }: Prop
       </section>
 
       <section className="card space-y-4">
-        <div className="eyebrow text-[11px]">Accompanying Email</div>
+        <div className="eyebrow text-[16px]">Accompanying Email</div>
         <p className="text-sm text-ink-secondary leading-relaxed">
           A brief, warm email to send alongside the letter. Mentions 2-3 highlights, 100-150 words.
         </p>

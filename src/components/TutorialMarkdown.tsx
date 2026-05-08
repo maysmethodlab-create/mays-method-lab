@@ -163,7 +163,7 @@ function renderInline(text: string): ReactNode {
       out.push(
         <code
           key={key++}
-          className="bg-bg-subtle text-ink-primary px-1.5 py-0.5 font-mono text-[13px]"
+          className="bg-bg-subtle text-ink-primary px-1.5 py-0.5 font-mono text-[16px]"
         >
           {m[3]}
         </code>,

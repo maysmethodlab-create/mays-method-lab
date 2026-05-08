@@ -166,7 +166,7 @@ export default function EvaluationLetterWorkflow() {
           <button
             type="button"
             onClick={handleStartOverClick}
-            className="text-[13px] text-maroon hover:underline focus:outline-none focus:ring-2 focus:ring-maroon/30 px-1"
+            className="text-[16px] text-maroon hover:underline focus:outline-none focus:ring-2 focus:ring-maroon/30 px-1"
           >
             Start over
           </button>

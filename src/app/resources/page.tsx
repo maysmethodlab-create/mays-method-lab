@@ -145,7 +145,7 @@ export default function ResourcesPage() {
       <div className="mt-24 pt-6 border-t border-line text-center">
         <Link
           href="/learning-community"
-          className="text-[14px] uppercase tracking-[0.1em] font-semibold text-maroon-muted hover:text-maroon"
+          className="text-[16px] uppercase tracking-[0.1em] font-semibold text-maroon-muted hover:text-maroon"
         >
           &larr; Back to the AI Learning Community
         </Link>
@@ -156,7 +156,7 @@ export default function ResourcesPage() {
 
 function CategoryChip({ category }: { category: ResourceCategory }) {
   return (
-    <span className="text-[10px] tracking-[0.05em] uppercase px-2 py-1 font-semibold border border-line text-maroon-muted bg-bg-subtle">
+    <span className="text-[16px] tracking-[0.05em] uppercase px-2 py-1 font-semibold border border-line text-maroon-muted bg-bg-subtle">
       {category}
     </span>
   );
@@ -167,15 +167,15 @@ function ResourceTile({ resource }: { resource: Resource }) {
     return (
       <div className="relative bg-white border-2 border-dashed border-maroon-muted/50 p-7 md:p-8 h-full flex flex-col text-ink-secondary">
         <div className="flex items-center justify-between mb-3 gap-2">
-          <span className="eyebrow text-[11px]">{resource.audience}</span>
-          <span className="text-[10px] tracking-[0.05em] uppercase px-2 py-1 font-semibold border border-line bg-bg-subtle">
+          <span className="eyebrow text-[16px]">{resource.audience}</span>
+          <span className="text-[16px] tracking-[0.05em] uppercase px-2 py-1 font-semibold border border-line bg-bg-subtle">
             Coming soon
           </span>
         </div>
         <h3 className="font-headline text-[20px] font-semibold text-maroon mb-3 leading-tight">
           {resource.title}
         </h3>
-        <p className="text-[15px] text-ink-secondary leading-relaxed flex-1 mb-4">
+        <p className="text-[16px] text-ink-secondary leading-relaxed flex-1 mb-4">
           {resource.blurb}
         </p>
         <div className="mt-auto pt-3 border-t border-line">
@@ -204,11 +204,11 @@ function ResourceTile({ resource }: { resource: Resource }) {
           <polyline points="9,6 18,6 18,15" />
         </svg>
       </span>
-      <div className="eyebrow text-[11px] mb-2 pr-8">{resource.audience}</div>
+      <div className="eyebrow text-[16px] mb-2 pr-8">{resource.audience}</div>
       <h3 className="font-headline text-[20px] font-semibold text-maroon mb-3 leading-tight pr-8">
         {resource.title}
       </h3>
-      <p className="text-[15px] text-ink-secondary leading-relaxed flex-1 mb-4">
+      <p className="text-[16px] text-ink-secondary leading-relaxed flex-1 mb-4">
         {resource.blurb}
       </p>
       <div className="mt-auto pt-3 border-t border-line">

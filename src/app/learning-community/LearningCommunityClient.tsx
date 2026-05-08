@@ -179,7 +179,7 @@ function RoleToggle({
 }) {
   return (
     <div className="flex flex-col items-center gap-3">
-      <div className="text-[12px] tracking-[0.18em] uppercase font-semibold text-maroon-muted">
+      <div className="text-[16px] tracking-[0.18em] uppercase font-semibold text-maroon-muted">
         I am a...
       </div>
       <div
@@ -272,7 +272,7 @@ function ChipButton({
       type="button"
       onClick={onClick}
       className={[
-        'px-4 py-2 text-[13px] tracking-wide font-semibold border-2 transition-colors',
+        'px-4 py-2 text-[16px] tracking-wide font-semibold border-2 transition-colors',
         active
           ? 'bg-maroon text-white border-maroon'
           : 'bg-white text-maroon border-maroon hover:bg-maroon/5',
@@ -331,7 +331,7 @@ function SearchBar({
           <button
             type="button"
             onClick={() => onChange('')}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-[12px] uppercase tracking-[0.1em] font-semibold text-maroon-muted hover:text-maroon"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[16px] uppercase tracking-[0.1em] font-semibold text-maroon-muted hover:text-maroon"
           >
             Clear
           </button>
@@ -355,7 +355,7 @@ function SearchGrid({
   return (
     <div className="mt-16">
       <div className="mb-8 text-center">
-        <div className="eyebrow text-[12px] mb-2">Filtered results</div>
+        <div className="eyebrow text-[16px] mb-2">Filtered results</div>
         <h2 className="leading-tight">
           {results.length}{' '}
           {results.length === 1 ? 'item' : 'items'} matching "{query}"
@@ -370,7 +370,7 @@ function SearchGrid({
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {results.map(({ sectionId, item }, i) => (
             <div key={`${sectionId}-${i}`}>
-              <div className="mb-1 text-[10px] uppercase tracking-[0.18em] font-semibold text-maroon-muted">
+              <div className="mb-1 text-[16px] uppercase tracking-[0.18em] font-semibold text-maroon-muted">
                 {sectionLabel(sectionId)}
               </div>
               <AppCard item={item} featured={false} />
@@ -444,7 +444,7 @@ function SectionBlock({
       </p>
 
       {section.items.length === 0 ? (
-        <p className="text-[15px] text-ink-secondary leading-relaxed">
+        <p className="text-[16px] text-ink-secondary leading-relaxed">
           Nothing tagged in this bucket for {labelFor(section.id).toLowerCase()}{' '}
           right now. Reset the chip to see everything.
         </p>
@@ -620,7 +620,7 @@ function PromptTile({
       className={`${tileBg} p-7 md:p-8 flex flex-col h-full text-left transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-maroon/30`}
     >
       <div
-        className={`text-[10px] uppercase tracking-[0.18em] font-semibold ${tileEyebrow} mb-3`}
+        className={`text-[16px] uppercase tracking-[0.18em] font-semibold ${tileEyebrow} mb-3`}
       >
         {prompt.bucket.replace(/-/g, ' ')}
       </div>
@@ -629,11 +629,11 @@ function PromptTile({
       >
         {prompt.title}
       </h3>
-      <p className={`text-[14px] ${tileBody} leading-relaxed flex-1 mb-4`}>
+      <p className={`text-[16px] ${tileBody} leading-relaxed flex-1 mb-4`}>
         {prompt.blurb}
       </p>
       <span
-        className={`text-[12px] uppercase tracking-[0.1em] font-semibold ${tileLink}`}
+        className={`text-[16px] uppercase tracking-[0.1em] font-semibold ${tileLink}`}
       >
         Open prompt &rarr;
       </span>
@@ -736,7 +736,7 @@ function LearnSection({
       {/* Course-tile row. Five squares for the Mays AI in Business
           program courses, plus one rectangle CTA at the right. */}
       <div id="mays-ai-courses" className="scroll-mt-24">
-        <div className="text-[12px] tracking-[0.18em] uppercase font-semibold text-maroon-muted mb-4">
+        <div className="text-[16px] tracking-[0.18em] uppercase font-semibold text-maroon-muted mb-4">
           Mays AI in Business Program
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -748,10 +748,10 @@ function LearnSection({
               rel="noreferrer"
               className="aspect-square bg-white dotted-frame p-5 flex flex-col hover:bg-maroon/5 transition-colors"
             >
-              <h4 className="font-headline text-[14px] md:text-[15px] font-semibold text-maroon leading-tight mb-2">
+              <h4 className="font-headline text-[16px] md:text-[16px] font-semibold text-maroon leading-tight mb-2">
                 {course.title}
               </h4>
-              <p className="text-[12px] text-ink-secondary leading-snug flex-1">
+              <p className="text-[16px] text-ink-secondary leading-snug flex-1">
                 {course.body}
               </p>
             </a>
@@ -783,10 +783,10 @@ function LearnTile({
       <h3 className="font-headline text-[20px] md:text-[22px] font-semibold text-maroon mb-3 leading-tight">
         {tile.title}
       </h3>
-      <p className="text-[14px] text-ink-secondary leading-relaxed flex-1 mb-4">
+      <p className="text-[16px] text-ink-secondary leading-relaxed flex-1 mb-4">
         {tile.body}
       </p>
-      <span className="text-[12px] uppercase tracking-[0.1em] font-semibold text-maroon">
+      <span className="text-[16px] uppercase tracking-[0.1em] font-semibold text-maroon">
         {tile.cta} &rarr;
       </span>
     </>
@@ -829,11 +829,11 @@ function AppCard({
       >
         <div className="flex items-center justify-between mb-3">
           {item.meta ? (
-            <span className="eyebrow text-[11px]">{item.meta}</span>
+            <span className="eyebrow text-[16px]">{item.meta}</span>
           ) : (
-            <span className="eyebrow text-[11px]">Heads up</span>
+            <span className="eyebrow text-[16px]">Heads up</span>
           )}
-          <span className="text-[10px] tracking-[0.05em] uppercase px-2 py-1 font-semibold border border-line bg-bg-subtle">
+          <span className="text-[16px] tracking-[0.05em] uppercase px-2 py-1 font-semibold border border-line bg-bg-subtle">
             Coming soon
           </span>
         </div>
@@ -842,7 +842,7 @@ function AppCard({
         >
           {item.title}
         </h3>
-        <p className="text-[15px] text-ink-secondary leading-relaxed flex-1">
+        <p className="text-[16px] text-ink-secondary leading-relaxed flex-1">
           {item.description}
         </p>
       </div>
@@ -860,7 +860,7 @@ function AppCard({
     : featured
     ? 'text-[26px] md:text-[28px]'
     : 'text-[20px]';
-  const descSize = featured ? 'text-[16px]' : 'text-[14px]';
+  const descSize = featured ? 'text-[16px]' : 'text-[16px]';
 
   const inner = (
     <div
@@ -868,7 +868,7 @@ function AppCard({
     >
       <ArrowUpRight className="absolute top-5 right-5" />
       {item.meta ? (
-        <div className="eyebrow text-[11px] mb-3 pr-8">{item.meta}</div>
+        <div className="eyebrow text-[16px] mb-3 pr-8">{item.meta}</div>
       ) : null}
       <h3
         className={`font-headline ${titleSize} font-semibold text-maroon mb-3 leading-tight pr-8`}
@@ -921,12 +921,12 @@ function RecentlyContributedRow({ items }: { items: ContributedPrompt[] }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-        <div className="text-[12px] tracking-[0.18em] uppercase font-semibold text-maroon-muted">
+        <div className="text-[16px] tracking-[0.18em] uppercase font-semibold text-maroon-muted">
           Recently contributed by faculty
         </div>
         <Link
           href="/your-ai-edge/contribute-prompt"
-          className="text-[13px] uppercase tracking-[0.1em] font-semibold text-maroon-muted hover:text-maroon"
+          className="text-[16px] uppercase tracking-[0.1em] font-semibold text-maroon-muted hover:text-maroon"
         >
           Contribute a prompt &rarr;
         </Link>
@@ -936,13 +936,13 @@ function RecentlyContributedRow({ items }: { items: ContributedPrompt[] }) {
           <h4 className="font-headline text-[18px] font-semibold text-maroon mb-2 leading-tight">
             Be the first to contribute.
           </h4>
-          <p className="text-[15px] text-ink-secondary leading-relaxed mb-3">
+          <p className="text-[16px] text-ink-secondary leading-relaxed mb-3">
             Got a prompt that earns its keep every week? Share it. The Lab
             reviews and credits you when it goes live.
           </p>
           <Link
             href="/your-ai-edge/contribute-prompt"
-            className="text-[13px] uppercase tracking-[0.1em] font-semibold text-maroon hover:text-maroon-deep"
+            className="text-[16px] uppercase tracking-[0.1em] font-semibold text-maroon hover:text-maroon-deep"
           >
             Submit a prompt &rarr;
           </Link>
@@ -959,7 +959,7 @@ function RecentlyContributedRow({ items }: { items: ContributedPrompt[] }) {
             );
             const inner = (
               <>
-                <div className="eyebrow text-[10px] mb-2 flex items-center justify-between gap-2">
+                <div className="eyebrow text-[16px] mb-2 flex items-center justify-between gap-2">
                   <span>
                     {p.contributorName}, {p.contributorRole}
                   </span>
@@ -970,15 +970,15 @@ function RecentlyContributedRow({ items }: { items: ContributedPrompt[] }) {
                   ) : null}
                 </div>
                 {titleLine}
-                <p className="text-[14px] text-ink-secondary leading-relaxed mb-3">
+                <p className="text-[16px] text-ink-secondary leading-relaxed mb-3">
                   {p.description}
                 </p>
                 {isInternal ? (
-                  <span className="text-[12px] uppercase tracking-[0.1em] font-semibold text-maroon">
+                  <span className="text-[16px] uppercase tracking-[0.1em] font-semibold text-maroon">
                     Try this prompt &rarr;
                   </span>
                 ) : (
-                  <div className="text-[12px] uppercase tracking-[0.1em] font-semibold text-maroon-muted">
+                  <div className="text-[16px] uppercase tracking-[0.1em] font-semibold text-maroon-muted">
                     Contributed by {p.contributorName}
                   </div>
                 )}
@@ -1058,7 +1058,7 @@ function ThroughputStrip() {
 function TrustBanner() {
   return (
     <div className="text-center max-w-3xl mx-auto">
-      <p className="text-[15px] text-ink-secondary leading-relaxed">
+      <p className="text-[16px] text-ink-secondary leading-relaxed">
         Every app on this page uses TAMU-approved tools or Lab-built apps that
         live behind the Mays sign-in. For the full compliance and tool
         registry, see{' '}

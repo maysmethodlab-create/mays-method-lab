@@ -18,7 +18,7 @@ export default function AboutNav() {
           <Link
             key={t.href}
             href={t.href}
-            className={`px-5 py-3 text-[15px] font-semibold tracking-normal border-b-[3px] -mb-px transition-colors ${
+            className={`px-5 py-3 text-[16px] font-semibold tracking-normal border-b-[3px] -mb-px transition-colors ${
               active
                 ? 'border-maroon text-maroon'
                 : 'border-transparent text-ink-secondary hover:text-maroon'

@@ -18,7 +18,7 @@ export default function Header() {
             className="w-12 h-12"
           />
           <div className="leading-tight font-brand">
-            <div className="text-[11px] tracking-[0.05em] uppercase text-ink-secondary font-semibold group-hover:text-maroon transition-colors">
+            <div className="text-[16px] tracking-[0.05em] uppercase text-ink-secondary font-semibold group-hover:text-maroon transition-colors">
               Mays Business School
             </div>
             <div className="text-xl md:text-[22px] text-ink-primary font-normal leading-[1.15] mt-0.5">
@@ -49,7 +49,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
   return (
     <Link
       href={href}
-      className={`relative px-3 py-3 text-[14px] font-semibold tracking-normal transition-colors ${
+      className={`relative px-3 py-3 text-[16px] font-semibold tracking-normal transition-colors ${
         active ? 'text-maroon' : 'text-ink-primary hover:text-maroon'
       }`}
     >

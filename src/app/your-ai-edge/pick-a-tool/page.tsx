@@ -124,7 +124,7 @@ export default function PickAToolPage() {
 
       {/* Tool comparison grid */}
       <div className="mt-16">
-        <div className="eyebrow text-[12px] mb-3">Quick picks</div>
+        <div className="eyebrow text-[16px] mb-3">Quick picks</div>
         <h2 className="mb-8 leading-tight">Choose by what you are trying to do.</h2>
         <div className="grid md:grid-cols-2 gap-6">
           {TOOLS.map((t) => (
@@ -135,7 +135,7 @@ export default function PickAToolPage() {
 
       {/* Use cases */}
       <div className="mt-24">
-        <div className="eyebrow text-[12px] mb-3">Use cases</div>
+        <div className="eyebrow text-[16px] mb-3">Use cases</div>
         <h2 className="mb-8 leading-tight">Match the tool to the work.</h2>
         <div className="grid md:grid-cols-2 gap-6">
           {USE_CASES.map((u) => (
@@ -146,10 +146,10 @@ export default function PickAToolPage() {
               <h3 className="font-headline text-[20px] font-semibold text-maroon mb-2 leading-tight">
                 {u.title}
               </h3>
-              <p className="text-[15px] text-ink-secondary leading-relaxed mb-3">
+              <p className="text-[16px] text-ink-secondary leading-relaxed mb-3">
                 {u.body}
               </p>
-              <ul className="text-[15px] text-ink-secondary leading-relaxed list-disc pl-5 space-y-1">
+              <ul className="text-[16px] text-ink-secondary leading-relaxed list-disc pl-5 space-y-1">
                 {u.bullets.map((b) => (
                   <li key={b}>{b}</li>
                 ))}
@@ -161,7 +161,7 @@ export default function PickAToolPage() {
 
       {/* Decision rules */}
       <div className="mt-24 max-w-4xl dotted-frame bg-bg-subtle py-10 px-8 md:px-12">
-        <div className="eyebrow text-[12px] mb-3">Decision rules</div>
+        <div className="eyebrow text-[16px] mb-3">Decision rules</div>
         <h2 className="mb-6 leading-tight">A simple way to decide.</h2>
         <ul className="text-[16px] text-ink-secondary leading-relaxed list-disc pl-5 space-y-2">
           <li>
@@ -211,20 +211,20 @@ function ToolCard({ tool }: { tool: Tool }) {
       <h3 className="font-headline text-[24px] font-semibold text-maroon mb-1 leading-tight">
         {tool.name}
       </h3>
-      <div className="eyebrow text-[11px] mb-4">{tool.blurb}</div>
-      <ul className="text-[15px] text-ink-secondary leading-relaxed list-disc pl-5 space-y-2 mb-4 flex-1">
+      <div className="eyebrow text-[16px] mb-4">{tool.blurb}</div>
+      <ul className="text-[16px] text-ink-secondary leading-relaxed list-disc pl-5 space-y-2 mb-4 flex-1">
         {tool.bullets.map((b) => (
           <li key={b}>{b}</li>
         ))}
       </ul>
-      <p className="text-[14px] text-ink-secondary leading-relaxed mb-4 italic">
+      <p className="text-[16px] text-ink-secondary leading-relaxed mb-4 italic">
         {tool.caveat}
       </p>
       <a
         href={tool.href}
         target="_blank"
         rel="noreferrer"
-        className="text-[13px] uppercase tracking-[0.1em] font-semibold text-maroon hover:text-maroon-deep"
+        className="text-[16px] uppercase tracking-[0.1em] font-semibold text-maroon hover:text-maroon-deep"
       >
         Open {tool.name} &rarr;
       </a>
@@ -246,7 +246,7 @@ function NextLink({
       href={href}
       className="block bg-white border-2 border-maroon p-6 hover:bg-maroon/5 transition-colors"
     >
-      <div className="eyebrow text-[11px] mb-2">{eyebrow}</div>
+      <div className="eyebrow text-[16px] mb-2">{eyebrow}</div>
       <div className="font-headline text-[20px] font-semibold text-maroon leading-tight">
         {label} &rarr;
       </div>

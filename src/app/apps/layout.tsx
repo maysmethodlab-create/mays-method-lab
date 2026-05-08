@@ -30,7 +30,7 @@ export default function AppsLayout({
       <div className="section pt-6 pb-2">
         <Link
           href="/learning-community"
-          className="inline-flex items-center gap-2 text-[13px] uppercase tracking-[0.1em] font-semibold text-maroon-muted hover:text-maroon"
+          className="inline-flex items-center gap-2 text-[16px] uppercase tracking-[0.1em] font-semibold text-maroon-muted hover:text-maroon"
         >
           <span aria-hidden="true">&larr;</span>
           <span>Back to Your AI Edge</span>

@@ -23,8 +23,8 @@ export default function DemoBanner({ candidateName }: Props) {
       className="border-2 border-maroon-muted bg-maroon/5 px-5 py-4 mb-8 flex items-start gap-4"
     >
       <div className="flex-1">
-        <div className="eyebrow text-[11px] mb-1">Sample data shown</div>
-        <p className="text-[14px] text-ink-primary leading-relaxed">
+        <div className="eyebrow text-[16px] mb-1">Sample data shown</div>
+        <p className="text-[16px] text-ink-primary leading-relaxed">
           Sample data shown for{' '}
           <span className="font-semibold">{candidateName}</span>. The MRC has not yet met for
           FY27 cases. Replace with real inputs before generating an actual letter.
@@ -33,7 +33,7 @@ export default function DemoBanner({ candidateName }: Props) {
       <button
         type="button"
         onClick={() => setDismissed(true)}
-        className="text-[12px] uppercase tracking-[0.08em] font-semibold text-maroon-muted hover:text-maroon-deep px-2 py-1 border border-maroon-muted/40 hover:border-maroon-deep transition-colors"
+        className="text-[16px] uppercase tracking-[0.08em] font-semibold text-maroon-muted hover:text-maroon-deep px-2 py-1 border border-maroon-muted/40 hover:border-maroon-deep transition-colors"
         aria-label="Dismiss sample data banner"
       >
         Dismiss

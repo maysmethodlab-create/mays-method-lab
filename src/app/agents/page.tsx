@@ -56,15 +56,15 @@ export default function TutorialsPage() {
                   </svg>
                 </span>
                 <div className="flex items-center justify-between mb-3 pr-8">
-                  <span className="eyebrow text-[11px]">{tut.category}</span>
-                  <span className="text-[10px] tracking-[0.05em] uppercase font-semibold text-maroon-muted">
+                  <span className="eyebrow text-[16px]">{tut.category}</span>
+                  <span className="text-[16px] tracking-[0.05em] uppercase font-semibold text-maroon-muted">
                     {tut.meta}
                   </span>
                 </div>
                 <h3 className="font-headline text-[22px] font-semibold text-maroon mb-3 leading-tight pr-8">
                   {tut.title}
                 </h3>
-                <p className="text-[15px] text-ink-secondary leading-relaxed flex-1">
+                <p className="text-[16px] text-ink-secondary leading-relaxed flex-1">
                   {tut.blurb}
                 </p>
               </Link>
@@ -76,7 +76,7 @@ export default function TutorialsPage() {
       <div className="mt-24 pt-6 border-t border-line text-center">
         <Link
           href="/learning-community"
-          className="text-[14px] uppercase tracking-[0.1em] font-semibold text-maroon-muted hover:text-maroon"
+          className="text-[16px] uppercase tracking-[0.1em] font-semibold text-maroon-muted hover:text-maroon"
         >
           &larr; Back to the AI Learning Community
         </Link>

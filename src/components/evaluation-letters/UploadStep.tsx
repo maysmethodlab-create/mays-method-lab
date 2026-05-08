@@ -116,7 +116,7 @@ export default function UploadStep({
     <div className="space-y-6">
       {/* 1. PICK THE RECIPIENT FROM THE FACULTY ROSTER */}
       <section className="card space-y-4">
-        <div className="eyebrow text-[11px]">Recipient</div>
+        <div className="eyebrow text-[16px]">Recipient</div>
         <FacultyPicker
           value={setup.recipientName}
           writerId={setup.writerId}
@@ -196,7 +196,7 @@ export default function UploadStep({
       </section>
 
       <section className="card space-y-4">
-        <div className="eyebrow text-[11px]">Documents</div>
+        <div className="eyebrow text-[16px]">Documents</div>
         <p className="text-sm text-ink-secondary leading-relaxed">
           Upload the recipient&apos;s self-evaluation (Faculty 180 / annual report) and CV.
           Include all peer comments as well, if you collected feedback from senior or
@@ -252,7 +252,7 @@ export default function UploadStep({
               <li key={f.id} className="flex items-center gap-4 px-4 py-3 bg-white">
                 <div className="flex-1 min-w-0">
                   <div className="text-sm text-ink-primary truncate font-medium">{f.filename}</div>
-                  <div className="text-[11px] text-ink-muted">
+                  <div className="text-[16px] text-ink-muted">
                     {(f.size / 1024).toFixed(1)} KB · {f.text.length.toLocaleString()} characters extracted
                   </div>
                 </div>
@@ -387,7 +387,7 @@ function ObservationsSection({
 
   return (
     <section className="card space-y-4">
-      <div className="eyebrow text-[11px]">Your Observations and Notes</div>
+      <div className="eyebrow text-[16px]">Your Observations and Notes</div>
       <p className="text-sm text-ink-secondary leading-relaxed">
         These shape the &quot;My Observations&quot; and &quot;Your Plan&quot; sections of the
         letter. Be honest and specific.

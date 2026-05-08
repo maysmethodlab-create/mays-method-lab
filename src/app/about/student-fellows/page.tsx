@@ -57,18 +57,18 @@ function FellowCard({ fellow }: { fellow: (typeof STUDENT_FELLOWS)[number] }) {
           </div>
         )}
         <div>
-          <div className="eyebrow text-[12px] mb-1">AI Student Fellow</div>
+          <div className="eyebrow text-[16px] mb-1">AI Student Fellow</div>
           <h3 className="font-headline text-[24px] font-semibold text-maroon leading-tight">
             {fellow.name}
           </h3>
           {fellow.program ? (
-            <div className="text-[14px] text-ink-secondary mt-1">{fellow.program}</div>
+            <div className="text-[16px] text-ink-secondary mt-1">{fellow.program}</div>
           ) : null}
         </div>
       </div>
 
       {fellow.bio ? (
-        <p className="text-[15px] text-ink-secondary leading-relaxed mb-4 flex-1">{fellow.bio}</p>
+        <p className="text-[16px] text-ink-secondary leading-relaxed mb-4 flex-1">{fellow.bio}</p>
       ) : null}
 
       {fellow.focus && fellow.focus.length > 0 ? (
@@ -76,7 +76,7 @@ function FellowCard({ fellow }: { fellow: (typeof STUDENT_FELLOWS)[number] }) {
           {fellow.focus.map((t) => (
             <span
               key={t}
-              className="text-[11px] uppercase tracking-[0.05em] font-semibold text-maroon-muted border border-maroon-muted/50 px-2 py-1"
+              className="text-[16px] uppercase tracking-[0.05em] font-semibold text-maroon-muted border border-maroon-muted/50 px-2 py-1"
             >
               {t}
             </span>
@@ -85,7 +85,7 @@ function FellowCard({ fellow }: { fellow: (typeof STUDENT_FELLOWS)[number] }) {
       ) : null}
 
       {fellow.links ? (
-        <div className="flex flex-wrap gap-4 text-[14px] font-semibold mt-auto">
+        <div className="flex flex-wrap gap-4 text-[16px] font-semibold mt-auto">
           {fellow.links.linkedin ? (
             <a
               href={fellow.links.linkedin}

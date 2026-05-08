@@ -78,22 +78,22 @@ function InlinePromptBlock({
   return (
     <div className="bg-white border-2 border-maroon border-t-0 px-6 md:px-10 py-7">
       <div className="flex items-center justify-between mb-4 gap-4 flex-wrap">
-        <div className="text-[11px] tracking-[0.18em] uppercase font-semibold text-maroon-muted">
+        <div className="text-[16px] tracking-[0.18em] uppercase font-semibold text-maroon-muted">
           Try this prompt
         </div>
         <button
           type="button"
           onClick={handleCopy}
-          className="px-5 py-2 bg-maroon text-white text-[12px] uppercase tracking-[0.12em] font-semibold hover:bg-maroon-deep transition-colors"
+          className="px-5 py-2 bg-maroon text-white text-[16px] uppercase tracking-[0.12em] font-semibold hover:bg-maroon-deep transition-colors"
         >
           {copied ? 'Copied!' : 'Copy prompt'}
         </button>
       </div>
-      <pre className="whitespace-pre-wrap font-mono text-[13px] text-ink-primary leading-relaxed bg-bg-subtle p-5 mb-3">
+      <pre className="whitespace-pre-wrap font-mono text-[16px] text-ink-primary leading-relaxed bg-bg-subtle p-5 mb-3">
         {text}
       </pre>
       {caption ? (
-        <p className="text-[13px] text-ink-secondary leading-relaxed">
+        <p className="text-[16px] text-ink-secondary leading-relaxed">
           {caption}
         </p>
       ) : null}
@@ -103,7 +103,7 @@ function InlinePromptBlock({
 
 function ComingSoonPill() {
   return (
-    <span className="inline-block px-5 py-2 border-2 border-white text-white text-[12px] uppercase tracking-[0.18em] font-semibold whitespace-nowrap">
+    <span className="inline-block px-5 py-2 border-2 border-white text-white text-[16px] uppercase tracking-[0.18em] font-semibold whitespace-nowrap">
       Coming soon
     </span>
   );

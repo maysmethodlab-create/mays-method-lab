@@ -19,7 +19,7 @@ export default function StepHeader({ step, total = TOTAL, title, subtitle }: Pro
           return (
             <div key={n} className="flex items-center gap-2">
               <div
-                className={`w-7 h-7 flex items-center justify-center text-[12px] font-bold border-2 ${
+                className={`w-7 h-7 flex items-center justify-center text-[16px] font-bold border-2 ${
                   active
                     ? 'bg-maroon text-white border-maroon-deep'
                     : done
@@ -30,7 +30,7 @@ export default function StepHeader({ step, total = TOTAL, title, subtitle }: Pro
                 {done ? '✓' : n}
               </div>
               <div
-                className={`text-[12px] uppercase tracking-[0.08em] font-semibold ${
+                className={`text-[16px] uppercase tracking-[0.08em] font-semibold ${
                   active ? 'text-maroon' : done ? 'text-status-success' : 'text-ink-secondary'
                 }`}
               >
@@ -43,7 +43,7 @@ export default function StepHeader({ step, total = TOTAL, title, subtitle }: Pro
           );
         })}
       </div>
-      <div className="eyebrow text-[12px] mb-2">Step {step} of {total}</div>
+      <div className="eyebrow text-[16px] mb-2">Step {step} of {total}</div>
       <h2 className="mb-3">{title}</h2>
       {subtitle ? (
         <p className="text-[16px] text-ink-secondary leading-relaxed max-w-3xl">{subtitle}</p>

@@ -20,7 +20,7 @@ export default function AcademicCalendarClient() {
           Ask about a date on the TAMU academic calendar. Registration windows,
           drop deadlines, finals weeks, breaks, commencement.
         </p>
-        <p className="text-[14px] text-ink-secondary mt-4">
+        <p className="text-[16px] text-ink-secondary mt-4">
           Source:{' '}
           <a
             href="https://registrar.tamu.edu/academic-calendar"

@@ -86,7 +86,7 @@ export default function UploadStep({ files, onFilesChange, onBack, onContinue }:
   return (
     <div className="space-y-6">
       <section className="card space-y-4">
-        <div className="eyebrow text-[11px]">Documents</div>
+        <div className="eyebrow text-[16px]">Documents</div>
         <p className="text-sm text-ink-secondary leading-relaxed">
           Upload the department head&apos;s recommendation letter (.docx or .pdf) and the
           candidate&apos;s CV (.pdf). The AI uses both to draft the Achievement and Qualifications
@@ -139,7 +139,7 @@ export default function UploadStep({ files, onFilesChange, onBack, onContinue }:
               <li key={f.id} className="flex items-center gap-4 px-4 py-3 bg-white">
                 <div className="flex-1 min-w-0">
                   <div className="text-sm text-ink-primary truncate font-medium">{f.filename}</div>
-                  <div className="text-[11px] text-ink-muted">
+                  <div className="text-[16px] text-ink-muted">
                     {(f.size / 1024).toFixed(1)} KB · {f.text.length.toLocaleString()} chars extracted
                   </div>
                 </div>

@@ -124,8 +124,8 @@ export default function ToolsPage() {
 
       {/* Trust banner. Replaces per-card compliance badges across the site. */}
       <div className="dotted-frame bg-bg-subtle py-6 px-6 md:px-8 mb-16">
-        <div className="eyebrow text-[11px] mb-2">Compliance</div>
-        <p className="text-[15px] text-ink-secondary leading-relaxed max-w-3xl">
+        <div className="eyebrow text-[16px] mb-2">Compliance</div>
+        <p className="text-[16px] text-ink-secondary leading-relaxed max-w-3xl">
           Every tool listed below has been reviewed and approved by Texas A&amp;M
           for use with university data. If a tool is not on this page, treat it
           as not approved until you confirm with TAMU IT.
@@ -155,14 +155,14 @@ export default function ToolsPage() {
                   <polyline points="9,6 18,6 18,15" />
                 </svg>
               </span>
-              <div className="eyebrow text-[11px] mb-2 pr-8">{tool.audience}</div>
+              <div className="eyebrow text-[16px] mb-2 pr-8">{tool.audience}</div>
               <h3 className="font-headline text-[24px] font-semibold text-maroon mb-3 leading-tight pr-8">
                 {tool.name}
               </h3>
-              <p className="text-[15px] text-ink-secondary leading-relaxed mb-3">
+              <p className="text-[16px] text-ink-secondary leading-relaxed mb-3">
                 {tool.blurb}
               </p>
-              <div className="text-[13px] text-ink-secondary mt-auto pt-3 border-t border-line">
+              <div className="text-[16px] text-ink-secondary mt-auto pt-3 border-t border-line">
                 <span className="font-semibold text-maroon-muted">Best for: </span>
                 {tool.use}
               </div>
@@ -174,7 +174,7 @@ export default function ToolsPage() {
       <div className="mt-24 pt-6 border-t border-line text-center">
         <Link
           href="/learning-community"
-          className="text-[14px] uppercase tracking-[0.1em] font-semibold text-maroon-muted hover:text-maroon"
+          className="text-[16px] uppercase tracking-[0.1em] font-semibold text-maroon-muted hover:text-maroon"
         >
           &larr; Back to the AI Learning Community
         </Link>

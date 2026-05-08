@@ -121,7 +121,7 @@ function PromptSheetContent({
       {/* Sheet header. Sticky. */}
       <div className="sticky top-0 bg-bg border-b border-line px-6 md:px-10 py-5 flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <div className="eyebrow text-[11px] mb-2">
+          <div className="eyebrow text-[16px] mb-2">
             {BUCKET_LABELS[prompt.bucket]}
           </div>
           <h2 className="font-headline text-[26px] md:text-[30px] font-semibold text-maroon leading-tight">
@@ -150,25 +150,25 @@ function PromptSheetContent({
         {/* Prompt text + copy button */}
         <div className="dotted-frame bg-bg-subtle py-8 px-6 md:px-8 mb-8">
           <div className="flex items-center justify-between mb-4">
-            <div className="eyebrow text-[11px]">The prompt</div>
+            <div className="eyebrow text-[16px]">The prompt</div>
             <button
               type="button"
               onClick={onCopy}
-              className="px-4 py-2 border-2 border-maroon text-[13px] uppercase tracking-[0.1em] font-semibold text-maroon hover:bg-maroon hover:text-white transition-colors"
+              className="px-4 py-2 border-2 border-maroon text-[16px] uppercase tracking-[0.1em] font-semibold text-maroon hover:bg-maroon hover:text-white transition-colors"
             >
               {copied ? 'Copied' : 'Copy prompt'}
             </button>
           </div>
-          <pre className="whitespace-pre-wrap font-mono text-[13px] text-ink-primary leading-relaxed">
+          <pre className="whitespace-pre-wrap font-mono text-[16px] text-ink-primary leading-relaxed">
             {prompt.promptText}
           </pre>
         </div>
 
         {/* Example output */}
         <div className="mb-8">
-          <div className="eyebrow text-[11px] mb-3">Example output</div>
+          <div className="eyebrow text-[16px] mb-3">Example output</div>
           <div className="border-l-2 border-maroon-muted pl-4">
-            <pre className="whitespace-pre-wrap font-body text-[15px] text-ink-secondary leading-relaxed">
+            <pre className="whitespace-pre-wrap font-body text-[16px] text-ink-secondary leading-relaxed">
               {prompt.exampleOutput}
             </pre>
           </div>
@@ -177,7 +177,7 @@ function PromptSheetContent({
         {/* Related prompts */}
         {related.length > 0 ? (
           <div>
-            <div className="eyebrow text-[11px] mb-3">Related prompts</div>
+            <div className="eyebrow text-[16px] mb-3">Related prompts</div>
             <ul className="space-y-3">
               {related.map((r) => (
                 <li key={r.slug}>
@@ -189,7 +189,7 @@ function PromptSheetContent({
                     <div className="font-headline text-[16px] font-semibold text-maroon mb-1">
                       {r.title}
                     </div>
-                    <div className="text-[13px] text-ink-secondary">
+                    <div className="text-[16px] text-ink-secondary">
                       {r.blurb}
                     </div>
                   </button>
@@ -203,7 +203,7 @@ function PromptSheetContent({
         <div className="mt-12 pt-6 border-t border-line">
           <Link
             href="/learning-community"
-            className="text-[13px] uppercase tracking-[0.1em] font-semibold text-maroon-muted hover:text-maroon"
+            className="text-[16px] uppercase tracking-[0.1em] font-semibold text-maroon-muted hover:text-maroon"
           >
             &larr; Back to the AI Learning Community
           </Link>

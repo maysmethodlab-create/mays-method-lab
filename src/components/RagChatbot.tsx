@@ -115,7 +115,7 @@ export default function RagChatbot({
         aria-live="polite"
       >
         {messages.length === 0 ? (
-          <div className="text-ink-secondary text-[14px]">
+          <div className="text-ink-secondary text-[16px]">
             <p className="mb-3">
               Ask a question about the academic calendar. Try one of these to start:
             </p>
@@ -128,7 +128,7 @@ export default function RagChatbot({
                       setInput(q);
                       inputRef.current?.focus();
                     }}
-                    className="text-left w-full border border-line bg-white px-3 py-2 hover:border-maroon hover:bg-maroon/5 focus:outline-none focus:border-maroon transition-colors text-[14px] text-ink-primary"
+                    className="text-left w-full border border-line bg-white px-3 py-2 hover:border-maroon hover:bg-maroon/5 focus:outline-none focus:border-maroon transition-colors text-[16px] text-ink-primary"
                   >
                     {q}
                   </button>
@@ -143,10 +143,10 @@ export default function RagChatbot({
         )}
         {busy ? (
           <div className="self-start max-w-[88%]">
-            <div className="text-[12px] uppercase tracking-[0.18em] text-maroon-muted font-semibold mb-1">
+            <div className="text-[16px] uppercase tracking-[0.18em] text-maroon-muted font-semibold mb-1">
               {botName}
             </div>
-            <div className="border border-line px-3 py-2 text-[14px] text-ink-secondary">
+            <div className="border border-line px-3 py-2 text-[16px] text-ink-secondary">
               Thinking…
             </div>
           </div>
@@ -161,23 +161,23 @@ export default function RagChatbot({
           onKeyDown={handleKeyDown}
           rows={2}
           placeholder="Ask about a date, a deadline, a break, or a finals window."
-          className="w-full border-2 border-line focus:border-maroon focus:outline-none px-3 py-2 text-[15px] font-body resize-none bg-white text-ink-primary"
+          className="w-full border-2 border-line focus:border-maroon focus:outline-none px-3 py-2 text-[16px] font-body resize-none bg-white text-ink-primary"
           disabled={busy}
         />
         <div className="flex items-center justify-between gap-3">
-          <div className="text-[12px] text-ink-secondary">
+          <div className="text-[16px] text-ink-secondary">
             Press Enter to send. Shift+Enter for a new line.
           </div>
           <button
             type="submit"
             disabled={busy || !input.trim()}
-            className="bg-maroon text-white px-5 py-2 font-semibold uppercase tracking-[0.05em] text-[13px] hover:bg-maroon-deep disabled:bg-ink-subtle disabled:cursor-not-allowed transition-colors"
+            className="bg-maroon text-white px-5 py-2 font-semibold uppercase tracking-[0.05em] text-[16px] hover:bg-maroon-deep disabled:bg-ink-subtle disabled:cursor-not-allowed transition-colors"
           >
             {busy ? 'Sending' : 'Send'}
           </button>
         </div>
         {error ? (
-          <div className="text-[13px] text-status-error">Error: {error}</div>
+          <div className="text-[16px] text-status-error">Error: {error}</div>
         ) : null}
       </form>
     </div>
@@ -198,12 +198,12 @@ function MessageBubble({
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
       <div className={`max-w-[88%] ${isUser ? 'text-right' : 'text-left'}`}>
         {!isUser ? (
-          <div className="text-[12px] uppercase tracking-[0.18em] text-maroon-muted font-semibold mb-1">
+          <div className="text-[16px] uppercase tracking-[0.18em] text-maroon-muted font-semibold mb-1">
             Mays Method Lab · Academic Calendar
           </div>
         ) : null}
         <div
-          className={`inline-block whitespace-pre-wrap text-[14px] leading-relaxed px-3 py-2 ${
+          className={`inline-block whitespace-pre-wrap text-[16px] leading-relaxed px-3 py-2 ${
             isUser
               ? 'bg-white border-2 border-maroon text-ink-primary text-left'
               : 'bg-white border border-line text-ink-primary text-left'
@@ -212,7 +212,7 @@ function MessageBubble({
           {message.content}
         </div>
         {!isUser ? (
-          <div className="text-[12px] text-ink-secondary mt-1">
+          <div className="text-[16px] text-ink-secondary mt-1">
             Source:{' '}
             <a
               href={sourceHref}

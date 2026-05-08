@@ -27,14 +27,14 @@ export default function FacultyGuidelinesClient({ enabled }: Props) {
           >
             Mays Faculty Guidelines Chatbot
           </h1>
-          <span className="inline-block px-3 py-1 bg-maroon text-white text-[12px] uppercase tracking-[0.18em] font-semibold whitespace-nowrap">
+          <span className="inline-block px-3 py-1 bg-maroon text-white text-[16px] uppercase tracking-[0.18em] font-semibold whitespace-nowrap">
             Beta
           </span>
         </div>
         <p className="text-[17px] text-ink-secondary leading-relaxed">
           Ask any question about the October 2025 guidelines. The chatbot quotes the exact passage that answers it.
         </p>
-        <p className="text-[14px] text-ink-secondary leading-relaxed mt-3">
+        <p className="text-[16px] text-ink-secondary leading-relaxed mt-3">
           This is a beta. If an answer feels off, tell us at{' '}
           <a href="mailto:ssridhar@mays.tamu.edu?subject=Faculty%20Guidelines%20Chatbot%20feedback" className="prose-link font-semibold">
             ssridhar@mays.tamu.edu
@@ -45,7 +45,7 @@ export default function FacultyGuidelinesClient({ enabled }: Props) {
 
       <section className="bg-white border-2 border-maroon p-5 md:p-6 relative max-w-3xl">
         <div className="absolute inset-0 pointer-events-none dotted-frame" aria-hidden="true" />
-        <div className="text-[14px] text-ink-primary">
+        <div className="text-[16px] text-ink-primary">
           Grounded in:{' '}
           <a
             href={SOURCE_HREF}
@@ -58,7 +58,7 @@ export default function FacultyGuidelinesClient({ enabled }: Props) {
         </div>
       </section>
 
-      <p className="text-[13px] text-ink-secondary max-w-3xl">
+      <p className="text-[16px] text-ink-secondary max-w-3xl">
         Advisory only. For decisions about your specific case, contact your
         department head or email Hari Sridhar (
         <a href="mailto:ssridhar@mays.tamu.edu" className="prose-link">
@@ -79,7 +79,7 @@ export default function FacultyGuidelinesClient({ enabled }: Props) {
         <div className="bg-white border-2 border-maroon p-6 md:p-8 relative max-w-3xl">
           <div className="absolute inset-0 pointer-events-none dotted-frame" aria-hidden="true" />
           <div className="eyebrow-lg mb-3 font-headline text-maroon">Paused for maintenance</div>
-          <p className="text-[15px] text-ink-primary leading-relaxed">
+          <p className="text-[16px] text-ink-primary leading-relaxed">
             This service is paused for maintenance. For decisions about your
             specific case, contact your department head or email Hari Sridhar (
             <a href="mailto:ssridhar@mays.tamu.edu" className="prose-link">

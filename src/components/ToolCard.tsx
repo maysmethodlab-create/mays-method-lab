@@ -36,9 +36,9 @@ export default function ToolCard({
       ) : null}
 
       <div className="flex items-center justify-between mb-4 pr-10">
-        <span className="eyebrow text-[12px]">{category ?? 'Tool'}</span>
+        <span className="eyebrow text-[16px]">{category ?? 'Tool'}</span>
         {live ? null : (
-          <span className="text-[11px] tracking-[0.05em] uppercase px-2.5 py-1 font-semibold text-ink-secondary border border-line bg-bg-subtle">
+          <span className="text-[16px] tracking-[0.05em] uppercase px-2.5 py-1 font-semibold text-ink-secondary border border-line bg-bg-subtle">
             Coming Soon
           </span>
         )}
@@ -47,7 +47,7 @@ export default function ToolCard({
       <h3 className="font-headline text-[24px] font-semibold text-maroon mb-3 leading-tight">
         {title}
       </h3>
-      <p className="text-[15px] text-ink-secondary leading-relaxed flex-1">{description}</p>
+      <p className="text-[16px] text-ink-secondary leading-relaxed flex-1">{description}</p>
     </>
   );
 

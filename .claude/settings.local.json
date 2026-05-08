@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh auth *)",
+      "mcp__0f0b566d-31eb-46e6-9129-00b159d48442__list_labels",
+      "Bash(sed -n '/=== AUDIT ===/,/Full brief:/p' \"C:/Users/SHRIHA~1/AppData/Local/Temp/claude/C--Users-shriharisridhar-OneDrive---Texas-A-M-University-ClaudeCodeProjects-Mays-Method-Lab--claude-worktrees-pensive-benz-c13493/d237b497-c02b-4696-96a1-dda5393d90fc/tasks/bqzpitx7m.output\")",
+      "Bash(sed -n '/=== AUDIT ===/,/Full brief:/p' \"C:/Users/SHRIHA~1/AppData/Local/Temp/claude/C--Users-shriharisridhar-OneDrive---Texas-A-M-University-ClaudeCodeProjects-Mays-Method-Lab--claude-worktrees-pensive-benz-c13493/d237b497-c02b-4696-96a1-dda5393d90fc/tasks/b7d8w5dqi.output\")"
+    ]
+  }
+}

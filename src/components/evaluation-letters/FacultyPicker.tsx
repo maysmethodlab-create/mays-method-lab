@@ -65,12 +65,12 @@ export default function FacultyPicker({ value, writerId, onPick }: Props) {
         <div>
           <div className="label">Faculty</div>
           {writerDept ? (
-            <div className="text-[11px] text-ink-muted">
+            <div className="text-[16px] text-ink-muted">
               {deptCount} evaluable faculty in {writerDept.departmentName}. Pick once and we
               fill in name, title, department, role category, and email.
             </div>
           ) : (
-            <div className="text-[11px] text-status-warning">
+            <div className="text-[16px] text-status-warning">
               Choose a writer in the previous step first.
             </div>
           )}
@@ -96,13 +96,13 @@ export default function FacultyPicker({ value, writerId, onPick }: Props) {
             onChange={(e) => setFilter(e.target.value)}
             className="input mb-3"
           />
-          <div className="text-[11px] text-ink-muted mb-2">
+          <div className="text-[16px] text-ink-muted mb-2">
             {matchCount} match{matchCount === 1 ? '' : 'es'} in {writerDept.departmentName}
           </div>
           <div className="max-h-[360px] overflow-y-auto space-y-3 pr-1">
             {filtered.map((g) => (
               <div key={g.departmentSlug}>
-                <div className="text-[10px] uppercase tracking-[0.18em] text-maroon font-bold border-b border-line pb-1 mb-1">
+                <div className="text-[16px] uppercase tracking-[0.18em] text-maroon font-bold border-b border-line pb-1 mb-1">
                   {g.departmentName}
                 </div>
                 <ul className="divide-y divide-line">
@@ -116,7 +116,7 @@ export default function FacultyPicker({ value, writerId, onPick }: Props) {
                         <span className="font-semibold text-ink-primary text-sm">{f.name}</span>
                         <span className="text-xs text-ink-secondary">{f.title || '—'}</span>
                         {f.email ? (
-                          <span className="text-[11px] text-ink-muted ml-auto">{f.email}</span>
+                          <span className="text-[16px] text-ink-muted ml-auto">{f.email}</span>
                         ) : null}
                       </button>
                     </li>

@@ -9,7 +9,7 @@ export default function Footer() {
             <h2 className="font-headline text-[18px] font-normal text-maroon mb-3 leading-tight">
               Mays Method Lab
             </h2>
-            <p className="text-[15px] text-ink-primary leading-relaxed max-w-xs">
+            <p className="text-[16px] text-ink-primary leading-relaxed max-w-xs">
               Discovering, testing, and codifying a new way of teaching business for the AI era.
             </p>
           </div>
@@ -18,7 +18,7 @@ export default function Footer() {
             <h2 className="font-headline text-[18px] font-normal text-maroon mb-3 leading-tight">
               Affiliation
             </h2>
-            <p className="text-[15px] text-ink-primary leading-relaxed">
+            <p className="text-[16px] text-ink-primary leading-relaxed">
               Mays Business School
               <br />
               Texas A&amp;M University
@@ -31,7 +31,7 @@ export default function Footer() {
             <h2 className="font-headline text-[18px] font-normal text-maroon mb-3 leading-tight">
               Co-Directors
             </h2>
-            <ul className="text-[15px] text-ink-primary leading-relaxed space-y-1">
+            <ul className="text-[16px] text-ink-primary leading-relaxed space-y-1">
               <li>Levi Belnap</li>
               <li>&apos;Jon Jasperson</li>
               <li>Shrihari Sridhar</li>
@@ -41,7 +41,7 @@ export default function Footer() {
 
         <div className="divider mt-12" />
 
-        <div className="mt-6 flex flex-col md:flex-row justify-between gap-4 text-[13px] text-ink-secondary">
+        <div className="mt-6 flex flex-col md:flex-row justify-between gap-4 text-[16px] text-ink-secondary">
           <div>
             &copy; {new Date().getFullYear()} Mays Business School &middot; Texas A&amp;M University
           </div>

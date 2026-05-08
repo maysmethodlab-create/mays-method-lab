@@ -124,7 +124,7 @@ export default function DeckAnalyzerClient() {
           >
             Deck Analyzer
           </h1>
-          <span className="inline-block px-3 py-1 bg-maroon text-white text-[12px] uppercase tracking-[0.18em] font-semibold whitespace-nowrap">
+          <span className="inline-block px-3 py-1 bg-maroon text-white text-[16px] uppercase tracking-[0.18em] font-semibold whitespace-nowrap">
             Beta
           </span>
         </div>
@@ -142,7 +142,7 @@ export default function DeckAnalyzerClient() {
 
       {(stage === 'uploading' || stage === 'analyzing') && (
         <section className="bg-white border-2 border-maroon p-6 md:p-8 max-w-3xl">
-          <div className="text-[14px] uppercase tracking-[0.18em] text-maroon font-semibold mb-2">
+          <div className="text-[16px] uppercase tracking-[0.18em] text-maroon font-semibold mb-2">
             Scanning
           </div>
           <h2 className="text-xl m-0 mb-2">{fileName}</h2>
@@ -154,7 +154,7 @@ export default function DeckAnalyzerClient() {
 
       {stage === 'error' && (
         <section className="bg-red-100 border-2 border-red-700 p-6 max-w-3xl">
-          <div className="text-[14px] uppercase tracking-[0.18em] text-red-900 font-semibold mb-2">
+          <div className="text-[16px] uppercase tracking-[0.18em] text-red-900 font-semibold mb-2">
             Error
           </div>
           <p className="m-0 mb-4 text-red-900">{error}</p>
@@ -202,7 +202,7 @@ function UploadCard({
     >
       <div className="absolute inset-0 pointer-events-none dotted-frame" aria-hidden="true" />
       <div className="relative z-10">
-        <div className="text-[14px] uppercase tracking-[0.18em] text-maroon font-semibold mb-2">
+        <div className="text-[16px] uppercase tracking-[0.18em] text-maroon font-semibold mb-2">
           Upload a deck
         </div>
         <h2 className="text-xl m-0 mb-3">Drag a .pptx file here, or click to choose one</h2>
@@ -247,11 +247,11 @@ function ReportView({
         <div className="absolute inset-0 pointer-events-none dotted-frame" aria-hidden="true" />
         <div className="relative z-10 flex flex-wrap items-start justify-between gap-4">
           <div>
-            <div className="text-[14px] uppercase tracking-[0.18em] text-maroon font-semibold mb-2">
+            <div className="text-[16px] uppercase tracking-[0.18em] text-maroon font-semibold mb-2">
               Scan complete
             </div>
             <h2 className="text-xl m-0 mb-1">{report.deck.fileName}</h2>
-            <p className="text-ink-secondary m-0 text-[14px]">
+            <p className="text-ink-secondary m-0 text-[16px]">
               {report.deck.slideCount} slide{report.deck.slideCount === 1 ? '' : 's'} ·{' '}
               {formatBytes(report.deck.fileSize)} · {report.deck.fileFormat.toUpperCase()}
             </p>
@@ -265,7 +265,7 @@ function ReportView({
       {/* Parse error banner if any */}
       {report.deck.parseError && (
         <section className="bg-red-100 border-2 border-red-700 p-6">
-          <div className="text-[14px] uppercase tracking-[0.18em] text-red-900 font-semibold mb-2">
+          <div className="text-[16px] uppercase tracking-[0.18em] text-red-900 font-semibold mb-2">
             Cannot analyze this file
           </div>
           <p className="m-0 text-red-900">{report.deck.parseError}</p>
@@ -275,12 +275,12 @@ function ReportView({
       {/* Top-level recommendation */}
       {!report.deck.parseError && (
         <section className={`border-2 p-6 ${block.banner}`}>
-          <div className="text-[14px] uppercase tracking-[0.18em] font-semibold mb-2">
+          <div className="text-[16px] uppercase tracking-[0.18em] font-semibold mb-2">
             Conversion verdict
           </div>
           <h2 className="text-2xl m-0 mb-2">{block.headline}</h2>
-          <p className="m-0 text-[15px] leading-relaxed">{block.body}</p>
-          <div className="mt-4 text-[13px] flex flex-wrap gap-4">
+          <p className="m-0 text-[16px] leading-relaxed">{block.body}</p>
+          <div className="mt-4 text-[16px] flex flex-wrap gap-4">
             <span>
               <strong>{report.reliability.summary.reliable}</strong> slide
               {report.reliability.summary.reliable === 1 ? '' : 's'} convert cleanly
@@ -301,19 +301,19 @@ function ReportView({
       {report.reliability.findings.length > 0 && (
         <section className="bg-white border-2 border-line p-6">
           <h3 className="text-lg m-0 mb-4 text-ink-primary">Element-by-element reliability</h3>
-          <table className="w-full text-[14px]">
+          <table className="w-full text-[16px]">
             <thead>
               <tr className="border-b-2 border-maroon">
-                <th className="text-left py-2 pr-4 font-semibold uppercase tracking-[0.05em] text-[12px] text-ink-secondary">
+                <th className="text-left py-2 pr-4 font-semibold uppercase tracking-[0.05em] text-[16px] text-ink-secondary">
                   Element
                 </th>
-                <th className="text-right py-2 px-4 font-semibold uppercase tracking-[0.05em] text-[12px] text-ink-secondary">
+                <th className="text-right py-2 px-4 font-semibold uppercase tracking-[0.05em] text-[16px] text-ink-secondary">
                   Count
                 </th>
-                <th className="text-left py-2 px-4 font-semibold uppercase tracking-[0.05em] text-[12px] text-ink-secondary">
+                <th className="text-left py-2 px-4 font-semibold uppercase tracking-[0.05em] text-[16px] text-ink-secondary">
                   Status
                 </th>
-                <th className="text-left py-2 pl-4 font-semibold uppercase tracking-[0.05em] text-[12px] text-ink-secondary">
+                <th className="text-left py-2 pl-4 font-semibold uppercase tracking-[0.05em] text-[16px] text-ink-secondary">
                   What happens on conversion
                 </th>
               </tr>
@@ -327,7 +327,7 @@ function ReportView({
                     <td className="py-3 px-4 text-right tabular-nums">{f.count}</td>
                     <td className="py-3 px-4">
                       <span
-                        className={`inline-block px-2 py-1 text-[12px] uppercase tracking-[0.05em] font-semibold border ${badge.color}`}
+                        className={`inline-block px-2 py-1 text-[16px] uppercase tracking-[0.05em] font-semibold border ${badge.color}`}
                       >
                         {badge.icon} {badge.label}
                       </span>
@@ -359,11 +359,11 @@ function ReportView({
                   >
                     <span className="font-semibold tabular-nums">Slide {s.slideIndex}</span>
                     <span
-                      className={`inline-block px-2 py-0.5 text-[11px] uppercase tracking-[0.05em] font-semibold border ${badge.color}`}
+                      className={`inline-block px-2 py-0.5 text-[16px] uppercase tracking-[0.05em] font-semibold border ${badge.color}`}
                     >
                       {badge.icon} {badge.label}
                     </span>
-                    <span className="text-ink-secondary text-[13px]">
+                    <span className="text-ink-secondary text-[16px]">
                       {s.reasons.join(', ')}
                     </span>
                   </li>
@@ -377,11 +377,11 @@ function ReportView({
       <section className="bg-white border-2 border-line p-6">
         <div className="flex flex-wrap items-baseline justify-between gap-4 mb-4">
           <h3 className="text-lg m-0 text-ink-primary">Accessibility</h3>
-          <div className="text-[14px] text-ink-secondary">
+          <div className="text-[16px] text-ink-secondary">
             Score: <strong className="text-ink-primary">{report.accessibility.score}/100</strong>
           </div>
         </div>
-        <div className="text-[13px] text-ink-secondary mb-4 flex flex-wrap gap-3">
+        <div className="text-[16px] text-ink-secondary mb-4 flex flex-wrap gap-3">
           <span>
             <strong className="text-red-900">{report.accessibility.summary.critical}</strong> critical
           </span>
@@ -407,11 +407,11 @@ function ReportView({
                     Slide {iss.slideIndex}
                   </span>
                   <span
-                    className={`inline-block px-2 py-0.5 text-[11px] uppercase tracking-[0.05em] font-semibold border ${badge.color} whitespace-nowrap`}
+                    className={`inline-block px-2 py-0.5 text-[16px] uppercase tracking-[0.05em] font-semibold border ${badge.color} whitespace-nowrap`}
                   >
                     {badge.label}
                   </span>
-                  <span className="text-ink-secondary text-[13px]">{iss.description}</span>
+                  <span className="text-ink-secondary text-[16px]">{iss.description}</span>
                 </li>
               );
             })}
@@ -419,7 +419,7 @@ function ReportView({
         )}
       </section>
 
-      <p className="text-[13px] text-ink-muted m-0 max-w-3xl">
+      <p className="text-[16px] text-ink-muted m-0 max-w-3xl">
         This is a static analysis — no LLM, no file persistence. Re-running on the same file
         will give the same result. The conversion tool itself does not exist yet; this
         Analyzer is the pre-flight feature shipped first so you can see what the converter

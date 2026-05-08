@@ -71,7 +71,7 @@ export default function DownloadStep({
       ) : null}
 
       <section className="card space-y-4">
-        <div className="eyebrow text-[11px]">Final Memo</div>
+        <div className="eyebrow text-[16px]">Final Memo</div>
         <p className="text-sm text-ink-secondary leading-relaxed">
           Download the recommendation memorandum as a Word document. 11pt Calibri, US Letter,
           1&quot; margins, with the Mays/TAMU letterhead, both required tables (outcome + MRC

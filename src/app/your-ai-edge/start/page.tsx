@@ -25,7 +25,7 @@ export default function StartPage() {
 
       {/* Quick start ladder */}
       <div className="mt-16 max-w-4xl">
-        <div className="eyebrow text-[12px] mb-3">Quick start</div>
+        <div className="eyebrow text-[16px] mb-3">Quick start</div>
         <h2 className="mb-8 leading-tight">Four steps, in order.</h2>
         <ol className="space-y-5">
           <Step
@@ -53,7 +53,7 @@ export default function StartPage() {
 
       {/* Better inputs */}
       <div className="mt-24 max-w-4xl">
-        <div className="eyebrow text-[12px] mb-3">Better inputs</div>
+        <div className="eyebrow text-[16px] mb-3">Better inputs</div>
         <h2 className="mb-8 leading-tight">Specific beats polished.</h2>
         <div className="grid md:grid-cols-2 gap-6">
           <Tip
@@ -82,7 +82,7 @@ export default function StartPage() {
 
       {/* Review */}
       <div className="mt-24 max-w-4xl">
-        <div className="eyebrow text-[12px] mb-3">Review</div>
+        <div className="eyebrow text-[16px] mb-3">Review</div>
         <h2 className="mb-6 leading-tight">Do a 30-second check.</h2>
         <ul className="text-[16px] text-ink-secondary leading-relaxed list-disc pl-5 space-y-2">
           <li>Names, dates, numbers, and links are correct.</li>
@@ -102,7 +102,7 @@ export default function StartPage() {
 
       {/* Data safety */}
       <div className="mt-24 max-w-4xl dotted-frame bg-bg-subtle py-10 px-8 md:px-12">
-        <div className="eyebrow text-[12px] mb-3">Data safety</div>
+        <div className="eyebrow text-[16px] mb-3">Data safety</div>
         <h2 className="mb-4 leading-tight">When in doubt, leave it out.</h2>
         <p className="text-[16px] text-ink-secondary leading-relaxed mb-6">
           Treat anything pasted into a public AI tool as shared with an
@@ -111,7 +111,7 @@ export default function StartPage() {
         <h3 className="font-headline text-[18px] font-semibold text-maroon mb-3">
           Never enter
         </h3>
-        <ul className="text-[15px] text-ink-secondary leading-relaxed list-disc pl-5 space-y-1 mb-6">
+        <ul className="text-[16px] text-ink-secondary leading-relaxed list-disc pl-5 space-y-1 mb-6">
           <li>Student names, A&amp;M IDs, grades, or identifiable records</li>
           <li>Health, financial, or Social Security information</li>
           <li>Passwords, tokens, account numbers, or private credentials</li>
@@ -120,7 +120,7 @@ export default function StartPage() {
         <h3 className="font-headline text-[18px] font-semibold text-maroon mb-3">
           Safer moves
         </h3>
-        <ul className="text-[15px] text-ink-secondary leading-relaxed list-disc pl-5 space-y-1">
+        <ul className="text-[16px] text-ink-secondary leading-relaxed list-disc pl-5 space-y-1">
           <li>Replace names with labels like "Student A."</li>
           <li>Summarize sensitive situations without identifying details.</li>
           <li>Use TAMU-approved tools for protected university work.</li>
@@ -170,7 +170,7 @@ function Tip({ title, body }: { title: string; body: string }) {
       <h3 className="font-headline text-[18px] font-semibold text-maroon mb-2 leading-tight">
         {title}
       </h3>
-      <p className="text-[15px] text-ink-secondary leading-relaxed">{body}</p>
+      <p className="text-[16px] text-ink-secondary leading-relaxed">{body}</p>
     </div>
   );
 }
@@ -189,7 +189,7 @@ function NextLink({
       href={href}
       className="block bg-white border-2 border-maroon p-6 hover:bg-maroon/5 transition-colors"
     >
-      <div className="eyebrow text-[11px] mb-2">{eyebrow}</div>
+      <div className="eyebrow text-[16px] mb-2">{eyebrow}</div>
       <div className="font-headline text-[20px] font-semibold text-maroon leading-tight">
         {label} &rarr;
       </div>

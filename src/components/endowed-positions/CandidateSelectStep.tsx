@@ -72,7 +72,7 @@ export default function CandidateSelectStep({ value, onPickCandidate, onContinue
       }}
     >
       <section className="card space-y-5">
-        <div className="eyebrow text-[11px]">Candidate</div>
+        <div className="eyebrow text-[16px]">Candidate</div>
 
         {/* Two-tab selector */}
         <div
