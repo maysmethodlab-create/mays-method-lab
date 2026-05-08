@@ -106,3 +106,6 @@ data/test-decks/
 # staff evaluations (executive assistant, etc.) that should not appear in a
 # public repo.
 apps/Annual Evaluation Letters/staff-evaluation-letter-writer-skill/Letters/private/
+
+# Claude Code per-session settings — user-specific permission allowlist.
+.claude/settings.local.json
