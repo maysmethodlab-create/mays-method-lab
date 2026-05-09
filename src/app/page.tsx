@@ -38,19 +38,19 @@ export default function HomePage() {
           <ScrollReveal>
             <PillarTile
               label="Learn About Us"
-              body="Recruiting the right student. Telling Mays&rsquo;s story to a donor. The event recap that used to take two hours. AI gives you those hours back, so the outward face of Mays is one you actually had time to write."
+              body="Telling a prospective student what Mays really is: the research, the faculty, the Aggie experience, the Aggie network. Matching them to the program that fits. Putting them in front of the alum who makes them want to be one of us. AI helps you reach more of the right students in the hours you have."
             />
           </ScrollReveal>
           <ScrollReveal>
             <PillarTile
               label="Experience Mays"
-              body="Teaching the class. Reading the paper. The grading queue. AI takes the work that filled your in-between hours off your desk, so the hour with the student in front of you is the one that grows."
+              body="Building the syllabus that keeps up with the field. Designing the case, the simulation, the experiential project that makes an idea stick. Reading the paper that shows the student is thinking harder than they were in September. AI takes the laborious tasks off your desk so the hour you spend making them sharper thinkers is the one that grows."
             />
           </ScrollReveal>
           <ScrollReveal>
             <PillarTile
               label="Leave Better"
-              body="Writing the recommendation. Prepping the senior for the interview. Making the alumni introduction. AI helps you spend more of the last semester on the student and less on the paperwork that used to fill it."
+              body="Connecting a senior to the employer that fits them. Prepping them for the interview that decides the offer. Making the introduction to the Aggie who has done what they want to do next. AI helps you spend more of their last semester on the student in front of you and less on the paperwork that used to fill it."
             />
           </ScrollReveal>
         </div>
