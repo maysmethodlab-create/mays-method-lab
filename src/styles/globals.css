@@ -2,17 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Work+Sans:wght@300;400;500;600;700&family=Open+Sans:wght@400;600;700&display=swap');
-
 /* =============================================================
-   Mays Method Lab — calibrated to mays.tamu.edu
-   Every value below has been verified against computed CSS on
-   the live Mays site. The two non-negotiables:
-     1. Display headings (H1/H2/H3) are Oswald 400, sentence case,
-        color #500000. They are NOT uppercase, NOT weight 600+.
-     2. The signature surface is the "dotted frame" — an outline
-        (dotted, 1.9px, #732F2F) with -15.2px offset, used on
-        content panels that overlap imagery.
+   Mays Method Lab — aligned to the Mays Web Brand and Accessibility
+   Guide (Cindy + MarComm + Hari, May 2026).
+   Fonts (Oswald, Work Sans, Open Sans) are self-hosted via
+   @fontsource and imported in src/app/layout.tsx, not via the
+   Google Fonts CDN. This eliminates render-blocking font requests
+   and keeps the Lighthouse perf score clean.
+   Two non-negotiables from the guide:
+     1. Display headings (H1/H2/H3) are Oswald, AP-style title case,
+        color Aggie Maroon (#500000).
+     2. Body text is Ink Secondary #1A1A1A (17:1 contrast on white,
+        AAA). Never use #732F2F for body text — it fails contrast.
    ============================================================= */
 
 :root {
@@ -22,7 +23,8 @@
 html,
 body {
   background: #FFFFFF;
-  color: #000000;
+  /* Ink Secondary — 17:1 on white, AAA. Brand & A11y Guide default. */
+  color: #1A1A1A;
   font-family: 'Work Sans', Arial, sans-serif;
   font-weight: 400;
   font-size: 16px;
@@ -36,8 +38,34 @@ body {
 }
 
 ::selection {
-  background: rgba(80, 0, 0, 0.18);
-  color: #000000;
+  background: rgba(80, 0, 0, 0.20);
+  color: #1A1A1A;
+}
+
+/* Skip link — keyboard / screen-reader users land here first; press
+   Tab once and the link gains focus. Hidden visually until focused. */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  z-index: 100;
+}
+.skip-link:focus {
+  position: fixed;
+  left: 8px;
+  top: 8px;
+  width: auto;
+  height: auto;
+  padding: 12px 16px;
+  background: #500000;
+  color: #FFFFFF;
+  font-weight: 600;
+  outline: 3px solid #FFD200;
+  outline-offset: 2px;
+  z-index: 100;
 }
 
 a {
@@ -154,6 +182,17 @@ h4 {
 .brand-ribbon a:hover {
   text-decoration: underline;
   text-decoration-thickness: 2px;
+}
+
+.brand-ribbon-sep {
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0 2px;
+}
+
+.brand-ribbon-current {
+  color: #FFFFFF;
+  font-weight: 600;
+  padding: 0 6px;
 }
 
 /* ----- The signature dotted frame (Mays's most distinctive element) -----
@@ -319,7 +358,7 @@ iframe.hero-video {
 
 .hero-sub {
   font-size: 18px;
-  color: #3E3E3E;
+  color: #1A1A1A;
   max-width: 600px;
   line-height: 1.5;
   font-weight: 400;
@@ -417,7 +456,13 @@ iframe.hero-video {
 }
 
 .btn-primary:disabled {
-  opacity: 0.45;
+  /* Per the Brand and Accessibility Guide: disabled state must NOT use
+     opacity. Opacity below 1.0 silently fails contrast and creates
+     ambiguity for screen reader users. Use solid grays that maintain
+     contrast: #B8B8B8 background, #1A1A1A text = 6.6:1 (AA Large). */
+  background: #B8B8B8;
+  color: #1A1A1A;
+  border-color: #888888;
   cursor: not-allowed;
 }
 
@@ -456,7 +501,10 @@ iframe.hero-video {
 }
 
 .btn-secondary:disabled {
-  opacity: 0.45;
+  /* Solid disabled colors instead of opacity — see .btn-primary:disabled. */
+  background: #FFFFFF;
+  color: #888888;
+  border-color: #B8B8B8;
   cursor: not-allowed;
 }
 
@@ -534,7 +582,7 @@ iframe.hero-video {
   font-size: 16px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: #3E3E3E;
+  color: #1A1A1A;
   font-weight: 600;
   font-family: 'Work Sans', Arial, sans-serif;
   margin-bottom: 8px;
@@ -558,7 +606,7 @@ iframe.hero-video {
 
 .divider {
   height: 2px;
-  background-image: radial-gradient(circle, #D1D1D1 1px, transparent 1.5px);
+  background-image: radial-gradient(circle, #999999 1px, transparent 1.5px);
   background-size: 8px 2px;
   background-repeat: repeat-x;
   background-position: center;
@@ -584,7 +632,7 @@ iframe.hero-video {
   content: '';
   flex: 1;
   height: 1px;
-  background: #D1D1D1;
+  background: #999999;
 }
 
 /* ----- Body links inside content blocks (matches Mays inline link

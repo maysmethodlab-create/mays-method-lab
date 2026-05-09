@@ -1,12 +1,19 @@
 import type { Config } from 'tailwindcss';
 
 /**
- * Mays Method Lab palette — calibrated to mays.tamu.edu (computed-CSS verified).
+ * Mays Method Lab palette — aligned to the Mays Web Brand and Accessibility
+ * Guide (Cindy + MarComm + Hari, May 2026).
  *
- * Mays runs Aggie Maroon `#500000` as the primary brand color, `#3C0000` as the
- * deep / hover variant, and `#732F2F` (the maroon-muted shade) as the
- * superhead / dotted-frame / muted-border accent. Body copy is `#000000` for
- * headings and `#3E3E3E` (their actual subhead gray) for paragraph text.
+ * Aggie Maroon (#500000) is the only true brand color. The rest are working
+ * surfaces (white, off-white, deep gray) and structural rules (lines,
+ * dividers). No gradients, accent colors, or complementary palettes.
+ *
+ * Body color: Ink Secondary #1A1A1A on white = 17:1 contrast (AAA).
+ * Helper:    Ink Muted     #2A2A2A on white = 13:1 contrast (AAA).
+ * Line:      #999999 = 3:1 non-text contrast (WCAG 1.4.11).
+ *
+ * Maroon Muted (#732F2F) is decorative only — never body text. It fails
+ * contrast against white as a content color.
  */
 const config: Config = {
   content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
@@ -26,10 +33,11 @@ const config: Config = {
           glow: 'rgba(80, 0, 0, 0.15)',
         },
         ink: {
-          primary: '#000000', // Mays headings & strong text
-          secondary: '#3E3E3E', // mays.tamu.edu paragraph / subhead gray
-          muted: '#5A5A5A',
-          subtle: '#A9A9A9',
+          // Body and headings. AAA values per the Brand & Accessibility Guide.
+          primary: '#000000',   // Strong emphasis, dark UI surfaces
+          secondary: '#1A1A1A', // Default body paragraph color (17:1 on white, AAA)
+          muted: '#2A2A2A',     // Captions, helper text, count badges (13:1, AAA)
+          subtle: '#5A5A5A',    // Reserve for non-content metadata only — fails AA otherwise
           white: '#FFFFFF',
           black: '#000000',
         },
@@ -38,7 +46,7 @@ const config: Config = {
           warning: '#C8A415',
           error: '#BF3D3D',
         },
-        line: '#D1D1D1', // mays.tamu.edu divider-dots gray-300
+        line: '#999999', // 1px divider, 3:1 non-text contrast on white (WCAG 1.4.11)
         // Google brand colors — used only by the inline G logo on the
         // Sign in with TAMU Google button. These are Google's required
         // marks per their branding guidelines and cannot be re-themed.

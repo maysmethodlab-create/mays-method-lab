@@ -27,10 +27,12 @@ export default function Header() {
           </div>
         </Link>
 
-        <nav className="flex items-center gap-0">
+        <nav className="flex items-center gap-0" aria-label="Primary navigation">
           <NavLink href="/">Home</NavLink>
-          <NavLink href="/learning-community">Your AI Edge</NavLink>
-          <NavLink href="/admin">Apps for Administrators</NavLink>
+          <NavLink href="/resources">Resources</NavLink>
+          <NavLink href="/community">Community</NavLink>
+          <NavLink href="/workflow-apps">Workflow Apps</NavLink>
+          <NavLink href="/breakthroughs">Breakthroughs</NavLink>
           <NavLink href="/about">About</NavLink>
         </nav>
       </div>

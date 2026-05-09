@@ -62,19 +62,18 @@ export default function HeroSection() {
       <div className="hero-content-outer">
         <div className="hero-card anim-fade-up">
           <div className="hero-eyebrow">Mays Method Lab</div>
-          <h1 className="hero-title">Inventing how America teaches business in an AI world.</h1>
+          <h1 className="hero-title">AI Just Changed What One Mays Person Can Do in a Day.</h1>
           <p className="hero-sub">
-            We make AI a daily advantage for every faculty and staff member. We build
-            world-class AI offerings for our students. We translate those breakthroughs
-            into a new pedagogical standard, the Mays Method.
+            A Lab for the faculty and staff using it to do better work, faster, in
+            service of the students who came here for you.
           </p>
           <div className="hero-buttons">
-            <Link href="/learning-community" className="btn-primary">
-              Explore the Lab
+            <Link href="/resources" className="btn-primary">
+              Start With You
               <span className="btn-arrow" aria-hidden="true">&rarr;</span>
             </Link>
             <Link href="/about" className="btn-secondary">
-              About
+              About the Lab
             </Link>
           </div>
         </div>
