@@ -62,7 +62,7 @@ export default function HeroSection() {
       <div className="hero-content-outer">
         <div className="hero-card anim-fade-up">
           <div className="hero-eyebrow">Mays Method Lab</div>
-          <h1 className="hero-title">AI Just Changed What One Mays Person Can Do in a Day.</h1>
+          <h1 className="hero-title">AI Just Changed What One Aggie Can Do in a Day.</h1>
           <p className="hero-sub">
             A Lab for the faculty and staff using it to do better work, faster, in
             service of the students who came here for you.

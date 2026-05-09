@@ -41,7 +41,7 @@ export default function AboutPage() {
         </ScrollReveal>
         <ScrollReveal>
           <h2 id="why-exist-heading" className="max-w-4xl mb-6">
-            AI Just Changed the Math on What One Person Can Do in a Day.
+            AI Just Changed the Math on What One Aggie Can Do in a Day.
           </h2>
         </ScrollReveal>
         <ScrollReveal>
