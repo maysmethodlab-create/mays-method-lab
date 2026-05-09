@@ -54,9 +54,21 @@ type ContributedPrompt = {
 export default function LearningCommunityClient({
   initialRole,
   contributedPrompts,
+  hideRoleToggle = false,
+  hideStory = false,
+  hideThroughput = false,
+  hideTrustBanner = false,
 }: {
   initialRole: LearningRole;
   contributedPrompts: ContributedPrompt[];
+  /** Hide the faculty/staff role toggle. /resources renders a single curated set. */
+  hideRoleToggle?: boolean;
+  /** Hide the editorial story card above the sections. */
+  hideStory?: boolean;
+  /** Hide the bottom Schedule + Join the Lab CTAs. */
+  hideThroughput?: boolean;
+  /** Hide the bottom-of-page trust banner. */
+  hideTrustBanner?: boolean;
 }) {
   const [role, setRole] = useState<LearningRole>(initialRole);
   const [bucket, setBucket] = useState<LearningBucket | null>(null);
@@ -105,12 +117,14 @@ export default function LearningCommunityClient({
   return (
     <>
       {/* Role toggle. The page is bilingual; this is the only switch. */}
-      <div className="mt-12">
-        <RoleToggle role={role} onChange={selectRole} />
-      </div>
+      {!hideRoleToggle && (
+        <div className="mt-12">
+          <RoleToggle role={role} onChange={selectRole} />
+        </div>
+      )}
 
       {/* Tag-filter chips + search bar. Sit just under the role toggle. */}
-      <div className="mt-10">
+      <div className={hideRoleToggle ? 'mt-2' : 'mt-10'}>
         <ChipRow bucket={bucket} onChange={setBucket} />
       </div>
       <div className="mt-6">
@@ -118,7 +132,7 @@ export default function LearningCommunityClient({
       </div>
 
       {/* Editorial story. Hidden when searching so the grid takes over. */}
-      {!isSearching && (
+      {!isSearching && !hideStory && (
         <section className="mt-20">
           <EditorialStoryCard story={story} />
         </section>
@@ -152,16 +166,18 @@ export default function LearningCommunityClient({
       />
 
       {/* Throughputs strip — two CTAs. Hidden during search. */}
-      {!isSearching && (
+      {!isSearching && !hideThroughput && (
         <section className="mt-32">
           <ThroughputStrip />
         </section>
       )}
 
       {/* Trust banner. One line, page bottom, replaces per-card badges. */}
-      <section className="mt-32 pt-10 border-t border-line">
-        <TrustBanner />
-      </section>
+      {!hideTrustBanner && (
+        <section className="mt-32 pt-10 border-t border-line">
+          <TrustBanner />
+        </section>
+      )}
     </>
   );
 }
@@ -677,9 +693,41 @@ const LEARN_TILES: Array<{
   },
   {
     title: 'Catch up on AI in business',
-    body: 'External courses, reading lists, and curated AI updates from the Lab.',
-    cta: 'Open resources',
-    href: '/resources',
+    body: 'Free external courses from Anthropic, DeepLearning.AI, Microsoft, and Google. Plus the Mays AI in Business program.',
+    cta: 'Browse the courses',
+    href: '#free-external-courses',
+  },
+];
+
+const FREE_EXTERNAL_COURSES: Array<{
+  title: string;
+  body: string;
+  href: string;
+}> = [
+  {
+    title: 'Anthropic Academy',
+    body: 'Free courses on prompt engineering, building with Claude, and AI safety. Beginner to advanced.',
+    href: 'https://www.anthropic.com/learn',
+  },
+  {
+    title: 'DeepLearning.AI Short Courses',
+    body: "Andrew Ng's short courses on building with LLMs. Most are free, taught with the major AI labs.",
+    href: 'https://www.deeplearning.ai/short-courses/',
+  },
+  {
+    title: 'Microsoft AI Skills Navigator',
+    body: 'Free Microsoft learning paths on Copilot, generative AI for everyone, and AI for business roles.',
+    href: 'https://aiskillsnavigator.microsoft.com/',
+  },
+  {
+    title: 'Google AI Essentials',
+    body: 'Coursera self-paced course from Google on using AI tools in everyday work. Free to audit.',
+    href: 'https://grow.google/ai-essentials/',
+  },
+  {
+    title: 'Anthropic Cookbook',
+    body: 'Working code examples for builders. Tool use, RAG, agents, evaluations, and prompt patterns.',
+    href: 'https://github.com/anthropics/anthropic-cookbook',
   },
 ];
 
@@ -731,6 +779,34 @@ function LearnSection({
         {LEARN_TILES.map((tile) => (
           <LearnTile key={tile.title} tile={tile} />
         ))}
+      </div>
+
+      {/* Free external courses row. Five tiles linking out to the free
+          courses Hari curates: Anthropic Academy, DeepLearning.AI,
+          Microsoft AI Skills Navigator, Google AI Essentials, Anthropic
+          Cookbook. Each card opens in a new tab. */}
+      <div id="free-external-courses" className="scroll-mt-24 mb-12">
+        <div className="text-[16px] tracking-[0.18em] uppercase font-semibold text-maroon-muted mb-4">
+          Free external courses
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+          {FREE_EXTERNAL_COURSES.map((course) => (
+            <a
+              key={course.title}
+              href={course.href}
+              target="_blank"
+              rel="noreferrer"
+              className="bg-white dotted-frame p-5 flex flex-col hover:bg-maroon/5 transition-colors min-h-[160px]"
+            >
+              <h4 className="font-headline text-[16px] md:text-[16px] font-semibold text-maroon leading-tight mb-2">
+                {course.title}
+              </h4>
+              <p className="text-[16px] text-ink-secondary leading-snug flex-1">
+                {course.body}
+              </p>
+            </a>
+          ))}
+        </div>
       </div>
 
       {/* Course-tile row. Five squares for the Mays AI in Business
