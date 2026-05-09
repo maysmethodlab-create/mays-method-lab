@@ -115,35 +115,30 @@ export default function HomePage() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
           <ScrollReveal>
             <CommitmentCard
-              num="01"
               title="Bring AI to the People Doing the Work"
               body="Every Mays faculty and staff member should be able to use AI in the work they actually care about. The Lab is succeeding when AI is no longer an extra step."
             />
           </ScrollReveal>
           <ScrollReveal>
             <CommitmentCard
-              num="02"
-              title="Give Faculty Their Time Back"
-              body="Every hour AI handles is an hour returned to a student. The Lab is succeeding when Mays faculty are spending more time with students, not less."
+              title="Give Faculty and Staff Their Time Back"
+              body="Every hour AI handles is an hour returned to the work that matters. The Lab is succeeding when Mays faculty and staff are spending more of their day on students, not less."
             />
           </ScrollReveal>
           <ScrollReveal>
             <CommitmentCard
-              num="03"
               title="Build Patterns Other Mays People Use"
               body="When something works in one office, the Lab makes it easy for the next office to pick it up. The Lab is succeeding when an app built for one department is in use across three."
             />
           </ScrollReveal>
           <ScrollReveal>
             <CommitmentCard
-              num="04"
               title="Put Mays at the Front of the Field"
               body="The Lab is succeeding when peer business schools visit College Station to see how Mays uses AI, and when they go home and copy us."
             />
           </ScrollReveal>
           <ScrollReveal>
             <CommitmentCard
-              num="05"
               title="Help Breakthroughs Scale"
               body="When something built inside Mays turns out to be a breakthrough, the Lab points you at the paths to take it further. We do not sit on it."
             />
@@ -246,12 +241,9 @@ function PillarTile({ label, body }: { label: string; body: string }) {
   );
 }
 
-function CommitmentCard({ num, title, body }: { num: string; title: string; body: string }) {
+function CommitmentCard({ title, body }: { title: string; body: string }) {
   return (
     <div className="card h-full flex flex-col">
-      <div className="font-headline text-maroon-muted text-[40px] font-semibold leading-none mb-3" aria-hidden="true">
-        {num}
-      </div>
       <h3 className="font-headline text-[22px] font-semibold text-maroon mb-3 leading-tight">
         {title}
       </h3>
