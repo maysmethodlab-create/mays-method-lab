@@ -128,7 +128,7 @@ export default function AboutPage() {
           </ScrollReveal>
           <ScrollReveal>
             <Bio
-              name="'Jon Jasperson"
+              name="Jon Jasperson"
               title="Associate Dean for Academic Innovation; Clinical Professor of Information and Operations Management"
             />
           </ScrollReveal>
