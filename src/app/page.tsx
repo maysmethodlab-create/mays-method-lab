@@ -18,29 +18,39 @@ export default function HomePage() {
       */}
       <section className="section" aria-labelledby="why-heading">
         <ScrollReveal>
-          <div className="eyebrow-lg mb-3">Three Things a Great Business School Does</div>
-          <h2 id="why-heading" className="mb-8 max-w-4xl">
-            AI Changes How Fast You Can Do All Three.
+          <div className="eyebrow-lg mb-3">Three Things You Are Always Doing</div>
+          <h2 id="why-heading" className="mb-6 max-w-4xl">
+            Whichever One You Are on Today, AI Helps You Do It Better.
           </h2>
+        </ScrollReveal>
+        <ScrollReveal>
+          <p className="text-[18px] text-ink-secondary leading-relaxed max-w-3xl mb-8">
+            Whatever you are doing for Mays today, you are working on one of
+            three things. Helping students find us. Helping them do their best
+            work while they are here. Helping them leave ready. We know that.
+            The Lab&rsquo;s job is to put AI to work on whichever one is on your
+            desk today, so the student you are doing it for gets the better
+            hour.
+          </p>
         </ScrollReveal>
 
         <div className="grid md:grid-cols-3 gap-6 md:gap-8">
           <ScrollReveal>
             <PillarTile
               label="Learn About Us"
-              body="Reach the right student, the right donor, the right partner. Cut your event recap from two hours to fifteen minutes."
+              body="Recruiting the right student. Telling Mays&rsquo;s story to a donor. The event recap that used to take two hours. AI gives you those hours back, so the outward face of Mays is one you actually had time to write."
             />
           </ScrollReveal>
           <ScrollReveal>
             <PillarTile
               label="Experience Mays"
-              body="Give every student feedback in 24 hours, not 24 days. The teaching you got into this for is the part AI gives back to you."
+              body="Teaching the class. Reading the paper. The grading queue. AI takes the work that filled your in-between hours off your desk, so the hour with the student in front of you is the one that grows."
             />
           </ScrollReveal>
           <ScrollReveal>
             <PillarTile
               label="Leave Better"
-              body="Match every senior with an alum who has done what they want to do. Their last semester compounds for decades."
+              body="Writing the recommendation. Prepping the senior for the interview. Making the alumni introduction. AI helps you spend more of the last semester on the student and less on the paperwork that used to fill it."
             />
           </ScrollReveal>
         </div>
