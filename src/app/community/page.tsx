@@ -61,7 +61,7 @@ export default function CommunityPage() {
               href="mailto:ssridhar@mays.tamu.edu?subject=AI%20angle%20question%20for%20the%20Mays%20Method%20Lab&body=A%20one-paragraph%20description%20of%20what%20you%20are%20stuck%20on%2C%20what%20you%20have%20tried%2C%20and%20the%20outcome%20you%20want."
               className="btn-primary"
             >
-              Email Hari
+              Email us
               <span className="btn-arrow" aria-hidden="true">&rarr;</span>
             </a>
           </div>
@@ -158,7 +158,7 @@ export default function CommunityPage() {
               href="mailto:ssridhar@mays.tamu.edu?subject=Joining%20the%20Mays%20Method%20Lab%20community"
               className="btn-primary"
             >
-              Email Hari to join
+              Email us to join
               <span className="btn-arrow" aria-hidden="true">&rarr;</span>
             </a>
           </div>

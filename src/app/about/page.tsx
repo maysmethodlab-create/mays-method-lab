@@ -208,7 +208,7 @@ Professor and Joe Foster '56 Chair in Business Leadership`}
               title="Bring Us a Problem"
               body="We will point you at the AI angle in ten minutes. The work stays yours."
               href="mailto:ssridhar@mays.tamu.edu?subject=AI%20angle%20question%20for%20the%20Mays%20Method%20Lab"
-              cta="Email Hari"
+              cta="Email us"
               external
             />
           </ScrollReveal>
